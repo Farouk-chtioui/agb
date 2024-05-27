@@ -1,25 +1,24 @@
 import React from 'react';
 import logo from './logo1.png';
 import './index.css';
-
+import { useState } from 'react';
 export default function Login() {
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [message, setMessage] = React.useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState(''); // added password state
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log('name:', name);
     console.log('email:', email);
-    console.log('message:', message);
+    console.log('password:', password); // log password
   }
+
   return (
     <div className="grid grid-cols-2 items-center justify-center w-screen h-screen bg-white relative">
       <div className="relative w-full h-full flex items-center justify-center z-20">
         <div className="flex flex-col items-center justify-center w-full sm:w-[500px] mx-auto">
           <h1 className="text-3xl text-blue-600 mb-2 m-auto">Welcome back</h1>
           <p className="text-gray-400 mb-6">Enter your email and password to sign in</p>
-          <form className="w-full space-y-4">
+          <form className="w-full space-y-4" onSubmit={handleSubmit}> {/* added onSubmit prop */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
               <input
@@ -29,6 +28,7 @@ export default function Login() {
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Your email address"
+                onChange={(event) => setEmail(event.target.value)}
               />
             </div>
             <div>
@@ -40,6 +40,7 @@ export default function Login() {
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Your password"
+                onChange={(event) => setPassword(event.target.value)} // changed setName to setPassword
               />
             </div>
             <div className="flex items-center">
@@ -67,4 +68,4 @@ export default function Login() {
       </div>
     </div>
   );
-}   
+}
