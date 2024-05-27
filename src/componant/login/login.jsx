@@ -1,14 +1,25 @@
 import React from 'react';
+import logo from './logo1.png';
 import './index.css';
 
 export default function Login() {
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [message, setMessage] = React.useState('');
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    console.log('name:', name);
+    console.log('email:', email);
+    console.log('message:', message);
+  }
   return (
-<div className="grid grid-cols-2 items-center justify-center w-screen h-screen bg-white relative">
+    <div className="grid grid-cols-2 items-center justify-center w-screen h-screen bg-white relative">
       <div className="relative w-full h-full flex items-center justify-center z-20">
-      <div className="flex flex-col items-center justify-center w-full sm:w-[500px] mx-auto">
-        <h1 className="text-3xl text-blue-600 mb-2 m-auto">Admin dashboard</h1>
-        <p className="text-gray-400 mb-6">Enter your email and password to sign in</p>
-        <form className="w-full space-y-4">
+        <div className="flex flex-col items-center justify-center w-full sm:w-[500px] mx-auto">
+          <h1 className="text-3xl text-blue-600 mb-2 m-auto">Welcome back</h1>
+          <p className="text-gray-400 mb-6">Enter your email and password to sign in</p>
+          <form className="w-full space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
               <input
@@ -48,11 +59,12 @@ export default function Login() {
                 SIGN IN
               </button>
             </div>
-            </form>
+          </form>
         </div>
       </div>
-      <div className="bg-blue-800 background-image w-full h-full lg:w-auto lg:h-full rounded-bl-[25px] flex items-center justify-center z-10">  <span className="text-2xl text-white">Temp logo</span>
-</div>
+      <div className="bg-custom-blue background-image w-full h-full lg:w-auto lg:h-full rounded-bl-[25px] flex items-center justify-center z-10">       
+       <img src={logo} alt="Logo" className="w-40 h-32" />
+      </div>
     </div>
   );
 }   

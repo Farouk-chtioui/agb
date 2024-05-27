@@ -4,3 +4,6 @@
     background-position: left, left top;
     background-repeat: no-repeat, no-repeat;
   }
+  .bg-custom-blue {
+    background-color: #2684FF;
+}
