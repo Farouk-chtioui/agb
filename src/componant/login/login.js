@@ -64,7 +64,7 @@ export default function Login() {
         </div>
       </div>
       <div className="bg-custom-blue background-image w-full h-full lg:w-auto lg:h-full rounded-bl-[25px] flex items-center justify-center z-10">       
-       <img src={logo} alt="Logo" className="w-40 h-32" />
+       <img src={logo} alt="Logo" className="w-45 h-32" />
       </div>
     </div>
   );
