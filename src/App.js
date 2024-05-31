@@ -1,8 +1,8 @@
 import './App.css';
-import Login from './componant/login/login';
+import Dashboard from './componant/dashboard/dashboard';
 function App() {
   return (
-    <Login/>
+    <Dashboard/>
   );
 }
 
