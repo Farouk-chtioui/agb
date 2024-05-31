@@ -1,16 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo1.png';
 import './index.css';
-import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 export default function Login() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState(''); // added password state
-
-  function handleSubmit(event) {
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('email:', email);
-    console.log('password:', password); // log password
-  }
+    try {
+      const response = await axios.post('http://localhost:3001/admin/login', { email, password });
+      if (response.data) {
+        if (rememberMe) {
+          localStorage.setItem('user', JSON.stringify(response.data));
+        }
+        navigate('/dashboard');
+      } else {
+        alert('Invalid credentials');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Invalid credentials');
+    }
+  };
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      setEmail(user.email);
+      setPassword(user.password);
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (!rememberMe) {
+        localStorage.removeItem('user');
+      }
+    };
+  }, [rememberMe]);
+
+  useEffect(() => {
+    return () => {
+      if (!rememberMe) {
+        localStorage.removeItem('user');
+      }
+    };
+  }, [rememberMe]);
 
   return (
     <div className="grid grid-cols-2 items-center justify-center w-screen h-screen bg-white relative">
@@ -18,7 +57,7 @@ export default function Login() {
         <div className="flex flex-col items-center justify-center w-full sm:w-[500px] mx-auto">
           <h1 className="text-3xl text-blue-600 mb-2 m-auto">Welcome back</h1>
           <p className="text-gray-400 mb-6">Enter your email and password to sign in</p>
-          <form className="w-full space-y-4" onSubmit={handleSubmit}> {/* added onSubmit prop */}
+          <form className="w-full space-y-4" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
               <input
@@ -40,7 +79,7 @@ export default function Login() {
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Your password"
-                onChange={(event) => setPassword(event.target.value)} // changed setName to setPassword
+                onChange={(event) => setPassword(event.target.value)}
               />
             </div>
             <div className="flex items-center">
@@ -49,6 +88,7 @@ export default function Login() {
                 name="remember-me"
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                onChange={(event) => setRememberMe(event.target.checked)}
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">Remember me</label>
             </div>
@@ -63,8 +103,8 @@ export default function Login() {
           </form>
         </div>
       </div>
-      <div className="bg-custom-blue background-image w-full h-full lg:w-auto lg:h-full rounded-bl-[25px] flex items-center justify-center z-10">       
-       <img src={logo} alt="Logo" className="w-45 h-32" />
+      <div className="bg-custom-blue background-image w-full h-full lg:w-auto lg:h-full rounded-bl-[25px] flex items-center justify-center z-10">
+        <img src={logo} alt="Logo" className="w-45 h-32" />
       </div>
     </div>
   );
