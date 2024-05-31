@@ -43,13 +43,6 @@ export default function Login() {
     };
   }, [rememberMe]);
 
-  useEffect(() => {
-    return () => {
-      if (!rememberMe) {
-        localStorage.removeItem('user');
-      }
-    };
-  }, [rememberMe]);
 
   return (
     <div className="grid grid-cols-2 items-center justify-center w-screen h-screen bg-white relative">
