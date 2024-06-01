@@ -1,6 +1,6 @@
 
 .background-image {
-    background-image: url('./1457718455276 1.png'), url('1457718455276 2.png');
+    background-image: url('../../images/14577184552761.png'), url('../../images/14577184552762.png');
     background-size: 50% 100%, 150%;
     background-position: left, left top;
     background-repeat: no-repeat, no-repeat;

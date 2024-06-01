@@ -1,7 +1,7 @@
 // Sidebar.js
 import React, { useState } from 'react';
 import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
-import logo from '../login/logo1.png';
+import logo from '../../images/logo1.png';
 const Sidebar = ({ items }) => {
   const [openIndexes, setOpenIndexes] = useState({});
 
