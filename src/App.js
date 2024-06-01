@@ -12,11 +12,12 @@ import Utilisateurs from './componant/utilisateurs/utilisateurs';
 import Pions from './componant/pions/pions';
 import Settings from './componant/settings/settings';
 import Listes from './componant/livraison/listes';
+import PublicRoute from './publicroute';
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+      <Route path="/" element={<PublicRoute element={<Login />} />} />
         <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
         <Route path="/livraison" element={<ProtectedRoute element={<Livraison />} />} />
         <Route path="/livraison/listes" element={<ProtectedRoute element={<Listes />} />} />
