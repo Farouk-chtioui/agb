@@ -12,7 +12,7 @@ function Dashboard() {
 };
     const sidebarItems = [
         { title: 'Dashboard', icon: FaHome, path: '/dashboard' },
-        { title: 'Livraison', icon: FaTruck, path: '/livraison', subItems: [
+        { title: 'Livraison', icon: FaTruck, subItems: [
             { title: 'Listes des livraisons', path: '/livraison/listes' }, 
             { title: 'Demandes des livraisons', path: '/livraison/demandes' }
         ]},
@@ -24,7 +24,7 @@ function Dashboard() {
             { title: 'Sub-item 4', path: '/chauffeurs/sub4' }
         ]},
         { title: 'Utilisateurs', icon: FaUsers, path: '/utilisateurs' },
-        { title: 'Pions', icon: FaRegChartBar, path: '/pions', subItems: [
+        { title: 'Pions', icon: FaRegChartBar, subItems: [
             { title: 'Sub-item 5', path: '/pions/sub5' }, 
             { title: 'Sub-item 6', path: '/pions/sub6' }
         ]},
