@@ -9,13 +9,16 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const response = await axios.post('http://localhost:3001/admin/login', { email, password });
-      if (response.data) {
+      if (response.data && response.data.token) {
+        const { token } = response.data;
+        localStorage.setItem('token', token);
         if (rememberMe) {
-          localStorage.setItem('user', JSON.stringify(response.data));
+          localStorage.setItem('user', JSON.stringify({ email }));
         }
         navigate('/dashboard');
       } else {
@@ -31,7 +34,6 @@ export default function Login() {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       setEmail(user.email);
-      setPassword(user.password);
     }
   }, []);
 
@@ -42,7 +44,6 @@ export default function Login() {
       }
     };
   }, [rememberMe]);
-
 
   return (
     <div className="grid grid-cols-2 items-center justify-center w-screen h-screen bg-white relative">
@@ -60,6 +61,7 @@ export default function Login() {
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Your email address"
+                value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
             </div>
@@ -72,6 +74,7 @@ export default function Login() {
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Your password"
+                value={password}
                 onChange={(event) => setPassword(event.target.value)}
               />
             </div>
@@ -81,6 +84,7 @@ export default function Login() {
                 name="remember-me"
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                checked={rememberMe}
                 onChange={(event) => setRememberMe(event.target.checked)}
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">Remember me</label>
