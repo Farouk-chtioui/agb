@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import logo from '../../images/logo1.png';
 import './index.css';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../../api/auth';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -13,7 +13,7 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/admin/login`, { email, password });
+      const response = await loginUser(email, password);
       if (response.data && response.data.token) {
         const { token } = response.data;
         localStorage.setItem('token', token);
