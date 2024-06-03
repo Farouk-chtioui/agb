@@ -13,7 +13,7 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post(`${process.env.path}/admin/login`, { email, password });
+      const response = await axios.post('http://localhost:3001/admin/login', { email, password });
       if (response.data && response.data.token) {
         const { token } = response.data;
         localStorage.setItem('token', token);
