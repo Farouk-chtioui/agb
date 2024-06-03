@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import logo from '../../images/logo1.png';
-import './index.css';
+import './login.css';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api/auth';
 
