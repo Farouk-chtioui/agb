@@ -1,16 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import Dashboard from './componant/dashboard/dashboard';
-import Login from './componant/login/login';
+import Dashboard from './components/dashboard/dashboard';
+import Login from './components/login/login';
 import ProtectedRoute from './ProtectedRoute';
-import Clients from './componant/clients/clients';
-import Magasins from './componant/magasins/magasins';
-import Produits from './componant/produits/produits';
-import Chauffeurs from './componant/chauffeurs/chauffeurs';
-import Utilisateurs from './componant/utilisateurs/utilisateurs';
-import Pions from './componant/pions/pions';
-import Settings from './componant/settings/settings';
-import Listes from './componant/livraison/listes';
+import Clients from './components/clients/clients';
+import Magasins from './components/magasins/magasins';
+import Produits from './components/produits/produits';
+import Chauffeurs from './components/chauffeurs/chauffeurs';
+import Utilisateurs from './components/utilisateurs/utilisateurs';
+import Pions from './components/pions/pions';
+import Settings from './components/settings/settings';
+import Listes from './components/livraison/listes';
 import PublicRoute from './publicroute';
 function App() {
   return (
