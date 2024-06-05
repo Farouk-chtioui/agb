@@ -1,9 +1,9 @@
 import React from 'react'
 
-function pions() {
+function Pions() {
   return (
     <div>pions</div>
   )
 }
 
-export default pions
+export default Pions

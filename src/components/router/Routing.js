@@ -6,7 +6,7 @@ import Clients from '../clients/Clients';
 import Magasins from '../magasins/Magasins';
 import Produits from '../produits/Proudits';
 import Chauffeurs from '../chauffeurs/Chauffeurs';
-import Utilisateurs from '../utilisateurs/utilisateurs';
+import Utilisateurs from '../utilisateurs/Utilisateurs';
 import Pions from '../pions/Pions';
 import Settings from '../settings/Settings';
 import ProtectedRoute from '../../ProtectedRoute';
