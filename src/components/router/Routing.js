@@ -16,7 +16,7 @@ function Routing(){
   return (
     <Routes>
       <Route path="/" element={<PublicRoute element={<Login />} />} />
-      <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
+      <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} />} />
       <Route path="/livraison/listes" element={<ProtectedRoute element={<Listes />} />} />
       <Route path="/clients" element={<ProtectedRoute element={<Clients />} />} />
       <Route path="/magasins" element={<ProtectedRoute element={<Magasins />} />} />

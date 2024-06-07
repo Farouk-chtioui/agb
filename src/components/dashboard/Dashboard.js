@@ -3,7 +3,7 @@ import Sidebar from '../sidebar/Sidebar';
 import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-function Dashboard() {
+function Dashboard({title}) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -36,7 +36,7 @@ function Dashboard() {
         <div className="flex">
           <Sidebar items={sidebarItems} />
           <div className="flex-grow p-6">
-            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <h1 className="text-3xl font-bold">{title}</h1>
           </div>
         </div>
     );
