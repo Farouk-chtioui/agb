@@ -39,3 +39,13 @@ export async function addDriver(driver) {
     throw error;
   }
 }
+
+export async function searchDrivers(searchTerm) {
+  try {
+    const response = await axios.get(`${API_URL}/driver/search/${searchTerm}`);
+    return response.data; 
+  } catch (error) {
+    console.error('Error searching drivers', error);
+    throw error;
+  }
+}
