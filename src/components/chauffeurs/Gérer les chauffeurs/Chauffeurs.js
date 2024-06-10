@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fetchDrivers, deleteDriver, addDriver, searchDrivers, modifyDriver } from '../../../api/Auth';
-import Dashboard from '../../dashboard/Dashboard'; 
+import Dashboard from '../../dashboard/Dashboard';
 import Search from '../../searchbar/Search';
 import DriverForm from './DriverForm';
 import DriverTable from './DriverTable';
@@ -20,6 +20,7 @@ const Chauffeurs = () => {
   });
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentDriver, setCurrentDriver] = useState(null);
+  const [isSearchActive, setIsSearchActive] = useState(false);
 
   useEffect(() => {
     fetchDriversData();
@@ -92,10 +93,12 @@ const Chauffeurs = () => {
   const handleSearch = async (searchTerm) => {
     if (searchTerm === '') {
       setFilteredDrivers(drivers);
+      setIsSearchActive(false);
     } else {
       try {
         const response = await searchDrivers(searchTerm);
         setFilteredDrivers(response);
+        setIsSearchActive(true);
       } catch (error) {
         console.error('Error searching drivers', error);
       }
@@ -104,10 +107,10 @@ const Chauffeurs = () => {
 
   return (
     <div className="flex">
-      <Dashboard title="Gérer les chauffeurs"/>
+      <Dashboard title="Gérer les chauffeurs" />
       <div className="flex-1 container mx-auto p-9 relative mt-20 ">
         <Search setData={handleSearch} />
-        <button 
+        <button
           className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
           onClick={() => {
             setShowForm(true);
@@ -136,7 +139,7 @@ const Chauffeurs = () => {
 
         <DriverTable drivers={filteredDrivers} handleDelete={handleDelete} handleModify={handleModify} />
 
-        <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
       </div>
     </div>
   );
