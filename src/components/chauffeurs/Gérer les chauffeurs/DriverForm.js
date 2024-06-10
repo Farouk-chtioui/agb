@@ -30,17 +30,20 @@ const DriverForm = ({
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded shadow-lg w-1/3 h-auto">
+      <div className="bg-white p-10 rounded-2xl shadow-lg w-1/2 h-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">{isEditMode ? 'Modifier le Chauffeur' : 'Ajouter un Chauffeur'}</h2>
-          <button className="text-gray-700 text-xl" onClick={() => setShowForm(false)}>&times;</button>
-        </div>
+        <h2 className="text-2xl font-semibold mx-auto text-blue-600 font-custom ">{isEditMode ? 'Modifier le Chauffeur' : 'Ajouter un Chauffeur'}</h2>       
+        <button
+  className="bg-blue-500 text-white rounded-full p-3 w-7 h-7 flex items-center justify-center text-2xl"
+  onClick={() => setShowForm(false)}>
+  &times;
+</button>        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 mb-2">Nom</label>
+              <label className="block text-blue-700 mb-2">Nom</label>
               <input
-                className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
                 type="text"
                 name="last_name"
                 value={newDriver.last_name}
@@ -49,9 +52,9 @@ const DriverForm = ({
               />
             </div>
             <div>
-              <label className="block text-gray-700 mb-2">Prénom</label>
+              <label className="block text-blue-700 mb-2">Prénom</label>
               <input
-                className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
                 type="text"
                 name="first_name"
                 value={newDriver.first_name}
@@ -61,9 +64,9 @@ const DriverForm = ({
             </div>
           </div>
           <div>
-            <label className="block text-gray-700 mb-2">Email Adresse</label>
+            <label className="block text-blue-700 mb-2">Email Adresse</label>
             <input
-              className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
               type="email"
               name="email"
               value={newDriver.email}
@@ -73,9 +76,9 @@ const DriverForm = ({
           </div>
           {!isEditMode && (
             <div>
-              <label className="block text-gray-700 mb-2">Mot de passe</label>
+              <label className="block text-blue-700 mb-2">Mot de passe</label>
               <input
-                className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
                 type="password"
                 name="password"
                 onChange={handleChange}
@@ -85,7 +88,7 @@ const DriverForm = ({
           )}
           <div className="flex justify-center">
             <button 
-              className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition"
+              className="bg-blue-500 text-white px-10 py-2 rounded-xl shadow hover:bg-blue-600 transition"
               type="submit">
               {isEditMode ? 'Modifier' : 'Créer'}
             </button>
