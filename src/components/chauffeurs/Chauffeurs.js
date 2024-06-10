@@ -1,6 +1,6 @@
 // Chauffeurs.js
 import React, { useState, useEffect } from 'react';
-import { fetchDrivers, deleteDriver, addDriver } from '../../api/Auth';
+import { fetchDrivers, deleteDriver, addDriver,searchDrivers} from '../../api/Auth';
 import Sidebar from '../dashboard/Dashboard'; 
 import Search from '../searchbar/Search';
 import DriverForm from './DriverForm';
@@ -62,21 +62,23 @@ const Chauffeurs = () => {
     });
   };
 
-  const handleSearch = (searchTerm) => {
+  const handleSearch = async (searchTerm) => {
     if (searchTerm === '') {
       setFilteredDrivers(drivers);
     } else {
-      const filtered = drivers.filter(driver =>
-        `${driver.first_name} ${driver.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredDrivers(filtered);
+      try {
+        const response = await searchDrivers(searchTerm);
+        setFilteredDrivers(response);
+      } catch (error) {
+        console.error('Error searching drivers', error);
+      }
     }
   };
 
   return (
     <div className="flex">
       <Sidebar title="Chauffeurs"/>
-      <div className="flex-1 container mx-auto p-9 relative mt-20">
+      <div className="flex-1 container mx-auto p-9 relative mt-20 ">
         <Search setData={handleSearch} />
         <button 
           className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"

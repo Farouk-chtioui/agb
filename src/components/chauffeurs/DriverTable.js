@@ -4,7 +4,7 @@ import { FaTrash } from 'react-icons/fa';
 
 const DriverTable = ({ drivers, handleDelete }) => {
     return (
-        <table className="min-w-full bg-white mt-8">
+        <table className="min-w-full bg-white mt-8 ">
             <thead>
                 <tr className="custom-color">
                     <th className="py-3 px-4 border-b border-gray-200">ID</th>

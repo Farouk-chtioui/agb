@@ -36,8 +36,7 @@ function Dashboard({title}) {
         <div className="flex">
           <Sidebar items={sidebarItems} />
           <div className="flex-grow p-6">
-            <h1 className="text-3xl font-bold">{title}</h1>
-          </div>
+          <h1 className="text-3xl font-bold fixed  z-50">{title}</h1>          </div>
         </div>
     );
 }
