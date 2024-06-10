@@ -19,9 +19,9 @@ function Dashboard({title}) {
         { title: 'Clients', icon: FaUserAlt, path: '/clients' },
         { title: 'Magasins', icon: FaStore, path: '/magasins' },
         { title: 'Produits', icon: FaBox, path: '/produits' },
-        { title: 'Chauffeurs', icon: FaTruck, path: '/chauffeurs', subItems: [
-            { title: 'Sub-item 3', path: '/chauffeurs/sub3' }, 
-            { title: 'Sub-item 4', path: '/chauffeurs/sub4' }
+        { title: 'Chauffeurs', icon: FaTruck,subItems: [
+            { title: 'Gérer les chauffeurs', path: '/chauffeurs/Gérer' }, 
+            { title: 'Fiche de route', path: '/chauffeurs/sub4' }
         ]},
         { title: 'Utilisateurs', icon: FaUsers, path: '/utilisateurs' },
         { title: 'Pions', icon: FaRegChartBar, subItems: [
@@ -36,7 +36,8 @@ function Dashboard({title}) {
         <div className="flex">
           <Sidebar items={sidebarItems} />
           <div className="flex-grow p-6">
-          <h1 className="text-3xl font-bold fixed  z-50">{title}</h1>          </div>
+          <h1 className="text-3xl font-bold absolute z-50">{title}</h1>   
+                 </div>
         </div>
     );
 }

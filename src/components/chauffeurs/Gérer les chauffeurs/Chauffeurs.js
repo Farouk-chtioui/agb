@@ -1,8 +1,7 @@
-// Chauffeurs.js
-import React, { useState, useEffect } from 'react';
-import { fetchDrivers, deleteDriver, addDriver,searchDrivers} from '../../api/Auth';
-import Sidebar from '../dashboard/Dashboard'; 
-import Search from '../searchbar/Search';
+import React, { useState, useEffect, useCallback } from 'react';
+import { fetchDrivers, deleteDriver, addDriver, searchDrivers, modifyDriver } from '../../../api/Auth';
+import Dashboard from '../../dashboard/Dashboard'; 
+import Search from '../../searchbar/Search';
 import DriverForm from './DriverForm';
 import DriverTable from './DriverTable';
 import Pagination from './Pagination';
@@ -19,6 +18,8 @@ const Chauffeurs = () => {
     email: '',
     password: ''
   });
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentDriver, setCurrentDriver] = useState(null);
 
   useEffect(() => {
     fetchDriversData();
@@ -43,6 +44,32 @@ const Chauffeurs = () => {
     }
   };
 
+  const handleModify = (driver) => {
+    setCurrentDriver(driver);
+    setNewDriver(driver);
+    setIsEditMode(true);
+    setShowForm(true);
+  };
+
+  const handleEditDriver = async (e) => {
+    e.preventDefault();
+    try {
+      await modifyDriver(newDriver);
+      fetchDriversData();
+      setShowForm(false);
+      setIsEditMode(false);
+      setCurrentDriver(null);
+      setNewDriver({
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: ''
+      });
+    } catch (error) {
+      console.error('Error modifying driver', error);
+    }
+  };
+
   const handleAddDriver = async (e) => {
     e.preventDefault();
     try {
@@ -54,13 +81,13 @@ const Chauffeurs = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    setNewDriver({
-      ...newDriver,
+    setNewDriver(prevState => ({
+      ...prevState,
       [name]: value
-    });
-  };
+    }));
+  }, []);
 
   const handleSearch = async (searchTerm) => {
     if (searchTerm === '') {
@@ -77,12 +104,21 @@ const Chauffeurs = () => {
 
   return (
     <div className="flex">
-      <Sidebar title="Chauffeurs"/>
+      <Dashboard title="Gérer les chauffeurs"/>
       <div className="flex-1 container mx-auto p-9 relative mt-20 ">
         <Search setData={handleSearch} />
         <button 
           className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
-          onClick={() => setShowForm(true)}>
+          onClick={() => {
+            setShowForm(true);
+            setIsEditMode(false);
+            setNewDriver({
+              first_name: '',
+              last_name: '',
+              email: '',
+              password: ''
+            });
+          }}>
           Ajouter un chauffeur
         </button>
 
@@ -91,11 +127,14 @@ const Chauffeurs = () => {
             newDriver={newDriver}
             handleChange={handleChange}
             handleAddDriver={handleAddDriver}
+            handleEditDriver={handleEditDriver}
             setShowForm={setShowForm}
+            isEditMode={isEditMode}
+            currentDriver={currentDriver}
           />
         )}
 
-        <DriverTable drivers={filteredDrivers} handleDelete={handleDelete} />
+        <DriverTable drivers={filteredDrivers} handleDelete={handleDelete} handleModify={handleModify} />
 
         <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />
       </div>
