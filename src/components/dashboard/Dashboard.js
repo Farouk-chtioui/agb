@@ -24,9 +24,9 @@ function Dashboard({title}) {
             { title: 'Fiche de route', path: '/chauffeurs/sub4' }
         ]},
         { title: 'Utilisateurs', icon: FaUsers, path: '/utilisateurs' },
-        { title: 'Pions', icon: FaRegChartBar, subItems: [
-            { title: 'Sub-item 5', path: '/pions/sub5' }, 
-            { title: 'Sub-item 6', path: '/pions/sub6' }
+        { title: 'Plans', icon: FaRegChartBar, subItems: [
+            { title: 'Géere le plans', path: '/pions/sub5' }, 
+            { title: 'Secture', path: '/pions/sub6' }
         ]},
         { title: 'Settings', icon: FaCog, path: '/settings' },
         { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout }
