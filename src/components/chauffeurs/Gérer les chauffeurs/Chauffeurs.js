@@ -4,7 +4,7 @@ import Dashboard from '../../dashboard/Dashboard';
 import Search from '../../searchbar/Search';
 import DriverForm from './DriverForm';
 import DriverTable from './DriverTable';
-import Pagination from './Pagination';
+import Pagination from '../../Pagination/Pagination';
 import './chauffeurs.css';
 
 const Chauffeurs = () => {
@@ -23,23 +23,25 @@ const Chauffeurs = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
 
   useEffect(() => {
+    const fetchDriversData = async () => {
+      try {
+        const data = await fetchDrivers(currentPage);
+        setDrivers(data);
+        setFilteredDrivers(data);
+      } catch (error) {
+        console.error('Error fetching drivers', error);
+      }
+    };
+
     fetchDriversData();
   }, [currentPage]);
-
-  const fetchDriversData = async () => {
-    try {
-      const data = await fetchDrivers(currentPage);
-      setDrivers(data);
-      setFilteredDrivers(data);
-    } catch (error) {
-      console.error('Error fetching drivers', error);
-    }
-  };
 
   const handleDelete = async (id) => {
     try {
       await deleteDriver(id);
-      fetchDriversData();
+      const updatedDrivers = drivers.filter(driver => driver.id !== id);
+      setDrivers(updatedDrivers);
+      setFilteredDrivers(updatedDrivers);
     } catch (error) {
       console.error('Error deleting driver', error);
     }
@@ -56,16 +58,12 @@ const Chauffeurs = () => {
     e.preventDefault();
     try {
       await modifyDriver(newDriver);
-      fetchDriversData();
-      setShowForm(false);
-      setIsEditMode(false);
-      setCurrentDriver(null);
-      setNewDriver({
-        first_name: '',
-        last_name: '',
-        email: '',
-        password: ''
-      });
+      const updatedDrivers = drivers.map(driver =>
+        driver.id === newDriver.id ? newDriver : driver
+      );
+      setDrivers(updatedDrivers);
+      setFilteredDrivers(updatedDrivers);
+      resetForm();
     } catch (error) {
       console.error('Error modifying driver', error);
     }
@@ -74,9 +72,10 @@ const Chauffeurs = () => {
   const handleAddDriver = async (e) => {
     e.preventDefault();
     try {
-      await addDriver(newDriver);
-      fetchDriversData();
-      setShowForm(false);
+      const addedDriver = await addDriver(newDriver);
+      setDrivers([...drivers, addedDriver]);
+      setFilteredDrivers([...drivers, addedDriver]);
+      resetForm();
     } catch (error) {
       console.error('Error adding driver', error);
     }
@@ -105,11 +104,23 @@ const Chauffeurs = () => {
     }
   };
 
+  const resetForm = () => {
+    setShowForm(false);
+    setIsEditMode(false);
+    setCurrentDriver(null);
+    setNewDriver({
+      first_name: '',
+      last_name: '',
+      email: '',
+      password: ''
+    });
+  };
+
   return (
     <div className="flex">
       <Dashboard title="Gérer les chauffeurs" />
-      <div className="flex-1 container mx-auto p-9 relative mt-20 ">
-        <Search setData={handleSearch} />
+      <div className="flex-1 container mx-auto p-9 relative mt-20">
+        <Search setData={handleSearch} title='Tout les chauffeurs' />
         <button
           className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
           onClick={() => {
