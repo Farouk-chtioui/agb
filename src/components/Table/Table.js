@@ -1,13 +1,13 @@
 import React from 'react';
 import { FaPen, FaTrash } from 'react-icons/fa';
-
+import './Table.css';
 const Table = ({ headers, data, renderRow, handleDelete, handleModify }) => {
     return (
         <table className="min-w-full bg-white mt-8">
             <thead>
                 <tr className="custom-color">
                     {headers.map((header, index) => (
-                        <th key={index} className="py-3 px-4 border-b border-gray-200">
+                        <th key={index} className="py-3 px-4">
                             {header}
                         </th>
                     ))}
@@ -15,7 +15,7 @@ const Table = ({ headers, data, renderRow, handleDelete, handleModify }) => {
             </thead>
             <tbody>
                 {data.map(item => (
-                    <tr key={item._id} className="text-center even:bg-gray-50">
+                    <tr key={item._id} className="text-center ">
                         {renderRow(item)}
                         <td className="py-2 px-4 border-b border-gray-200">
                             <button

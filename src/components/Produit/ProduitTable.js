@@ -1,7 +1,7 @@
 import React from "react";
 import Table from "../Table/Table";
 const ProuditsTable = ({ produits, handleDelete, handleModify }) => {
-    const headers = ["image", "Nom de produit", "Prix","Description","Action"];
+    const headers = ["Image", "Nom de produit", "Prix","Description","Action"];
     const renderRow = (produit) => (
         <>
        <td className="py-6 px-4 border-b border-gray-200">
