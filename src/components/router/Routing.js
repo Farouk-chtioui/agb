@@ -7,7 +7,7 @@ import Magasins from '../magasins/Magasins';
 import Produits from '../Produit/Produit'
 import Chauffeurs from '../chauffeurs/Gérer les chauffeurs/Chauffeurs';
 import Utilisateurs from '../utilisateurs/Utilisateurs';
-import Pions from '../pions/Pions';
+import Pions from '../Plans/Plans';
 import Settings from '../settings/Settings';
 import ProtectedRoute from '../../ProtectedRoute';
 import PublicRoute from '../../publicroute';

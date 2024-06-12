@@ -96,7 +96,7 @@ const Produits = () => {
     <div className="flex">
       <Dashboard title="Produit"/>
       <div className="flex-1 container mx-auto p-9 relative mt-20 ">
-        <Search setData={handleSearch} title={"Tout les chauffeurs"} />
+        <Search setData={handleSearch} title={"Tout les Produits"} />
         <button
              className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
              onClick={() => {
@@ -108,7 +108,7 @@ const Produits = () => {
                   price: '',
                   description: ''
                 });
-              }}>Ajouter</button>
+              }}>Ajouter un Produit</button>
               {showForm && (
                 <ProductForm 
                 newProduit={newProduct} 

@@ -52,7 +52,7 @@
 }
 
 .file-upload-placeholder img {
-  width: 40px; /* Adjust size as needed */
+  width: 40px; 
   margin-bottom: 10px;
 }
 
@@ -62,8 +62,8 @@
 }
 
 .image-preview-container {
-  margin-top: 20px; /* Adjust margin as needed */
-  width: 100%; /* Ensure the preview container takes full width */
+  margin-top: 20px; 
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -72,8 +72,8 @@
 
 .image-preview {
   max-width: 100%;
-  max-height: 300px; /* Fixed height to ensure it fits within the container */
+  max-height: 300px; 
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  object-fit: contain; /* Ensure the image scales correctly within its container */
+  object-fit: contain; 
 }

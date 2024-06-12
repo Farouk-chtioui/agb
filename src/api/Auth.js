@@ -57,9 +57,9 @@ export async function searchDrivers(searchTerm) {
     throw error;
   }
 }
-export async function fetchProducts() {
+export async function fetchProducts(page) {
   try {
-    const response = await axios.get(`${API_URL}/product`);
+    const response = await axios.get(`${API_URL}/product?page=${page}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching products', error);

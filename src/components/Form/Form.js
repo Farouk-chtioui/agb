@@ -83,7 +83,7 @@ const Form = ({
                         <img src={imagePreview} alt="Preview" className="image-preview" />
                       </div>
                     )}
-                    <p className="file-upload-hint">JPEG, PNG, PDF, and MP4 formats, up to 50MB</p>
+                    <p className="file-upload-hint">JPEG, PNG, PDF, and MP4 formats,</p>
                   </div>
                 ) : (
                   <input

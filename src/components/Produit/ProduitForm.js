@@ -35,7 +35,8 @@ const ProduitsForm = ({
             handleChange={handleChange}
             handleSubmit={handleSubmit}
             setShowForm={setShowForm}
-            fields={fields} // Assuming your Form component can render fields based on this prop
+            fields={fields} 
+            title={isEditMode ? 'Modifier le Produit' : 'Ajouter un Produit'} 
         />
     );
 };
