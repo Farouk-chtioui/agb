@@ -4,7 +4,7 @@ import Dashboard from '../dashboard/Dashboard';
 import Listes from '../livraison/Listes';
 import Clients from '../clients/Clients';
 import Magasins from '../magasins/Magasins';
-import Produits from '../produits/Proudits';
+import Produits from '../Produit/Produit'
 import Chauffeurs from '../chauffeurs/Gérer les chauffeurs/Chauffeurs';
 import Utilisateurs from '../utilisateurs/Utilisateurs';
 import Pions from '../pions/Pions';

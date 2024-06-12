@@ -4,7 +4,7 @@ import Dashboard from '../../dashboard/Dashboard';
 import Search from '../../searchbar/Search';
 import DriverForm from './DriverForm';
 import DriverTable from './DriverTable';
-import Pagination from './Pagination';
+import Pagination from '../../Pagination/Pagination';
 import './chauffeurs.css';
 
 const Chauffeurs = () => {

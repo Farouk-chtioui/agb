@@ -13,7 +13,9 @@ const Form = ({
   useEffect(() => {
     if (isEditMode && formData) {
       fields.forEach(field => {
-        handleChange({ target: { name: field.name, value: formData[field.name] || '' } });
+        if (field.type !== 'file') {
+          handleChange({ target: { name: field.name, value: formData[field.name] || '' } });
+        }
       });
     }
   }, [isEditMode, formData, handleChange, fields]);
@@ -21,6 +23,22 @@ const Form = ({
   const onSubmit = (e) => {
     e.preventDefault();
     handleSubmit(e);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleChange({
+          target: {
+            name: e.target.name,
+            value: reader.result // This is the base64 string
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -42,14 +60,23 @@ const Form = ({
             {fields.map((field, index) => (
               <div key={index} className={`col-span-${field.colSpan || 2}`}>
                 <label className="block text-blue-700 mb-2">{field.label}</label>
-                <input
-                  className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-                  type={field.type}
-                  name={field.name}
-                  value={formData[field.name] || ''}
-                  onChange={handleChange}
-                  placeholder={field.placeholder}
-                />
+                {field.type === 'file' ? (
+                  <input
+                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                    type={field.type}
+                    name={field.name}
+                    onChange={handleFileChange}
+                  />
+                ) : (
+                  <input
+                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                    type={field.type}
+                    name={field.name}
+                    value={field.type === 'file' ? undefined : formData[field.name] || ''}
+                    onChange={handleChange}
+                    placeholder={field.placeholder}
+                  />
+                )}
               </div>
             ))}
           </div>
