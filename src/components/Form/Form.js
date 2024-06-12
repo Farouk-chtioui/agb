@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import './Form.css'; // Import the CSS file
+import img from '../../images/Group3.png'
 const Form = ({
   formData,
   handleChange,
@@ -9,6 +10,7 @@ const Form = ({
   title,
   fields
 }) => {
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     if (isEditMode && formData) {
@@ -30,12 +32,14 @@ const Form = ({
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
+        const base64String = reader.result;
         handleChange({
           target: {
             name: e.target.name,
-            value: reader.result // This is the base64 string
+            value: base64String
           }
         });
+        setImagePreview(base64String);
       };
       reader.readAsDataURL(file);
     }
@@ -61,18 +65,32 @@ const Form = ({
               <div key={index} className={`col-span-${field.colSpan || 2}`}>
                 <label className="block text-blue-700 mb-2">{field.label}</label>
                 {field.type === 'file' ? (
-                  <input
-                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-                    type={field.type}
-                    name={field.name}
-                    onChange={handleFileChange}
-                  />
+                  <div className="file-upload-container">
+                    <label htmlFor="file-upload" className="file-upload-label">
+                      <div className="file-upload-placeholder">
+                        <img src={img} alt="Upload" />
+                        <p>Choose a file or drag & drop it here</p>
+                      </div>
+                      <input
+                        id="file-upload"
+                        type="file"
+                        name={field.name}
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                    {imagePreview && (
+                      <div className="image-preview-container">
+                        <img src={imagePreview} alt="Preview" className="image-preview" />
+                      </div>
+                    )}
+                    <p className="file-upload-hint">JPEG, PNG, PDF, and MP4 formats, up to 50MB</p>
+                  </div>
                 ) : (
                   <input
                     className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
                     type={field.type}
                     name={field.name}
-                    value={field.type === 'file' ? undefined : formData[field.name] || ''}
+                    value={formData[field.name] || ''}
                     onChange={handleChange}
                     placeholder={field.placeholder}
                   />

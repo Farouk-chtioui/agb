@@ -5,6 +5,7 @@ import Search from "../searchbar/Search";
 import ProductForm from "./ProduitForm";
 import ProductTable from "./ProduitTable";
 import Pagination from "../Pagination/Pagination";
+
 const Produits = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
