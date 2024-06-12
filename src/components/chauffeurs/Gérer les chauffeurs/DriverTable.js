@@ -6,10 +6,10 @@ const DriverTable = ({ drivers, handleDelete, handleModify }) => {
 
     const renderRow = (driver) => (
         <>
-            <td className="py-6 px-4 border-b border-gray-200">{driver._id}</td>
-            <td className="py-6 px-4 border-b border-gray-200">{driver.first_name + " " + driver.last_name}</td>
+            <td className="py-8 px-4 border-b border-gray-200">{driver._id}</td>
+            <td className="py-8 px-4 border-b border-gray-200">{driver.first_name + " " + driver.last_name}</td>
             <td className="py-6 px-4 border-b border-gray-200">{driver.email}</td>
-            <td className="py-6 px-4 border-b border-gray-200">
+            <td className="py-8 px-4 border-b border-gray-200">
                 {`${new Date(driver.created_at).getDate()} ${new Date(driver.created_at).toLocaleString('default', { month: 'short' })} ${new Date(driver.created_at).getFullYear()}`}
             </td>
         </>

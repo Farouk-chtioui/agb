@@ -4,10 +4,10 @@ const ProuditsTable = ({ produits, handleDelete, handleModify }) => {
     const headers = ["Image", "Nom de produit", "Prix","Description","Action"];
     const renderRow = (produit) => (
         <>
-       <td className="py-6 px-4 border-b border-gray-200">
+       <td className="py-6 px-4 border-b border-gray-200 ">
   {produit.image ? (
-    <img src={produit.image} alt={produit.name} style={{ width: '90px', height: '90px', objectFit: 'cover' }} />
-  ) : "No image"}
+    <img src={produit.image} alt={produit.name} style={{ width: '90px', height: '90px', objectFit: 'cover' }} className="rounded-lg" />
+  ) : "-"}
 </td>
         <td className="py-6 px-4 border-b border-gray-200">{produit.name}</td>
         <td className="py-6 px-4 border-b border-gray-200">{produit.price}</td>

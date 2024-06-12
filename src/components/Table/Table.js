@@ -1,6 +1,8 @@
 import React from 'react';
-import { FaPen, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaPen, FaRegEdit, FaTrash } from 'react-icons/fa';
 import './Table.css';
+import trash from '../../images/Vector.png'
+import { FaRegTrashCan, FaTrashCan } from 'react-icons/fa6';
 const Table = ({ headers, data, renderRow, handleDelete, handleModify }) => {
     return (
         <table className="min-w-full bg-white mt-8">
@@ -22,13 +24,13 @@ const Table = ({ headers, data, renderRow, handleDelete, handleModify }) => {
                                 className="text-blue-500 hover:text-blue-700 transition mr-3"
                                 onClick={() => handleModify(item)}
                             >
-                                <FaPen />
+                                <FaRegEdit size={20} />
                             </button>
                             <button
                                 className="text-blue-500 hover:text-red-700 transition"
                                 onClick={() => handleDelete(item._id)}
                             >
-                                <FaTrash />
+                                <FaRegTrashCan size={20}/>
                             </button>
                         </td>
                     </tr>

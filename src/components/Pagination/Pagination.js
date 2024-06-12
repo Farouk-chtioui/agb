@@ -1,19 +1,35 @@
-// Pagination.js
 import React from 'react';
-
+import './Pagination.css';
 const Pagination = ({ currentPage, setCurrentPage }) => {
+  const totalPages = 4; // Set this to the total number of pages
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
-    <div className="flex justify-between items-center mt-8">
+    <div className="pagination-container">
       <button 
-        className="bg-gray-300 text-gray-700 px-4 py-2 rounded shadow hover:bg-gray-400 transition"
+        className="pagination-button"
         onClick={() => setCurrentPage(currentPage - 1)} 
         disabled={currentPage === 1}>
         &lt; Previous
       </button>
-      <span>Page {currentPage}</span>
+      {[...Array(totalPages)].map((_, index) => {
+        const page = index + 1;
+        return (
+          <button
+            key={page}
+            className={`pagination-page ${currentPage === page ? 'active' : ''}`}
+            onClick={() => handlePageClick(page)}>
+            {page}
+          </button>
+        );
+      })}
       <button 
-        className="bg-gray-300 text-gray-700 px-4 py-2 rounded shadow hover:bg-gray-400 transition"
-        onClick={() => setCurrentPage(currentPage + 1)}>
+        className="pagination-button"
+        onClick={() => setCurrentPage(currentPage + 1)}
+        disabled={currentPage === totalPages}>
         Next &gt;
       </button>
     </div>
