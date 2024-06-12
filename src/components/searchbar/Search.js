@@ -5,7 +5,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faUsers } from '@fortawesome/free-solid-svg-icons'; // Import the icon for "Show All"
 import './search.css';
 
-const Search = ({ setData,title }) => {
+const Search = ({ setData }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearchChange = event => {
@@ -27,7 +27,7 @@ const Search = ({ setData,title }) => {
     <div className="search-container">
       <div className="show-all" onClick={handleShowAll}>
         <FontAwesomeIcon icon={faUsers} className="show-all-icon" />
-        <span className="show-all-text">{title}</span>
+        <span className="show-all-text">Tout les chauffeurs</span>
       </div>
       <div className="search">
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
