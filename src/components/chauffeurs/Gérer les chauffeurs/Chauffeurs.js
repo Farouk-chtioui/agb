@@ -109,7 +109,7 @@ const Chauffeurs = () => {
     <div className="flex">
       <Dashboard title="Gérer les chauffeurs" />
       <div className="flex-1 container mx-auto p-9 relative mt-20 ">
-        <Search setData={handleSearch} />
+        <Search setData={handleSearch} title={"Tout les chauffeurs"} />
         <button
           className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
           onClick={() => {
@@ -133,7 +133,6 @@ const Chauffeurs = () => {
             handleEditDriver={handleEditDriver}
             setShowForm={setShowForm}
             isEditMode={isEditMode}
-            currentDriver={currentDriver}
           />
         )}
 
