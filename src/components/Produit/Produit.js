@@ -1,10 +1,10 @@
-import React,{useState,useEffect,useCallback} from "react";
-import { fetchProducts, deleteProduct, addProduct, searchProducts, modifyProduct } from "../../api/Auth";
+import React, { useCallback, useEffect, useState } from "react";
+import { addProduct, deleteProduct, fetchProducts, modifyProduct, searchProducts } from "../../api/Auth";
+import Pagination from "../Pagination/Pagination";
 import Dashboard from "../dashboard/Dashboard";
 import Search from "../searchbar/Search";
 import ProductForm from "./ProduitForm";
 import ProductTable from "./ProduitTable";
-import Pagination from "../Pagination/Pagination";
 
 const Produits = () => {
   const [products, setProducts] = useState([]);
@@ -86,10 +86,10 @@ const Produits = () => {
     setCurrentPage(page);
   }, []);
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setNewProduct(prevState => ({
         ...prevState,
-        [name]: value,
+        [name]: type === 'number' ? Number(value) : value,
     }));
 };
   return (

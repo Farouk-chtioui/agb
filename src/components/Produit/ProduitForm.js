@@ -14,7 +14,7 @@ const ProduitsForm = ({
 
     const fields = [
         { name: 'name', label: 'Nom', type: 'text', placeholder: 'Nom', colSpan: 1 },
-        { name: 'price', label: 'Prix', type: 'text', placeholder: 'Prix', colSpan: 1 },
+        { name: 'price', label: 'Prix', type: 'number', placeholder: 'Prix', colSpan: 1 },
         { name: 'description', label: 'Description', type: 'text', placeholder: 'Description', colSpan: 2 },
         { name: 'image', label: 'Image', type: 'file', placeholder: 'Upload Image', colSpan: 2, key: keyForFileInput },
     ].filter(Boolean);
