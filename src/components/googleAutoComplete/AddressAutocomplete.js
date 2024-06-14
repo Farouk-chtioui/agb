@@ -5,6 +5,16 @@ const AddressAutocomplete = ({ value, onChange }) => {
     const autoCompleteRef = useRef(null);
     const [inputValue, setInputValue] = useState(value || ''); 
     const [loaded, setLoaded] = useState(false);
+    const debounce = (func, delay) => {
+        let timer;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+    };
+
 
     useEffect(() => {
         const loadScript = (url) => {

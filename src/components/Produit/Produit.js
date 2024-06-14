@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { addProduct, deleteProduct, fetchProducts, modifyProduct, searchProducts } from "../../api/Auth";
+import { addProduct, deleteProduct, fetchProducts, modifyProduct, searchProducts } from "../../api/productService";
 import Pagination from "../Pagination/Pagination";
 import Dashboard from "../dashboard/Dashboard";
 import Search from "../searchbar/Search";

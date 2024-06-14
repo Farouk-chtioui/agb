@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import logo from '../../images/logo1.png';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../../api/Auth';
+import { loginUser } from '../../api/adminService';
 
 export default function Login() {
   const [email, setEmail] = useState('');

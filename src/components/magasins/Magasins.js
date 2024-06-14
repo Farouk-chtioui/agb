@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { fetchMagasins, deleteMagasin, addMagasin, searchMagasins, modifyMagasin } from '../../api/Auth';
+import { fetchMagasins, deleteMagasin, addMagasin, searchMagasins, modifyMagasin } from '../../api/marketService';
 import Dashboard from '../dashboard/Dashboard';
 import Search from '../searchbar/Search';
 import MagasinForm from './MagasinForm';

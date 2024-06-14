@@ -15,7 +15,7 @@ const MagasinForm = ({
         { name: 'first_name', label: 'Nom', type: 'text', placeholder: 'Nom', colSpan: 1 },
         { name: 'last_name', label: 'Prenom', type: 'text', placeholder: 'Prenom', colSpan: 1 },
         { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 2 },
-        { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 2 },
+        { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 2},
         { name: 'address', label: 'Address', type: 'autocomplete', placeholder: 'Address', colSpan: 2 },
         { name: 'numberMa', label: 'Nombre des commandes du matin', type: 'number', placeholder: 'Nombre des commandes du matin', colSpan: 2 },
         { name: 'numberMi', label: 'Nombre des commandes du midi', type: 'number', placeholder: 'Nombre des commandes du midi', colSpan: 2 },
@@ -59,6 +59,7 @@ const MagasinForm = ({
                             value={newMagasin[field.name]}
                             onChange={handleChange}
                             placeholder={field.placeholder}
+                            autoComplete='off'
                             className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
                         />
                     </div>

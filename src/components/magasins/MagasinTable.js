@@ -1,7 +1,7 @@
 import React from 'react';
 import Table from '../Table/Table';
 const MagasinTable = ({ magasins, handleDelete, handleModify }) => {
-    const headers = [ "Nom de magasin", "Email","Adresse","Créé le","Action"];
+    const headers = [ "Nom et Prenom", "Email","Adresse","Créé le","Action"];
 
     const renderRow = (magasin) => (
         <>
