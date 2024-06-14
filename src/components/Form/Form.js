@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import './Form.css'; // Import the CSS file
+import React, { useState, useEffect } from 'react';
+import './Form.css'; 
 import img from '../../images/Group3.png';
 
 const Form = ({
@@ -10,13 +10,13 @@ const Form = ({
   isEditMode,
   title,
   fields,
-  renderField,
+  renderField
 }) => {
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     if (isEditMode && formData) {
-      fields.forEach((field) => {
+      fields.forEach(field => {
         if (field.type !== 'file') {
           handleChange({ target: { name: field.name, value: formData[field.name] || '' } });
         }
@@ -38,8 +38,8 @@ const Form = ({
         handleChange({
           target: {
             name: e.target.name,
-            value: base64String,
-          },
+            value: base64String
+          }
         });
         setImagePreview(base64String);
       };
@@ -51,7 +51,9 @@ const Form = ({
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-10 rounded-2xl shadow-lg w-1/2 h-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-semibold text-blue-600 font-custom">{title}</h2>
+          <h2 className="text-3xl font-semibold text-blue-600 font-custom">
+            {title}
+          </h2>
           <button
             className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-2xl"
             onClick={() => setShowForm(false)}
@@ -61,10 +63,14 @@ const Form = ({
         </div>
         <form onSubmit={onSubmit} className="space-y-6">
           <div className="grid grid-cols-2 gap-6">
-            {fields.map((field, index) =>
-              renderField ? renderField(field) : (
-                <div key={index} className={`col-span-${field.colSpan || 2}`}>
-                  <label className="block text-blue-700 mb-2">{field.label}</label>
+            {fields.map((field, index) => {
+              if (renderField) {
+                return renderField(field, index);
+              }
+
+              return (
+                <div className={`form-group col-span-${field.colSpan || 2}`} key={index}>
+                  <label className="block text-blue-700 mb-2" htmlFor={field.name}>{field.label}</label>
                   {field.type === 'file' ? (
                     <div className="file-upload-container">
                       <label htmlFor="file-upload" className="file-upload-label">
@@ -97,8 +103,8 @@ const Form = ({
                     />
                   )}
                 </div>
-              )
-            )}
+              );
+            })}
           </div>
           <div className="flex justify-center">
             <button

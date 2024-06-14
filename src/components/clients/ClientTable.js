@@ -22,3 +22,4 @@ const ClientTable = ({ clients, handleDelete, handleModify }) => {
         />
     );
 }
+export default ClientTable;
