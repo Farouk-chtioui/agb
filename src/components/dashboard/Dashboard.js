@@ -26,7 +26,7 @@ function Dashboard({title}) {
         { title: 'Utilisateurs', icon: FaUsers, path: '/utilisateurs' },
         { title: 'Plans', icon: FaRegChartBar, subItems: [
             { title: 'Géere le plans', path: '/pions/sub5' }, 
-            { title: 'Secture', path: '/pions/sub6' }
+            { title: 'Secture', path: '/plans/secture' }
         ]},
         { title: 'Settings', icon: FaCog, path: '/settings' },
         { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout }

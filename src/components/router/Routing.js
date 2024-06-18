@@ -23,7 +23,7 @@ function Routing(){
       <Route path="/produits" element={<ProtectedRoute element={<Produits />} />} />
       <Route path="/chauffeurs/Gérer" element={<ProtectedRoute element={<Chauffeurs />} />} />
       <Route path="/utilisateurs" element={<ProtectedRoute element={<Utilisateurs />} />} />
-      <Route path="/pions/*" element={<ProtectedRoute element={<Pions />} />} />
+      <Route path="/plans/secteur" element={<ProtectedRoute element={<Pions />} />} />
       <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
     </Routes>
   );
