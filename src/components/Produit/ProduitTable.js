@@ -1,7 +1,7 @@
 import React from "react";
 import Table from "../Table/Table";
 const ProuditsTable = ({ produits, handleDelete, handleModify }) => {
-    const headers = ["Image", "Nom de produit", "Prix","Description","Action"];
+    const headers = ["Image", "Nom de produit", "Description","Prix","Action"];
     const renderRow = (produit) => (
         <>
        <td className="py-6 px-4 border-b border-gray-200 ">
@@ -10,8 +10,9 @@ const ProuditsTable = ({ produits, handleDelete, handleModify }) => {
   ) : "-"}
 </td>
         <td className="py-6 px-4 border-b border-gray-200">{produit.name}</td>
-        <td className="py-6 px-4 border-b border-gray-200">{produit.price}</td>
         <td className="py-6 px-4 border-b border-gray-200">{produit.description}</td>
+        <td className="py-6 px-4 border-b border-gray-200">{produit.price}€</td>
+
         </>
     );
     return (
