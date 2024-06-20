@@ -29,3 +29,12 @@ export async function searchLivraisons(searchTerm){
         throw error;
     }
 }
+export async function fetchbyCommande(NumeroCommande){
+    try{
+        const response=await axios.get(`${API_URL}/livraison/${NumeroCommande}`);
+        return response.data
+    }catch(error){
+        console.error('Error fetching clients',error)
+        throw error;
+    }
+}

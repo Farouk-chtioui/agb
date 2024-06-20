@@ -11,7 +11,7 @@ import Settings from '../settings/Settings';
 import ProtectedRoute from '../../ProtectedRoute';
 import PublicRoute from '../../publicroute';
 import Livraison from '../livraison/Livraison';
-
+import InvoicePDF from '../livraison/pdf/Invoice';
 function Routing(){
   return (
     <Routes>
@@ -25,6 +25,8 @@ function Routing(){
       <Route path="/utilisateurs" element={<ProtectedRoute element={<Utilisateurs />} />} />
       <Route path="/plans/secteur" element={<ProtectedRoute element={<Pions />} />} />
       <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
+      <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
+
     </Routes>
   );
 }
