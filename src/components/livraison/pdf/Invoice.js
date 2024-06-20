@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import { fetchbyCommande } from '../../../api/livraisonService'; // Adjust the import path according to your project structure
-
-// Define your styles
+import logo from '../../../images/logo1.png';
 const styles = StyleSheet.create({
   page: {
     padding: 30,
@@ -17,7 +16,7 @@ const styles = StyleSheet.create({
     top: 30,
     right: 30,
     width: 100,
-    height: 30
+    height: 50
   },
   header: {
     fontSize: 18,
@@ -80,11 +79,10 @@ const styles = StyleSheet.create({
   }
 });
 
-// Document component
 const InvoiceDocument = ({ data }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      <Image src="/path/to/logo.png" style={styles.logo} />
+      <Image src={logo} style={styles.logo} />
       <Text style={styles.header}>Confirmation de la commande N°{data.NumeroCommande}</Text>
       <View style={styles.section}>
         <Text style={styles.subHeader}>Commande pour:</Text>
@@ -105,17 +103,19 @@ const InvoiceDocument = ({ data }) => (
         {data.products?.map((item, index) => (
           <View key={index} style={styles.tableRow}>
             <Text style={styles.tableCol}>{item?.name}</Text>
-            <Text style={styles.tableCol}>{item?.quantity}</Text>
-            <Text style={styles.tableCol}>{item?.dropoff ? 'Oui' : 'Non'}</Text>
-            <Text style={styles.tableCol}>{item?.assembly ? 'Oui' : 'Non'}</Text>
-            <Text style={styles.tableCol}>{item?.install ? 'Oui' : 'Non'}</Text>
+            <Text style={styles.tableCol}>{data.quantity}</Text>
+            <Text style={styles.tableCol}>{data.Dépôt ? 'Oui' : 'Non'}</Text>
+            <Text style={styles.tableCol}>{data.Montage ? 'Oui' : 'Non'}</Text>
+            <Text style={styles.tableCol}>{data.Install ? 'Oui' : 'Non'}</Text>
           </View>
         ))}
       </View>
 
       <Text style={styles.observation}>Observations : {data.Observations}</Text>
-      <Text style={styles.text}>Forfait de la livraison : {data.deliveryFee}€</Text>
-      <Text style={styles.text}>Solde Magasin: {data.products.reduce((total, product) => total + product.price, 0)}€</Text>
+
+      <Text style={styles.text}>Total à payer : {data.products.reduce((total, product) => total + product.price, 0)}€</Text>    
+        <Text style={styles.text}>Solde Magasin : 0€</Text>  // to be adjusted for later use
+
       <Text style={styles.signature}>
         Par sa signature, le client reconnait avoir reçu, contrôlé et constaté
         le bon état de la marchandise livrée et/ou installée ce jour

@@ -47,7 +47,11 @@ const LivraisonForm = ({
         {
             title: 'Sélection des Produits',
             fields: [
-                { name: 'products', label: 'Products', type: 'select', placeholder: 'Select products', colSpan: 1, options: products.map(product => ({ value: product._id, label: product.name })) }
+                { name: 'products', label: 'Products', type: 'select', placeholder: 'Select products', colSpan: 1, options: products.map(product => ({ value: product._id, label: product.name })) },
+                { name: 'quantity', label: 'Quantity', type: 'number', placeholder: 'Quantity', colSpan: 1 },
+                { name: 'Dépôt', label: 'Dépôt', type: 'checkbox', colSpan: 1 },
+                { name: 'Montage', label: 'Montage', type: 'checkbox', colSpan: 1 },
+                { name: 'Install', label: 'Checkbox 3', type: 'checkbox', colSpan: 1 },
             ]
         },
         {
@@ -55,7 +59,6 @@ const LivraisonForm = ({
             fields: [
                 { name: 'market', label: 'Market', type: 'select', placeholder: 'Select a market', colSpan: 1, options: markets.map(market => ({ value: market._id, label: market.first_name })) },
                 { name: 'driver', label: 'Driver', type: 'select', placeholder: 'Select a driver', colSpan: 1, options: drivers.map(driver => ({ value: driver._id, label: driver.first_name })) },
-                { name: 'status', label: 'Status', type: 'text', placeholder: 'Status', colSpan: 1 }
             ]
         }
     ];

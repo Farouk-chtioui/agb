@@ -26,7 +26,11 @@ function Livraison() {
     products: [],
     market: '',
     driver: '',
-    status: ''
+    status: false,
+    quantity: 1,
+    Dépôt: false,
+    Montage: false,
+    Install: false
   });
   const [showForm, setShowForm] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -109,21 +113,28 @@ function Livraison() {
   };
 
   const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     if (name === 'products' || name === 'market' || name === 'driver') {
-      // Convert comma-separated string to array of IDs
-      const ids = value.split(',').map(id => id.trim());
-      setNewLivraison((prevState) => ({
-        ...prevState,
-        [name]: ids
-      }));
+        // Convert comma-separated string to array of IDs
+        const ids = value.split(',').map(id => id.trim());
+        setNewLivraison((prevState) => ({
+            ...prevState,
+            [name]: ids
+        }));
+    } else if (type === 'checkbox') {
+        // Handle checkbox inputs
+        setNewLivraison((prevState) => ({
+            ...prevState,
+            [name]: checked // true or false
+        }));
     } else {
-      setNewLivraison((prevState) => ({
-        ...prevState,
-        [name]: value
-      }));
+        // Handle all other inputs
+        setNewLivraison((prevState) => ({
+            ...prevState,
+            [name]: value
+        }));
     }
-  }, []);
+}, []);
 
   const handleSearch = async (searchTerm) => {
     if (searchTerm === '') {
@@ -148,11 +159,15 @@ function Livraison() {
       Observations: '',
       Date: '',
       Periode: '',
-      client: '',
+      client: '', 
       products: [],
-      market: '',
-      driver: '',
-      status: ''
+      market: '', 
+      driver: '', 
+      status: false,
+      quantity: 1,
+      Dépôt: false,
+      Montage: false,
+      Install: false
     });
     setIsEditMode(false);
     setCurrentLivraison(null);
