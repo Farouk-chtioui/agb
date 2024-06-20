@@ -66,9 +66,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 5
   },
-  tableCell: {
-    margin: 5,
-  },
   observation: {
     marginTop: 10,
     fontStyle: 'italic'
@@ -79,53 +76,61 @@ const styles = StyleSheet.create({
   }
 });
 
-const InvoiceDocument = ({ data }) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <Image src={logo} style={styles.logo} />
-      <Text style={styles.header}>Confirmation de la commande N°{data.NumeroCommande}</Text>
-      <View style={styles.section}>
-        <Text style={styles.subHeader}>Commande pour:</Text>
-        <Text style={styles.text}>{data.client?.first_name}</Text>
-        <Text style={styles.text}>{data.client.address1 +" "+ data.client.address2}</Text>
-        <Text style={styles.text}>Téléphone: {data.client?.phone}</Text>
-        <Text style={styles.subHeader}>LIVRAISON POUR {data.Date}</Text>
-      </View>
+const InvoiceDocument = ({ data }) => {
+  const livraison = data[0]; // Access the first object in the array
 
-      <View style={styles.table}>
-        <View style={styles.tableRow}>
-          <Text style={styles.tableColHeader}>Article</Text>
-          <Text style={styles.tableColHeader}>Qté</Text>
-          <Text style={styles.tableColHeader}>Dépose</Text>
-          <Text style={styles.tableColHeader}>Montage</Text>
-          <Text style={styles.tableColHeader}>Install</Text>
+  if (!livraison) {
+    return null; // or render a loading indicator
+  }
+
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <Image src={logo} style={styles.logo} />
+        <Text style={styles.header}>Confirmation de la commande N°{livraison.NumeroCommande}</Text>
+        <View style={styles.section}>
+          <Text style={styles.subHeader}>Commande pour:</Text>
+          <Text style={styles.text}>{livraison.client?.first_name} {livraison.client?.last_name}</Text>
+          <Text style={styles.text}>{livraison.client?.address1}</Text>
+          <Text style={styles.text}>{livraison.client?.phone}</Text>
+          <Text style={styles.subHeader}>LIVRAISON POUR {livraison.Date}</Text>
         </View>
-        {data.products?.map((item, index) => (
-          <View key={index} style={styles.tableRow}>
-            <Text style={styles.tableCol}>{item?.name}</Text>
-            <Text style={styles.tableCol}>{data.quantity}</Text>
-            <Text style={styles.tableCol}>{data.Dépôt ? 'Oui' : 'Non'}</Text>
-            <Text style={styles.tableCol}>{data.Montage ? 'Oui' : 'Non'}</Text>
-            <Text style={styles.tableCol}>{data.Install ? 'Oui' : 'Non'}</Text>
+
+        <View style={styles.table}>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableColHeader}>Article</Text>
+            <Text style={styles.tableColHeader}>Qté</Text>
+            <Text style={styles.tableColHeader}>Dépose</Text>
+            <Text style={styles.tableColHeader}>Montage</Text>
+            <Text style={styles.tableColHeader}>Install</Text>
           </View>
-        ))}
-      </View>
+          {livraison.products && livraison.products.map((item, index) => (
+            <View key={index} style={styles.tableRow}>
+              <Text style={styles.tableCol}>{item.productId?.name}</Text>
+              <Text style={styles.tableCol}>{item.quantity}</Text>
+              <Text style={styles.tableCol}>{item.dropoff ? 'Oui' : 'Non'}</Text>
+              <Text style={styles.tableCol}>{item.assembly ? 'Oui' : 'Non'}</Text>
+              <Text style={styles.tableCol}>{item.install ? 'Oui' : 'Non'}</Text>
+            </View>
+          ))}
+        </View>
 
-      <Text style={styles.observation}>Observations : {data.Observations}</Text>
+        <Text style={styles.observation}>Observations : {livraison.Observations}</Text>
 
-      <Text style={styles.text}>Total à payer : {data.products.reduce((total, product) => total + product.price, 0)}€</Text>    
-        <Text style={styles.text}>Solde Magasin : 0€</Text>  // to be adjusted for later use
+        {livraison.products && livraison.products.length > 0 && (
+          <Text style={styles.text}>Total à payer : {livraison.products.reduce((total, product) => total + product.productId.price, 0)}€</Text>
+        )}
+        <Text style={styles.text}>Solde Magasin : 0€</Text>  {/* to be adjusted for later use */}
 
-      <Text style={styles.signature}>
-        Par sa signature, le client reconnait avoir reçu, contrôlé et constaté
-        le bon état de la marchandise livrée et/ou installée ce jour
-      </Text>
-      <Text style={styles.signature}>Signature du client: ....................................</Text>
-    </Page>
-  </Document>
-);
-
-// PDFViewer component
+        <Text style={styles.signature}>
+          Par sa signature, le client reconnaît avoir reçu, contrôlé et constaté
+          le bon état de la marchandise livrée et/ou installée ce jour
+        </Text>
+        <Text style={styles.signature}>Signature du client: ....................................</Text>
+      </Page>
+    </Document>
+  );
+}
 const InvoicePDF = () => {
   const { NumeroCommande } = useParams(); // Use this for fetching invoice data if needed
   const [data, setData] = useState(null);
