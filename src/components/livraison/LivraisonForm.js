@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import Form from "../Form/Form";
-import img from '../../images/Group3.png';
-import '../Form/Form.css'; // Ensure you have the correct path to your Form.css
+import '../Form/Form.css'; 
 
 const LivraisonForm = ({
     newLivraison,
@@ -15,15 +13,27 @@ const LivraisonForm = ({
     products,
     drivers
 }) => {
+    const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: '', dropoff: false, assembly: false, install: false }]);
     const [currentStep, setCurrentStep] = useState(0);
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const livraisonData = { ...newLivraison, products: productList };
         if (isEditMode) {
-            handleEditLivraison(e);
+            handleEditLivraison(livraisonData);
         } else {
-            handleAddLivraison(e);
+            handleAddLivraison(livraisonData);
         }
+    };
+
+    const addProduct = () => {
+        setProductList([...productList, { productId: '', quantity: 1, dropoff: false, assembly: false, install: false }]);
+    };
+
+    const handleProductChange = (index, field, value) => {
+        const newProducts = [...productList];
+        newProducts[index][field] = value;
+        setProductList(newProducts);
     };
 
     const steps = [
@@ -35,7 +45,7 @@ const LivraisonForm = ({
                 { name: 'part_du_magasin', label: 'Part du Magasin', type: 'text', placeholder: 'Part du Magasin', colSpan: 1 },
                 { name: 'Observations', label: 'Observations', type: 'text', placeholder: 'Observations', colSpan: 1 },
                 { name: 'Date', label: 'Date', type: 'date', placeholder: 'Date', colSpan: 1 },
-                { name: 'Periode', label: 'Periode', type: 'text', placeholder: 'Periode', colSpan: 1 }
+                { name: 'Periode', label: 'Periode', type: 'select', options: [{ value: 'Matin', label: 'Matin' }, { value: 'Midi', label: 'Midi' }], placeholder: 'Select Période', colSpan: 1 }
             ]
         },
         {
@@ -46,13 +56,7 @@ const LivraisonForm = ({
         },
         {
             title: 'Sélection des Produits',
-            fields: [
-                { name: 'products', label: 'Products', type: 'select', placeholder: 'Select products', colSpan: 1, options: products.map(product => ({ value: product._id, label: product.name })) },
-                { name: 'quantity', label: 'Quantity', type: 'number', placeholder: 'Quantity', colSpan: 1 },
-                { name: 'Dépôt', label: 'Dépôt', type: 'checkbox', colSpan: 1 },
-                { name: 'Montage', label: 'Montage', type: 'checkbox', colSpan: 1 },
-                { name: 'Install', label: 'Checkbox 3', type: 'checkbox', colSpan: 1 },
-            ]
+            fields: []
         },
         {
             title: 'Détails de la Livraison',
@@ -62,15 +66,17 @@ const LivraisonForm = ({
             ]
         }
     ];
+
     const nextStep = (e) => {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault();
         setCurrentStep(prevStep => prevStep + 1);
     };
-    
+
     const prevStep = (e) => {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault();
         setCurrentStep(prevStep => prevStep - 1);
     };
+
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-10 rounded-2xl shadow-lg w-1/2 h-auto">
@@ -116,6 +122,66 @@ const LivraisonForm = ({
                             )}
                         </div>
                     ))}
+                    {currentStep === 2 && (
+                        <>
+                            {productList.map((product, index) => (
+                                <div key={index} className="mb-4">
+                                    <label className="block text-blue-700 mb-2" htmlFor={`product-${index}`}>Produit</label>
+                                    <select
+                                        className="border rounded-lg w-full py-3 px-4 mb-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                        name={`product-${index}`}
+                                        value={product.productId}
+                                        onChange={(e) => handleProductChange(index, 'productId', e.target.value)}
+                                    >
+                                        <option value="">Select a product</option>
+                                        {products.map(prod => (
+                                            <option key={prod._id} value={prod._id}>
+                                                {prod.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <input
+                                        className="border rounded-lg w-full py-3 px-4 mb-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                        type="number"
+                                        placeholder="Quantity"
+                                        value={product.quantity}
+                                        onChange={(e) => handleProductChange(index, 'quantity', e.target.value)}
+                                    />
+                                    <div className="flex items-center mb-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={product.dropoff}
+                                            onChange={(e) => handleProductChange(index, 'dropoff', e.target.checked)}
+                                        />
+                                        <label className="ml-2">Dépôt</label>
+                                    </div>
+                                    <div className="flex items-center mb-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={product.assembly}
+                                            onChange={(e) => handleProductChange(index, 'assembly', e.target.checked)}
+                                        />
+                                        <label className="ml-2">Montage</label>
+                                    </div>
+                                    <div className="flex items-center mb-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={product.install}
+                                            onChange={(e) => handleProductChange(index, 'install', e.target.checked)}
+                                        />
+                                        <label className="ml-2">Installation</label>
+                                    </div>
+                                </div>
+                            ))}
+                            <button
+                                type="button"
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                                onClick={addProduct}
+                            >
+                                Add Product
+                            </button>
+                        </>
+                    )}
                     <div className="flex justify-between mt-4">
                         {currentStep > 0 && (
                             <button
@@ -149,3 +215,5 @@ const LivraisonForm = ({
 };
 
 export default LivraisonForm;
+
+
