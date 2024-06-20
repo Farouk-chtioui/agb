@@ -7,18 +7,20 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
 
     const renderRow = (livraison) => (
         <>
-             <td className="py-6 px-4 border-b border-gray-200">
+            <td className="py-6 px-4 border-b border-gray-200">
                 <Link to={`/invoice/${livraison.NumeroCommande}`}>{livraison.NumeroCommande}</Link>
             </td>
             <td className="py-6 px-4 border-b border-gray-200">{livraison.client?.first_name}</td>
             <td className="py-6 px-4 border-b border-gray-200">{livraison.driver?.first_name}</td>
             <td className="py-6 px-4 border-b border-gray-200">{livraison.market.first_name}</td>
             <td className="py-6 px-4 border-b border-gray-200">{livraison.Date}</td>
-            <td className="py-6 px-4 border-b border-gray-200">{livraison.status}</td>
-            {/* Add other fields as needed */}
+            <td className="py-6 px-4 border-b border-gray-200 flex items-center justify-center gap-2">
+                <span className={`h-3 w-3 rounded-full ${livraison.status ? 'bg-green-500' : 'bg-yellow-500'}`} style={{ border: '2px solid white' }}></span>
+                {livraison.status ? "Livrée" : "En cours"}
+            </td>
         </>
     );
-    
+
 
 
     return (

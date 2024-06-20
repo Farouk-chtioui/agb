@@ -13,7 +13,7 @@ const LivraisonForm = ({
     products,
     drivers
 }) => {
-    const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: '', dropoff: false, assembly: false, install: false }]);
+    const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: '', Dépôt: false, Montage: false, Install: false }]);
     const [currentStep, setCurrentStep] = useState(0);
 
     const handleSubmit = (e) => {
@@ -27,7 +27,7 @@ const LivraisonForm = ({
     };
 
     const addProduct = () => {
-        setProductList([...productList, { productId: '', quantity: 1, dropoff: false, assembly: false, install: false }]);
+        setProductList([...productList, { productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
     };
 
     const handleProductChange = (index, field, value) => {
@@ -151,7 +151,7 @@ const LivraisonForm = ({
                                         <input
                                             type="checkbox"
                                             checked={product.dropoff}
-                                            onChange={(e) => handleProductChange(index, 'dropoff', e.target.checked)}
+                                            onChange={(e) => handleProductChange(index, 'Dépôt', e.target.checked)}
                                         />
                                         <label className="ml-2">Dépôt</label>
                                     </div>
@@ -159,7 +159,7 @@ const LivraisonForm = ({
                                         <input
                                             type="checkbox"
                                             checked={product.assembly}
-                                            onChange={(e) => handleProductChange(index, 'assembly', e.target.checked)}
+                                            onChange={(e) => handleProductChange(index, 'Montage', e.target.checked)}
                                         />
                                         <label className="ml-2">Montage</label>
                                     </div>
@@ -167,7 +167,7 @@ const LivraisonForm = ({
                                         <input
                                             type="checkbox"
                                             checked={product.install}
-                                            onChange={(e) => handleProductChange(index, 'install', e.target.checked)}
+                                            onChange={(e) => handleProductChange(index, 'Install', e.target.checked)}
                                         />
                                         <label className="ml-2">Installation</label>
                                     </div>

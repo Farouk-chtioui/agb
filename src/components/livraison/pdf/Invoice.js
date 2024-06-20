@@ -108,9 +108,9 @@ const InvoiceDocument = ({ data }) => {
             <View key={index} style={styles.tableRow}>
               <Text style={styles.tableCol}>{item.productId?.name}</Text>
               <Text style={styles.tableCol}>{item.quantity}</Text>
-              <Text style={styles.tableCol}>{item.dropoff ? 'Oui' : 'Non'}</Text>
-              <Text style={styles.tableCol}>{item.assembly ? 'Oui' : 'Non'}</Text>
-              <Text style={styles.tableCol}>{item.install ? 'Oui' : 'Non'}</Text>
+              <Text style={styles.tableCol}>{item.Dépôt ? 'Oui' : 'Non'}</Text>
+              <Text style={styles.tableCol}>{item.Montage ? 'Oui' : 'Non'}</Text>
+              <Text style={styles.tableCol}>{item.Install ? 'Oui' : 'Non'}</Text>
             </View>
           ))}
         </View>
