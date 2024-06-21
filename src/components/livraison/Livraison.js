@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { fetchClients } from '../../api/clientService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchMagasins } from '../../api/marketService';
-import { fetchProducts } from '../../api/productService';
+import { fetchProductsNoPage } from '../../api/productService';
 import { addLivraison, fetchLivraisons, searchLivraisons,deleteLivraison } from '../../api/livraisonService';
 import LivraisonForm from './LivraisonForm'; 
 import LivraisonTable from './LivraisonTable'; 
@@ -64,7 +64,7 @@ function Livraison() {
 
   const fetchProductsData = async () => {
     try {
-      const data = await fetchProducts();
+      const data = await fetchProductsNoPage();
       setProducts(data);
     } catch (error) {
       console.error('Error fetching products', error);

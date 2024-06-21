@@ -11,6 +11,16 @@ export async function fetchProducts(page) {
     throw error;
   }
 }
+export async function fetchProductsNoPage(){
+  try {
+    const response = await axios.get(`${API_URL}/product/all`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching products', error);
+    throw error;
+  }
+
+}
 
 export async function deleteProduct(id) {
   try {
