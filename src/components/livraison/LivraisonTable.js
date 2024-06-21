@@ -8,7 +8,7 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
     const renderRow = (livraison) => (
         <>
             <td className="py-6 px-4 border-b border-gray-200">
-                <Link to={`/invoice/${livraison.NumeroCommande}`}>{livraison.NumeroCommande}</Link>
+                <Link to={`/invoice/${livraison.NumeroCommande}`}>{"#"+livraison.NumeroCommande}</Link>
             </td>
             <td className="py-6 px-4 border-b border-gray-200">{livraison.client?.first_name}</td>
             <td className="py-6 px-4 border-b border-gray-200">{livraison.driver?.first_name}</td>

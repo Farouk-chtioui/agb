@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
-import { fetchbyCommande } from '../../../api/livraisonService'; // Adjust the import path according to your project structure
+import { fetchbyCommande } from '../../../api/livraisonService';
 import logo from '../../../images/logo1.png';
 const styles = StyleSheet.create({
   page: {
@@ -77,10 +77,10 @@ const styles = StyleSheet.create({
 });
 
 const InvoiceDocument = ({ data }) => {
-  const livraison = data[0]; // Access the first object in the array
+  const livraison = data[0]; 
 
   if (!livraison) {
-    return null; // or render a loading indicator
+    return null; 
   }
 
   return (
@@ -132,7 +132,7 @@ const InvoiceDocument = ({ data }) => {
   );
 }
 const InvoicePDF = () => {
-  const { NumeroCommande } = useParams(); // Use this for fetching invoice data if needed
+  const { NumeroCommande } = useParams(); 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -157,8 +157,8 @@ const InvoicePDF = () => {
   console.log(data);
 
   return (
-    <div style={{ width: '100%', height: '90vh' }}> {/* Customize the size of the preview here */}
-      <PDFViewer style={{ width: '100%', height: '100%' }}> {/* Make the PDFViewer fill the container */}
+    <div style={{ width: '100%', height: '100vh' }}>
+      <PDFViewer style={{ width: '100%', height: '100%' }}> 
         <InvoiceDocument data={data} />
       </PDFViewer>
     </div>
