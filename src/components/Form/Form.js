@@ -13,6 +13,7 @@ const Form = ({
   renderField
 }) => {
   const [imagePreview, setImagePreview] = useState(null);
+  const [isDragging, setIsDragging] = useState(false); // New state for drag over
 
   useEffect(() => {
     if (isEditMode && formData) {
@@ -30,14 +31,18 @@ const Form = ({
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0] || e.dataTransfer.files[0]; // Handle files from both input and drop
+    processFile(file);
+  };
+
+  const processFile = (file) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result;
         handleChange({
           target: {
-            name: e.target.name,
+            name: 'image', // Assuming the name is 'image', adjust accordingly
             value: base64String
           }
         });
@@ -46,6 +51,23 @@ const Form = ({
       reader.readAsDataURL(file);
     }
   };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFileChange(e);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
@@ -69,10 +91,18 @@ const Form = ({
               }
 
               return (
-                <div className={`form-group col-span-${field.colSpan || 2}`} key={index}>
+                <div
+                  className={`form-group col-span-${field.colSpan || 2}`}
+                  key={index}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  onDragLeave={handleDragLeave}
+                >
                   <label className="block text-blue-700 mb-2" htmlFor={field.name}>{field.label}</label>
                   {field.type === 'file' ? (
-                    <div className="file-upload-container">
+                    <div
+                      className={`file-upload-container ${isDragging ? 'dragging' : ''}`}
+                    >
                       <label htmlFor="file-upload" className="file-upload-label">
                         <div className="file-upload-placeholder">
                           <img src={img} alt="Upload" />
