@@ -38,3 +38,21 @@ export async function fetchbyCommande(NumeroCommande){
         throw error;
     }
 }
+export async function modifyLivraison(livraison){
+    try{
+        const response=await axios.put(`${API_URL}/livraison/${livraison.id}`,livraison);
+        return response.data
+    }catch(error){
+        console.error('Error fetching clients',error)
+        throw error;
+    }
+}
+export async function deleteLivraison(id){
+    try{
+        const response=await axios.delete(`${API_URL}/livraison/${id}`);
+        return response.data
+    }catch(error){
+        console.error('Error fetching clients',error)
+        throw error;
+    }
+}

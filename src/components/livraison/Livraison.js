@@ -3,7 +3,7 @@ import { fetchClients } from '../../api/clientService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchProducts } from '../../api/productService';
-import { addLivraison, fetchLivraisons, searchLivraisons } from '../../api/livraisonService';
+import { addLivraison, fetchLivraisons, searchLivraisons,deleteLivraison } from '../../api/livraisonService';
 import LivraisonForm from './LivraisonForm'; 
 import LivraisonTable from './LivraisonTable'; 
 import Search from '../searchbar/Search';
@@ -158,7 +158,15 @@ function Livraison() {
       }
     }
   };
+  const handleDelete = async (id) => {
+    try{
+      await deleteLivraison(id);
+      fetchLivraisonsData();
 
+    }catch(error){
+      console.error('Error deleting livraison', error);
+    }
+  }
   const resetForm = () => {
     setNewLivraison({
       NumeroCommande: '',
@@ -176,6 +184,7 @@ function Livraison() {
     setIsEditMode(false);
     setCurrentLivraison(null);
   };
+
 
   return (
     <div className="flex">
@@ -207,7 +216,7 @@ function Livraison() {
           />
         )}
 
-        <LivraisonTable livraisons={filteredLivraisons} />
+        <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete}  />
 
         {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
       </div>

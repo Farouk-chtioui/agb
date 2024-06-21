@@ -14,9 +14,10 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
             <td className="py-6 px-4 border-b border-gray-200">{livraison.driver?.first_name}</td>
             <td className="py-6 px-4 border-b border-gray-200">{livraison.market.first_name}</td>
             <td className="py-6 px-4 border-b border-gray-200">{livraison.Date}</td>
-            <td className="py-6 px-4 border-b border-gray-200 flex items-center justify-center gap-2">
-                <span className={`h-3 w-3 rounded-full ${livraison.status ? 'bg-green-500' : 'bg-yellow-500'}`} style={{ border: '2px solid white' }}></span>
-                {livraison.status ? "Livrée" : "En cours"}
+           <td className="py-6 px-4 border-b border-gray-200 flex items-center justify-center gap-2">
+                <span className={`${livraison.status ? "text-green-600" : "text-blue-600"} font-poppins font-normal text-base leading-6`}>
+                    {livraison.status ? "Livrée" : "En cours"}
+                </span>
             </td>
         </>
     );
