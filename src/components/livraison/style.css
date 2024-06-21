@@ -1,0 +1,43 @@
+/* Form.css */
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.step-number {
+    background-color: #E0E0E0;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.step-item.active .step-number  {
+    background-color: #1C64F2;
+}
+
+.step-title {
+    margin-top: 0.5rem;
+    color: #a3a3a3;
+}
+.step-item.active .step-title {
+    color: #1C64F2;
+}
+button[type="button"] {
+    transition: background-color 0.3s ease;
+}
+
+button[type="button"]:hover {
+    background-color: #1C64F2;
+    color: white;
+}

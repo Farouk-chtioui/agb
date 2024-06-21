@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import '../Form/Form.css'; 
-
+import '../Form/Form.css';
+import './style.css'
 const LivraisonForm = ({
     newLivraison,
     handleChange,
@@ -37,34 +37,10 @@ const LivraisonForm = ({
     };
 
     const steps = [
-        {
-            title: 'Informations Générales',
-            fields: [
-                { name: 'NumeroCommande', label: 'Numero de Commande', type: 'text', placeholder: 'Numero de Commande', colSpan: 1 },
-                { name: 'Référence', label: 'Référence', type: 'text', placeholder: 'Référence', colSpan: 1 },
-                { name: 'part_du_magasin', label: 'Part du Magasin', type: 'text', placeholder: 'Part du Magasin', colSpan: 1 },
-                { name: 'Observations', label: 'Observations', type: 'text', placeholder: 'Observations', colSpan: 1 },
-                { name: 'Date', label: 'Date', type: 'date', placeholder: 'Date', colSpan: 1 },
-                { name: 'Periode', label: 'Periode', type: 'select', options: [{ value: 'Matin', label: 'Matin' }, { value: 'Midi', label: 'Midi' }], placeholder: 'Select Période', colSpan: 1 }
-            ]
-        },
-        {
-            title: 'Sélection du Client',
-            fields: [
-                { name: 'client', label: 'Client', type: 'select', placeholder: 'Select a client', colSpan: 1, options: clients.map(client => ({ value: client._id, label: client.first_name })) }
-            ]
-        },
-        {
-            title: 'Sélection des Produits',
-            fields: []
-        },
-        {
-            title: 'Détails de la Livraison',
-            fields: [
-                { name: 'market', label: 'Market', type: 'select', placeholder: 'Select a market', colSpan: 1, options: markets.map(market => ({ value: market._id, label: market.first_name })) },
-                { name: 'driver', label: 'Driver', type: 'select', placeholder: 'Select a driver', colSpan: 1, options: drivers.map(driver => ({ value: driver._id, label: driver.first_name })) },
-            ]
-        }
+        'Informations Générales',
+        'Client',
+        'Produits de la commande',
+        'Chauffeur & Livraison'
     ];
 
     const nextStep = (e) => {
@@ -91,37 +67,115 @@ const LivraisonForm = ({
                         &times;
                     </button>
                 </div>
+                <div className="mb-6">
+                    <div className="flex justify-between items-center">
+                        {steps.map((step, index) => (
+                            <React.Fragment key={index}>
+                                <div className={`step-item ${index <= currentStep ? 'active' : ''}`}>
+                                    <div className="step-number">{index + 1}</div>
+<div className={`step-title ${index < currentStep ? ' active' : ''}`}>{step}</div>                                </div>
+                                {index < steps.length - 1 && (
+                                    <div className={`step-line ${index < currentStep ? 'active' : ''}`}></div>
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {steps[currentStep].fields.map((field, index) => (
-                        <div className={`form-group col-span-${field.colSpan || 2}`} key={index}>
-                            <label className="block text-blue-700 mb-2" htmlFor={field.name}>{field.label}</label>
-                            {field.type === 'select' ? (
-                                <select
-                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-                                    name={field.name}
-                                    value={newLivraison[field.name] || ''}
-                                    onChange={handleChange}
-                                    placeholder={field.placeholder}
-                                >
-                                    <option value="">Select an option</option>
-                                    {field.options.map(option => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            ) : (
+                    {currentStep === 0 && (
+                        <>
+                            <div className="form-group">
+                                <label className="block text-blue-700 mb-2" htmlFor="NumeroCommande">N° Commande</label>
                                 <input
                                     className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-                                    type={field.type}
-                                    name={field.name}
-                                    value={newLivraison[field.name] || ''}
+                                    type="text"
+                                    name="NumeroCommande"
+                                    value={newLivraison.NumeroCommande || ''}
                                     onChange={handleChange}
-                                    placeholder={field.placeholder}
+                                    placeholder="0000000000"
                                 />
-                            )}
+                            </div>
+                            <div className="form-group">
+                                <label className="block text-blue-700 mb-2" htmlFor="Référence">Référence</label>
+                                <input
+                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                    type="text"
+                                    name="Référence"
+                                    value={newLivraison.Référence || ''}
+                                    onChange={handleChange}
+                                    placeholder="0000000000"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="block text-blue-700 mb-2" htmlFor="part_du_magasin">A régler de la part du magasin</label>
+                                <input
+                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                    type="text"
+                                    name="part_du_magasin"
+                                    value={newLivraison.part_du_magasin || ''}
+                                    onChange={handleChange}
+                                    placeholder="32.123"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="block text-blue-700 mb-2" htmlFor="Observations">Observation</label>
+                                <textarea
+                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                    name="Observations"
+                                    value={newLivraison.Observations || ''}
+                                    onChange={handleChange}
+                                    placeholder="Message"
+                                ></textarea>
+                            </div>
+                            <div className="form-group">
+                                <label className="block text-blue-700 mb-2" htmlFor="Date">Date de la livraison</label>
+                                <input
+                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                    type="date"
+                                    name="Date"
+                                    value={newLivraison.Date || ''}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="block text-blue-700 mb-2">Période</label>
+                                <div className="flex">
+                                    <button
+                                        type="button"
+                                        className={`border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 ${newLivraison.Periode === 'Matin' ? 'bg-blue-500 text-white' : 'bg-white border-blue-600'}`}
+                                        onClick={() => handleChange({ target: { name: 'Periode', value: 'Matin' } })}
+                                    >
+                                        Matin
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`ml-2 border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 ${newLivraison.Periode === 'Midi' ? 'bg-blue-500 text-white' : 'bg-white border-blue-600'}`}
+                                        onClick={() => handleChange({ target: { name: 'Periode', value: 'Midi' } })}
+                                    >
+                                        Midi
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                    {currentStep === 1 && (
+                        <div className="form-group">
+                            <label className="block text-blue-700 mb-2" htmlFor="client">Client</label>
+                            <select
+                                className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                name="client"
+                                value={newLivraison.client || ''}
+                                onChange={handleChange}
+                            >
+                                <option value="">Select a client</option>
+                                {clients.map(client => (
+                                    <option key={client._id} value={client._id}>
+                                        {client.first_name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-                    ))}
+                    )}
                     {currentStep === 2 && (
                         <>
                             {productList.map((product, index) => (
@@ -182,6 +236,42 @@ const LivraisonForm = ({
                             </button>
                         </>
                     )}
+                    {currentStep === 3 && (
+                        <>
+                            <div className="form-group">
+                                <label className="block text-blue-700 mb-2" htmlFor="market">Market</label>
+                                <select
+                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                    name="market"
+                                    value={newLivraison.market || ''}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Select a market</option>
+                                    {markets.map(market => (
+                                        <option key={market._id} value={market._id}>
+                                            {market.first_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="block text-blue-700 mb-2" htmlFor="driver">Driver</label>
+                                <select
+                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                    name="driver"
+                                    value={newLivraison.driver || ''}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Select a driver</option>
+                                    {drivers.map(driver => (
+                                        <option key={driver._id} value={driver._id}>
+                                            {driver.first_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </>
+                    )}
                     <div className="flex justify-between mt-4">
                         {currentStep > 0 && (
                             <button
@@ -215,5 +305,3 @@ const LivraisonForm = ({
 };
 
 export default LivraisonForm;
-
-
