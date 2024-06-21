@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import '../Form/Form.css';
-import './style.css'
+import './style.css';
+
 const LivraisonForm = ({
     newLivraison,
     handleChange,
@@ -55,7 +55,7 @@ const LivraisonForm = ({
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-10 rounded-2xl shadow-lg w-1/2 h-auto">
+            <div className="bg-white p-10 rounded-2xl shadow-lg custom-width h-auto">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-3xl font-semibold text-blue-600 font-custom">
                         {isEditMode ? 'Modifier la Livraison' : 'Ajouter une Livraison'}
@@ -68,12 +68,13 @@ const LivraisonForm = ({
                     </button>
                 </div>
                 <div className="mb-6">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center steps-container">
                         {steps.map((step, index) => (
                             <React.Fragment key={index}>
                                 <div className={`step-item ${index <= currentStep ? 'active' : ''}`}>
                                     <div className="step-number">{index + 1}</div>
-<div className={`step-title ${index < currentStep ? ' active' : ''}`}>{step}</div>                                </div>
+                                    <div className={`step-title ${index <= currentStep ? 'active' : ''}`}>{step}</div>
+                                </div>
                                 {index < steps.length - 1 && (
                                     <div className={`step-line ${index < currentStep ? 'active' : ''}`}></div>
                                 )}
@@ -84,27 +85,29 @@ const LivraisonForm = ({
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {currentStep === 0 && (
                         <>
-                            <div className="form-group">
-                                <label className="block text-blue-700 mb-2" htmlFor="NumeroCommande">N° Commande</label>
-                                <input
-                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-                                    type="text"
-                                    name="NumeroCommande"
-                                    value={newLivraison.NumeroCommande || ''}
-                                    onChange={handleChange}
-                                    placeholder="0000000000"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label className="block text-blue-700 mb-2" htmlFor="Référence">Référence</label>
-                                <input
-                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-                                    type="text"
-                                    name="Référence"
-                                    value={newLivraison.Référence || ''}
-                                    onChange={handleChange}
-                                    placeholder="0000000000"
-                                />
+                            <div className="flex space-x-4">
+                                <div className="form-group flex-1">
+                                    <label className="block text-blue-700 mb-2" htmlFor="NumeroCommande">N° Commande</label>
+                                    <input
+                                        className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                        type="text"
+                                        name="NumeroCommande"
+                                        value={newLivraison.NumeroCommande || ''}
+                                        onChange={handleChange}
+                                        placeholder="0000000000"
+                                    />
+                                </div>
+                                <div className="form-group flex-1">
+                                    <label className="block text-blue-700 mb-2" htmlFor="Référence">Référence</label>
+                                    <input
+                                        className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                        type="text"
+                                        name="Référence"
+                                        value={newLivraison.Référence || ''}
+                                        onChange={handleChange}
+                                        placeholder="0000000000"
+                                    />
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label className="block text-blue-700 mb-2" htmlFor="part_du_magasin">A régler de la part du magasin</label>
@@ -127,33 +130,35 @@ const LivraisonForm = ({
                                     placeholder="Message"
                                 ></textarea>
                             </div>
-                            <div className="form-group">
-                                <label className="block text-blue-700 mb-2" htmlFor="Date">Date de la livraison</label>
-                                <input
-                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-                                    type="date"
-                                    name="Date"
-                                    value={newLivraison.Date || ''}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label className="block text-blue-700 mb-2">Période</label>
-                                <div className="flex">
-                                    <button
-                                        type="button"
-                                        className={`border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 ${newLivraison.Periode === 'Matin' ? 'bg-blue-500 text-white' : 'bg-white border-blue-600'}`}
-                                        onClick={() => handleChange({ target: { name: 'Periode', value: 'Matin' } })}
-                                    >
-                                        Matin
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`ml-2 border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 ${newLivraison.Periode === 'Midi' ? 'bg-blue-500 text-white' : 'bg-white border-blue-600'}`}
-                                        onClick={() => handleChange({ target: { name: 'Periode', value: 'Midi' } })}
-                                    >
-                                        Midi
-                                    </button>
+                            <div className="flex space-x-4">
+                                <div className="form-group flex-1">
+                                    <label className="block text-blue-700 mb-2" htmlFor="Date">Date de la livraison</label>
+                                    <input
+                                        className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                        type="date"
+                                        name="Date"
+                                        value={newLivraison.Date || ''}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className="form-group flex-1">
+                                    <label className="block text-blue-700 mb-2">Période</label>
+                                    <div className="flex space-x-1">
+                                        <button
+                                            type="button"
+                                            className={`border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 ${newLivraison.Periode === 'Matin' ? 'bg-blue-500 text-white' : 'bg-white border-blue-600'}`}
+                                            onClick={() => handleChange({ target: { name: 'Periode', value: 'Matin' } })}
+                                        >
+                                            Matin
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 ${newLivraison.Periode === 'Midi' ? 'bg-blue-500 text-white' : 'bg-white border-blue-600'}`}
+                                            onClick={() => handleChange({ target: { name: 'Periode', value: 'Midi' } })}
+                                        >
+                                            Midi
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </>
@@ -201,29 +206,28 @@ const LivraisonForm = ({
                                         value={product.quantity}
                                         onChange={(e) => handleProductChange(index, 'quantity', e.target.value)}
                                     />
-                                    <div className="flex items-center mb-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={product.dropoff}
-                                            onChange={(e) => handleProductChange(index, 'Dépôt', e.target.checked)}
-                                        />
-                                        <label className="ml-2">Dépôt</label>
-                                    </div>
-                                    <div className="flex items-center mb-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={product.assembly}
-                                            onChange={(e) => handleProductChange(index, 'Montage', e.target.checked)}
-                                        />
-                                        <label className="ml-2">Montage</label>
-                                    </div>
-                                    <div className="flex items-center mb-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={product.install}
-                                            onChange={(e) => handleProductChange(index, 'Install', e.target.checked)}
-                                        />
-                                        <label className="ml-2">Installation</label>
+                                    <div className="flex space-x-1">
+                                        <button
+                                            type="button"
+                                            className={`border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 ${product.Dépôt ? 'bg-blue-500 text-white' : 'bg-white border-blue-600'}`}
+                                            onClick={() => handleProductChange(index, 'Dépôt', !product.Dépôt)}
+                                        >
+                                            Dépôt
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 ${product.Montage ? 'bg-blue-500 text-white' : 'bg-white border-blue-600'}`}
+                                            onClick={() => handleProductChange(index, 'Montage', !product.Montage)}
+                                        >
+                                            Montage
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 ${product.Install ? 'bg-blue-500 text-white' : 'bg-white border-blue-600'}`}
+                                            onClick={() => handleProductChange(index, 'Install', !product.Install)}
+                                        >
+                                            Installation
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -283,10 +287,10 @@ const LivraisonForm = ({
                         )}
                         {currentStep < steps.length - 1 && (
                             <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                                className="bg-blue-500 text-white px-4 py-2 rounded mx-auto"
                                 onClick={nextStep}
                             >
-                                Next
+                                Suivant
                             </button>
                         )}
                         {currentStep === steps.length - 1 && (
