@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Form.css'; 
+import './Form.css';
 import img from '../../images/Group3.png';
 
 const Form = ({
@@ -9,11 +9,11 @@ const Form = ({
   setShowForm,
   isEditMode,
   title,
-  fields,
+  fields = [], // Initialize fields as an empty array if not provided
   renderField
 }) => {
   const [imagePreview, setImagePreview] = useState(null);
-  const [isDragging, setIsDragging] = useState(false); // New state for drag over
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     if (isEditMode && formData) {
@@ -31,7 +31,7 @@ const Form = ({
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0] || e.dataTransfer.files[0]; // Handle files from both input and drop
+    const file = e.target.files[0] || e.dataTransfer.files[0];
     processFile(file);
   };
 
@@ -42,7 +42,7 @@ const Form = ({
         const base64String = reader.result;
         handleChange({
           target: {
-            name: 'image', // Assuming the name is 'image', adjust accordingly
+            name: 'image',
             value: base64String
           }
         });
@@ -67,7 +67,6 @@ const Form = ({
     e.preventDefault();
     setIsDragging(false);
   };
-
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
@@ -122,6 +121,17 @@ const Form = ({
                       )}
                       <p className="file-upload-hint">JPEG, PNG, PDF, and MP4 formats,</p>
                     </div>
+                  ) : field.type === 'dropdown' && field.options ? ( // Check if options are provided
+                    <select
+                      className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                      name={field.name}
+                      value={formData[field.name] || ''}
+                      onChange={handleChange}
+                    >
+                      {field.options.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
                   ) : (
                     <input
                       className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
