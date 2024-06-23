@@ -31,17 +31,17 @@ const Sidebar = ({ items }) => {
           {items.map((item, index) => (
             <li key={index} className="mb-4">
               <div
-                className="flex items-center justify-between cursor-pointer p-2 rounded hover:bg-purple-200 transition-colors duration-200"
+                className="flex items-center justify-between cursor-pointer p-2 rounded hover:bg-blue-200 transition-colors duration-200"
                 onClick={() => handleClick(item, index)}
               >
                 <div className="flex items-center w-full">
                   {item.icon && <item.icon className="mr-3 h-5 w-5 text-blue-500" />}
                   {item.path ? (
-                    <Link to={item.path} className="text-gray-700 hover:text-purple-500">
+                    <Link to={item.path} className="text-gray-700 hover:text-blue-500">
                       {item.title}
                     </Link>
                   ) : (
-                    <span className="text-gray-700 hover:text-purple-500">{item.title}</span>
+                    <span className="text-gray-700 hover:text-blue-500">{item.title}</span>
                   )}
                 </div>
                 {item.subItems && (
@@ -58,9 +58,9 @@ const Sidebar = ({ items }) => {
                 <ul className={`ml-6 mt-2 transition-all duration-300 ${openIndexes[index] ? 'block' : 'hidden'}`}>
                   {item.subItems.map((subItem, subIndex) => (
                     <li key={subIndex} className="mb-2">
-                      <Link to={subItem.path} className="flex items-center p-2 rounded hover:bg-purple-200 transition-colors duration-200">
+                      <Link to={subItem.path} className="flex items-center p-2 rounded hover:bg-blue-200 transition-colors duration-200">
                         {subItem.icon && <subItem.icon className="mr-3 h-4 w-4 text-blue-400" />}
-                        <span className="text-gray-500 hover:text-purple-500">{subItem.title}</span>
+                        <span className="text-gray-500 hover:text-blue-500">{subItem.title}</span>
                       </Link>
                     </li>
                   ))}
