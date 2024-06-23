@@ -12,6 +12,7 @@ import ProtectedRoute from '../../ProtectedRoute';
 import PublicRoute from '../../publicroute';
 import Livraison from '../livraison/Livraison';
 import InvoicePDF from '../livraison/pdf/Invoice';
+import Plans from '../Plans/Plans';
 function Routing(){
   return (
     <Routes>
@@ -26,6 +27,7 @@ function Routing(){
       <Route path="/plans/secture" element={<ProtectedRoute element={<Secture />} />} />
       <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
       <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
+      <Route path="/test" element={<ProtectedRoute element={<Plans />} />} />
 
     </Routes>
   );
