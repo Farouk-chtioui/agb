@@ -21,7 +21,7 @@ const PlanForm = ({
     }
   }, [isEditMode, newPlan.Date, handleChange]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const updatedPlan = {
@@ -30,10 +30,15 @@ const PlanForm = ({
     };
 
     if (isEditMode) {
-      handleEditPlan(updatedPlan);
+      await handleEditPlan(updatedPlan);
     } else {
-      handleAddPlan(updatedPlan);
+      await handleAddPlan(updatedPlan);
     }
+    setShowForm(false);
+  };
+
+  const handleDelete = async () => {
+    await handleDeletePlan(newPlan._id);
     setShowForm(false);
   };
 
@@ -79,16 +84,14 @@ const PlanForm = ({
       formData={newPlan}
       handleChange={handleChange}
       handleSubmit={handleSubmit}
+      handleDelete={handleDelete}
       setShowForm={setShowForm}
+      isEditMode={isEditMode}
+      markets={markets}
+      secteurs={secteurs}
       fields={fields}
       title={isEditMode ? 'Modifier le Plan' : 'Ajouter un Plan'}
-    >
-      {isEditMode && (
-        <button type="button" onClick={handleDeletePlan} className="btn btn-danger">
-          Supprimer
-        </button>
-      )}
-    </Form>
+    />
   );
 };
 

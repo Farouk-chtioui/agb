@@ -10,7 +10,8 @@ const Form = ({
   isEditMode,
   title,
   fields = [], // Initialize fields as an empty array if not provided
-  renderField
+  renderField,
+  handleDelete // New prop to handle deletion
 }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -66,6 +67,12 @@ const Form = ({
   const handleDragLeave = (e) => {
     e.preventDefault();
     setIsDragging(false);
+  };
+
+  const handleDeleteClick = () => {
+    if (window.confirm('Are you sure you want to delete this plan?')) {
+      handleDelete();
+    }
   };
 
   return (
@@ -153,6 +160,15 @@ const Form = ({
             >
               {isEditMode ? 'Modifier' : 'Créer'}
             </button>
+            {isEditMode && (
+              <button
+                type="button"
+                onClick={handleDeleteClick}
+                className="bg-red-500 text-white px-6 py-3 rounded-full ml-4 shadow hover:bg-red-600 transition"
+              >
+                Supprimer
+              </button>
+            )}
           </div>
         </form>
       </div>
