@@ -12,7 +12,7 @@ const Secture = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [currentSecture, setCurrentSecture] = useState({ name: '', codesPostaux: [''] });
+  const [currentSecture, setCurrentSecture] = useState({ name: '', codesPostaux: [] });
   const [isSearchActive, setIsSearchActive] = useState(false);
 
   useEffect(() => {
@@ -45,13 +45,15 @@ const Secture = () => {
   };
 
   const handleAddSecture = () => {
-    setCurrentSecture({ name: '', codesPostaux: [''] });
+    setCurrentSecture({ name: '', codesPostaux: [] });
     setIsEditMode(false);
     setShowForm(true);
   };
 
   const handleSaveSecture = async (secteur) => {
     try {
+      // Convert string array to number array
+      secteur.codesPostaux = secteur.codesPostaux.map(code => Number(code));
       if (isEditMode) {
         await modifySecture(secteur);
       } else {
@@ -60,7 +62,7 @@ const Secture = () => {
       fetchSecturesData();
       setShowForm(false);
       setIsEditMode(false);
-      setCurrentSecture({ name: '', codesPostaux: [''] });
+      setCurrentSecture({ name: '', codesPostaux: [] });
     } catch (error) {
       console.error('Error saving secture', error);
     }

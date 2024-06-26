@@ -1,16 +1,17 @@
 import React from 'react';
 import Table from '../../Table/Table';
-import './SectureTable.css'; // Import the CSS file
 
 const SectureTable = ({ sectures, handleDelete, handleModify }) => {
     const header = ["Nom de Secture", "Codes Postaux", "Action"];
     const renderRow = (secture) => (
         <>
-            <td className="py-8 px-4 border-b border-gray-200">{secture.name}</td>
-            <td className="py-6 px-4 border-b border-gray-200">
-                <ul className="postal-codes-list">
+            <td className="py-2 px-4 border-b border-gray-200">{secture.name}</td>
+            <td className="py-2 px-4 border-b border-gray-200">
+                <ul className="list-none p-0 m-0">
                     {secture.codesPostaux.map((code, index) => (
-                        <li key={index} className="postal-code-item">{code}</li>
+                        <li key={index} className="relative pl-4 before:content-['•'] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:text-black">
+                            {code}
+                        </li>
                     ))}
                 </ul>
             </td>
