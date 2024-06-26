@@ -1,0 +1,42 @@
+/* SectureTable.css */
+.postal-codes-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.postal-code-item {
+    position: relative;
+    padding-left: 1.2em; /* Adjust space for the dot */
+    margin-bottom: 0.5em; /* Space between the items */
+    font-size: 1rem; /* Adjust the font size as needed */
+}
+
+.postal-code-item::before {
+    content: "•"; /* Unicode character for a dot */
+    position: absolute;
+    left: 8em; /* Adjust position of the dot */
+    color: #000; /* Dot color, change as needed */
+    font-size: 1.2rem; /* Size of the dot, adjust as needed */
+}
+
+/* Additional styles for table */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}

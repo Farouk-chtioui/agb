@@ -4,9 +4,8 @@ const AddressAutocomplete = ({ value, onChange }) => {
     const inputRef = useRef(null);
     const autoCompleteRef = useRef(null);
     const [inputValue, setInputValue] = useState(value || ''); 
-    const [loaded, setLoaded] = useState(false);
-
-
+    // Set loaded to true by default to allow manual input initially
+    const [loaded, setLoaded] = useState(true); 
 
     useEffect(() => {
         const loadScript = (url) => {
@@ -15,7 +14,11 @@ const AddressAutocomplete = ({ value, onChange }) => {
                 script.src = url;
                 script.async = true;
                 script.defer = true;
-                script.onload = resolve;
+                script.onload = () => {
+                    resolve();
+                    // Only set loaded to true here if script loads successfully
+                    setLoaded(true);
+                };
                 script.onerror = reject;
                 document.head.appendChild(script);
             });
@@ -41,7 +44,6 @@ const AddressAutocomplete = ({ value, onChange }) => {
                 });
 
                 console.log('Autocomplete is set up');
-                setLoaded(true);
             }
         };
 
@@ -51,9 +53,11 @@ const AddressAutocomplete = ({ value, onChange }) => {
                 .then(initializeAutocomplete)
                 .catch((error) => {
                     console.error('Error loading Google Maps script:', error);
+                    // Keep loaded true to allow manual input on script load failure
                 });
         } else {
             console.error('Google Maps API key is not defined');
+            // Keep loaded true if API key is not defined
         }
     }, [onChange]);
 
@@ -79,7 +83,6 @@ const AddressAutocomplete = ({ value, onChange }) => {
             className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
             disabled={!loaded}
             style={{ boxShadow: 'none', }}
-            
         />
     );
 };
