@@ -29,15 +29,16 @@ export async function addPlan(plan){
         throw error;
     }
 }
-export async function modifyPlan(plan){
+export const modifyPlan = async (id, planData) => {
     try {
-        const response = await axios.patch(`${API_URL}/plans/${plan._id}`, plan);
-        return response.data;
+      console.log('Modifying plan:', id, planData); // Add this line
+      const response = await axios.patch(`${API_URL}/plans/${id}`, planData);
+      return response.data;
     } catch (error) {
-        console.error('Error modifying plan', error);
-        throw error;
+      console.error('Error modifying plan:', error);
+      throw error;
     }
-}
+  };
 
 export async function fetchPlan(id){
     try {

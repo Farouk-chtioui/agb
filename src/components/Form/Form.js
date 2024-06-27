@@ -19,12 +19,14 @@ const Form = ({
   useEffect(() => {
     if (isEditMode && formData) {
       fields.forEach(field => {
-        if (field.type !== 'file') {
-          handleChange({ target: { name: field.name, value: formData[field.name] || '' } });
+        if (field.type !== 'file' && formData[field.name] !== undefined) {
+          if (formData[field.name] !== field.value) {
+            handleChange({ target: { name: field.name, value: formData[field.name] || '' } });
+          }
         }
       });
     }
-  }, [isEditMode, formData, handleChange, fields]);
+  }, [isEditMode, formData, fields, handleChange]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -41,12 +43,7 @@ const Form = ({
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result;
-        handleChange({
-          target: {
-            name: 'image',
-            value: base64String
-          }
-        });
+        handleChange({ target: { name: 'image', value: base64String } });
         setImagePreview(base64String);
       };
       reader.readAsDataURL(file);
@@ -95,7 +92,6 @@ const Form = ({
               if (renderField) {
                 return renderField(field, index);
               }
-
               return (
                 <div
                   className={`form-group col-span-${field.colSpan || 2}`}
@@ -106,9 +102,7 @@ const Form = ({
                 >
                   <label className="block text-blue-700 mb-2" htmlFor={field.name}>{field.label}</label>
                   {field.type === 'file' ? (
-                    <div
-                      className={`file-upload-container ${isDragging ? 'dragging' : ''}`}
-                    >
+                    <div className={`file-upload-container ${isDragging ? 'dragging' : ''}`}>
                       <label htmlFor="file-upload" className="file-upload-label">
                         <div className="file-upload-placeholder">
                           <img src={img} alt="Upload" />
@@ -126,15 +120,16 @@ const Form = ({
                           <img src={imagePreview} alt="Preview" className="image-preview" />
                         </div>
                       )}
-                      <p className="file-upload-hint">JPEG, PNG, PDF, and MP4 formats,</p>
+                      <p className="file-upload-hint">JPEG, PNG, PDF, and MP4 formats</p>
                     </div>
-                  ) : field.type === 'dropdown' && field.options ? ( // Check if options are provided
+                  ) : field.type === 'dropdown' && field.options ? (
                     <select
                       className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
                       name={field.name}
                       value={formData[field.name] || ''}
                       onChange={handleChange}
                     >
+                      <option value="" disabled>{field.placeholder}</option>
                       {field.options.map(option => (
                         <option key={option.value} value={option.value}>{option.label}</option>
                       ))}
