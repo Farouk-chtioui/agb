@@ -29,8 +29,8 @@ const PlanForm = ({
       ...newPlan,
       Date: new Date(newPlan.Date),
       market: newPlan.market?._id || newPlan.market,
-      secteurMatinal: newPlan.secteurMatinal === '' ? null : newPlan.secteurMatinal?._id || newPlan.secteurMatinal,
-      secteurApresMidi: newPlan.secteurApresMidi === '' ? null : newPlan.secteurApresMidi?._id || newPlan.secteurApresMidi,
+      secteursMatinal: newPlan.secteursMatinal?.map(item => item._id || item) || [],
+      secteursApresMidi: newPlan.secteursApresMidi?.map(item => item._id || item) || [],
       totalMatin: parseInt(newPlan.totalMatin, 10),
       totalMidi: parseInt(newPlan.totalMidi, 10),
     };
@@ -48,9 +48,53 @@ const PlanForm = ({
     setShowForm(false);
   };
 
-  const handleClearField = (fieldName) => {
-    handleChange({ target: { name: fieldName, value: '' } });
+  const handleClearField = (fieldName, index) => {
+    const newArray = [...newPlan[fieldName]];
+    newArray.splice(index, 1);
+    handleChange({ target: { name: fieldName, value: newArray } });
   };
+
+  const handleAddField = (fieldName) => {
+    handleChange({ target: { name: fieldName, value: [...(newPlan[fieldName] || []), ''] } });
+  };
+
+  const renderArrayField = (field, index) => (
+    <div className={`form-group col-span-${field.colSpan || 2}`} key={index}>
+      <label className="block text-blue-700 mb-2">{field.label}</label>
+      {newPlan[field.name]?.map((item, idx) => (
+        <div className="flex items-center mb-2" key={idx}>
+          <select
+            className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+            name={field.name}
+            value={item || ''}
+            onChange={(e) => {
+              const updatedArray = newPlan[field.name].map((val, i) => (i === idx ? e.target.value : val));
+              handleChange({ target: { name: field.name, value: updatedArray } });
+            }}
+          >
+            <option value="" disabled>{field.placeholder}</option>
+            {field.options.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="ml-2 text-red-500"
+            onClick={() => handleClearField(field.name, idx)}
+          >
+            &times;
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        className="text-blue-500"
+        onClick={() => handleAddField(field.name)}
+      >
+        + Add {field.label}
+      </button>
+    </div>
+  );
 
   const fields = [
     {
@@ -71,28 +115,32 @@ const PlanForm = ({
       value: newPlan.market?._id || newPlan.market || '',
     },
     {
-      name: 'secteurMatinal',
-      label: 'Secteur Matinale',
-      type: 'dropdown',
-      placeholder: 'Search Secteur Matinale',
+      name: 'secteursMatinal',
+      label: 'Secteurs Matinal',
+      type: 'arrayDropdown',
+      placeholder: 'Search Secteur Matinal',
       colSpan: 1,
       options: secteurs.map(sector => ({ value: sector._id, label: sector.name })),
-      value: newPlan.secteurMatinal?._id || newPlan.secteurMatinal || '',
+      value: newPlan.secteursMatinal || [],
     },
     {
-      name: 'secteurApresMidi',
-      label: 'Secteur Après Midi',
-      type: 'dropdown',
+      name: 'secteursApresMidi',
+      label: 'Secteurs Après Midi',
+      type: 'arrayDropdown',
       placeholder: 'Search Secteur Après Midi',
       colSpan: 1,
       options: secteurs.map(sector => ({ value: sector._id, label: sector.name })),
-      value: newPlan.secteurApresMidi?._id || newPlan.secteurApresMidi || '',
+      value: newPlan.secteursApresMidi || [],
     },
     { name: 'totalMatin', label: 'Total Matin', type: 'number', placeholder: 'Total Matin', colSpan: 1, value: newPlan.totalMatin || 0 },
     { name: 'totalMidi', label: 'Total Après Midi', type: 'number', placeholder: 'Total Après Midi', colSpan: 1, value: newPlan.totalMidi || 0 },
   ];
 
   const renderField = (field, index) => {
+    if (field.type === 'arrayDropdown') {
+      return renderArrayField(field, index);
+    }
+
     return (
       <div className={`form-group col-span-${field.colSpan || 2}`} key={index}>
         <label className="block text-blue-700 mb-2" htmlFor={field.name}>{field.label}</label>

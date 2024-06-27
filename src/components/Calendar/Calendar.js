@@ -22,21 +22,21 @@ const Plan = ({ plan, onEdit }) => {
 
   return (
     <div ref={ref} className="cursor-pointer" onClick={handleEditClick}>
-      {plan.secteurMatinal ? (
-        <div className="event bg-blue-200 text-blue-800 px-2 py-1 rounded-md mt-1">
-          {plan.secteurMatinal.name} - 8:00 AM
+      {plan.secteurMatinal?.map((secteur, index) => (
+        <div key={`matinal-${index}`} className="event bg-blue-200 text-blue-800 px-2 py-1 rounded-md mt-1">
+          {secteur.name} - 8:00 AM
         </div>
-      ) : null}
-      {plan.secteurApresMidi ? (
-        <div className="event bg-green-200 text-green-800 px-2 py-1 rounded-md mt-1">
-          {plan.secteurApresMidi.name} - 12:00 PM
+      ))}
+      {plan.secteurApresMidi?.map((secteur, index) => (
+        <div key={`apresMidi-${index}`} className="event bg-green-200 text-green-800 px-2 py-1 rounded-md mt-1">
+          {secteur.name} - 12:00 PM
         </div>
-      ) : null}
+      ))}
     </div>
   );
 };
 
-const CalendarTile = ({ date, plans, onEdit ,onDrop}) => {
+const CalendarTile = ({ date, plans, onEdit, onDrop }) => {
   const [, ref] = useDrop({
     accept: ItemType.PLAN,
     drop: (item) => onDrop(item.id, date),
