@@ -1,26 +1,29 @@
+// src/components/Login.js
 import React, { useState, useEffect } from 'react';
 import logo from '../../images/logo1.png';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../../api/adminService';
+import { loginUser } from '../../api/authService';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await loginUser(email, password);
+      const response = await loginUser(email, password, rememberMe);
       if (response.data && response.data.token) {
-        const { token } = response.data;
+        const { token, role } = response.data;
         localStorage.setItem('token', token);
+        localStorage.setItem('role', role);
         if (rememberMe) {
           localStorage.setItem('user', JSON.stringify({ email }));
         }
-        navigate('/dashboard');
+        navigate(`/${role}/dashboard`);
       } else {
         alert('Invalid credentials');
       }

@@ -14,7 +14,14 @@ const Plans = () => {
   const [markets, setMarkets] = useState([]);
   const [secteurs, setSecteurs] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState({});
+  const [selectedPlan, setSelectedPlan] = useState({
+    Date: '',
+    market: '',
+    secteurMatinal: [],
+    secteurApresMidi: [],
+    totalMatin: '',
+    totalMidi: ''
+  });
   const [isEditMode, setIsEditMode] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,7 +52,14 @@ const Plans = () => {
       setShowForm(true);
       setIsEditMode(true);
     } else {
-      setSelectedPlan({ Date: localDate.toISOString().split('T')[0] });
+      setSelectedPlan({
+        Date: localDate.toISOString().split('T')[0],
+        market: '',
+        secteurMatinal: [],
+        secteurApresMidi: [],
+        totalMatin: '',
+        totalMidi: ''
+      });
       setShowForm(true);
       setIsEditMode(false);
     }
@@ -58,16 +72,22 @@ const Plans = () => {
   };
 
   const handleChange = (e) => {
-    setSelectedPlan(prevPlan => {
-      const newPlan = { ...prevPlan, [e.target.name]: e.target.value };
-      if (JSON.stringify(prevPlan) !== JSON.stringify(newPlan)) {
-        return newPlan;
-      }
-      return prevPlan;
-    });
+    const { name, value } = e.target;
+    const [fieldName, index] = name.split('_');
+    
+    if (index !== undefined) {
+      setSelectedPlan(prevPlan => {
+        const updatedArray = [...(prevPlan[fieldName] || [])];
+        updatedArray[Number(index)] = value;
+        return { ...prevPlan, [fieldName]: updatedArray };
+      });
+    } else {
+      setSelectedPlan(prevPlan => ({ ...prevPlan, [name]: value }));
+    }
   };
 
   const handleAddPlan = async (plan) => {
+    console.log("Plan being added:", plan);
     await addPlan(plan);
     fetchData();
     setShowForm(false);
@@ -75,6 +95,7 @@ const Plans = () => {
 
   const handleEditPlan = async (planId, plan) => {
     try {
+      console.log("Plan being edited:", plan);
       await modifyPlan(planId, plan);
       fetchData();
       setShowForm(false);
@@ -105,7 +126,14 @@ const Plans = () => {
 
   const handleEditFormClose = () => {
     setShowForm(false);
-    setSelectedPlan({});
+    setSelectedPlan({
+      Date: '',
+      market: '',
+      secteurMatinal: [],
+      secteurApresMidi: [],
+      totalMatin: '',
+      totalMidi: ''
+    });
     setIsEditMode(false);
   };
 
@@ -123,8 +151,8 @@ const Plans = () => {
               setSelectedPlan({
                 Date: '',
                 market: '',
-                secteurMatinal: '',
-                secteurApresMidi: '',
+                secteurMatinal: [],
+                secteurApresMidi: [],
                 totalMatin: '',
                 totalMidi: ''
               });
