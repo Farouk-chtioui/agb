@@ -1,4 +1,3 @@
-// CalendarComponent.js
 import React from 'react';
 import Calendar from 'react-calendar';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
@@ -51,7 +50,7 @@ const CalendarTile = ({ date, plans, onEdit, onDrop }) => {
   );
 };
 
-const CalendarComponent = ({ plans, onEdit, onClickDay }) => (
+const CalendarComponent = ({ plans, onEdit, onDrop, onClickDay }) => (
   <DndProvider backend={HTML5Backend}>
     <div className="calendar-container">
       <Calendar
@@ -63,6 +62,7 @@ const CalendarComponent = ({ plans, onEdit, onClickDay }) => (
               date={date}
               plans={dayPlans}
               onEdit={onEdit}
+              onDrop={onDrop}
             />
           );
         }}

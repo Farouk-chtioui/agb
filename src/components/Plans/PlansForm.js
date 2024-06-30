@@ -37,6 +37,8 @@ const PlanForm = ({
       totalMidi: parseInt(newPlan.totalMidi, 10),
     };
 
+    console.log("Updated Plan: ", updatedPlan);
+
     if (isEditMode) {
       await handleEditPlan(newPlan._id.toString(), updatedPlan);
     } else {
@@ -56,10 +58,10 @@ const PlanForm = ({
     handleChange({ target: { name: fieldName, value: newArray } });
   };
 
-  const handleAddField = (fieldName) => {
-    const valueToAdd = fieldName === 'secteurMatinal' ? tempSecteurMatinal : tempSecteurApresMidi;
+  const handleAddField = (fieldName, valueToAdd) => {
     if (valueToAdd) {
-      handleChange({ target: { name: fieldName, value: [...(newPlan[fieldName] || []), valueToAdd] } });
+      const updatedArray = [...(newPlan[fieldName] || []), valueToAdd];
+      handleChange({ target: { name: fieldName, value: updatedArray } });
       if (fieldName === 'secteurMatinal') setTempSecteurMatinal('');
       else setTempSecteurApresMidi('');
     }
@@ -99,8 +101,13 @@ const PlanForm = ({
           className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
           value={field.name === 'secteurMatinal' ? tempSecteurMatinal : tempSecteurApresMidi}
           onChange={(e) => {
-            if (field.name === 'secteurMatinal') setTempSecteurMatinal(e.target.value);
-            else setTempSecteurApresMidi(e.target.value);
+            if (field.name === 'secteurMatinal') {
+              setTempSecteurMatinal(e.target.value);
+              handleAddField(field.name, e.target.value);
+            } else {
+              setTempSecteurApresMidi(e.target.value);
+              handleAddField(field.name, e.target.value);
+            }
           }}
         >
           <option value="" disabled>{field.placeholder}</option>
@@ -108,13 +115,6 @@ const PlanForm = ({
             <option key={option.value} value={option.value}>{option.label}</option>
           ))}
         </select>
-        <button
-          type="button"
-          className="ml-2 text-blue-500"
-          onClick={() => handleAddField(field.name)}
-        >
-          + Add {field.label}
-        </button>
       </div>
     </div>
   );

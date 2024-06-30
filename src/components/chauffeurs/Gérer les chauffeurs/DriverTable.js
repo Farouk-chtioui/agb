@@ -3,7 +3,7 @@ import Table from '../../Table/Table';
 
 const DriverTable = ({ drivers, handleDelete, handleModify }) => {
     const headers = ["ID", "Nom de chauffeur", "E-mail", "Créé le", "Action"];
-
+    const role = localStorage.getItem('role');
     const renderRow = (driver) => (
         <>
             <td className="py-8 px-4 border-b border-gray-200">{driver._id}</td>
@@ -22,6 +22,7 @@ const DriverTable = ({ drivers, handleDelete, handleModify }) => {
             renderRow={renderRow} 
             handleDelete={handleDelete} 
             handleModify={handleModify} 
+            role={role}
         />
     );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import Table from "../Table/Table";
 const ClientTable = ({ clients, handleDelete, handleModify }) => {
     const headers = [ "Nom et Prenom", "Adresse de la Livraison","Adresse Alternative","Numéro de Téléphone","Action"];
+    const role = localStorage.getItem('role');
 
     const renderRow = (client) => (
         <>
@@ -19,6 +20,7 @@ const ClientTable = ({ clients, handleDelete, handleModify }) => {
             renderRow={renderRow} 
             handleDelete={handleDelete} 
             handleModify={handleModify} 
+            role={role}
         />
     );
 }

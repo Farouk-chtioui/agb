@@ -29,7 +29,7 @@ function Routing() {
       <Route path="/plans/secture" element={<ProtectedRoute element={<Secture />} requiredRoles={['admin']} />} />
       <Route path="/settings" element={<ProtectedRoute element={<Settings />} requiredRoles={['admin']} />} />
       <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
-      <Route path="/test" element={<ProtectedRoute element={<Plans />} requiredRoles={['admin']} />} />
+      <Route path="/test" element={<Plans/>}/>
     </Routes>
   );
 }

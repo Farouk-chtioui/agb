@@ -45,7 +45,7 @@ const MagasinForm = ({
                         <div className={`form-group col-span-${field.colSpan}`} key={field.name}>
                             <label htmlFor={field.name}>{field.label}</label>
                             <AddressAutocomplete
-                                value={newMagasin[field.name]} // Corrected from field.address to field.name
+                                value={newMagasin[field.name]} 
                                 onChange={handleChange}
                             />
                         </div>

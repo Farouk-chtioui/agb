@@ -6,7 +6,6 @@ import MagasinForm from './MagasinForm';
 import MagasinTable from './MagasinTable';
 import Pagination from '../Pagination/Pagination';
 
-
 const Magasins = () => {
   const [magasins, setMagasins] = useState([]);
   const [filteredMagasins, setFilteredMagasins] = useState([]);
@@ -89,7 +88,7 @@ const Magasins = () => {
   };
 
   const handleChange = useCallback((e) => {
-    const { name, value,type} = e.target;
+    const { name, value, type } = e.target;
     setNewMagasin(prevState => ({
       ...prevState,
       [name]: type === 'number' ? Number(value) : value,

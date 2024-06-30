@@ -6,7 +6,7 @@ import PlanForm from './PlansForm';
 import Dashboard from '../dashboard/Dashboard';
 import Search from '../searchbar/Search';
 import Pagination from '../Pagination/Pagination';
-import CalendarComponent from '../Calendar/Calendar'; // Import the new CalendarComponent
+import CalendarComponent from '../Calendar/Calendar'; 
 import './Plans.css';
 
 const Plans = () => {
@@ -119,7 +119,7 @@ const Plans = () => {
     const updatedPlan = plans.find(plan => plan._id === planId);
     if (updatedPlan) {
       updatedPlan.Date = newDate;
-      await modifyPlan(updatedPlan);
+      await modifyPlan(updatedPlan._id, updatedPlan);
       fetchData();
     }
   };
@@ -180,13 +180,11 @@ const Plans = () => {
 
             <CalendarComponent
               plans={plans}
-              onDelete={handleDeletePlan}
-              onDrop={handleDrop}
               onEdit={handlePlanSelect}
+              onDrop={handleDrop}
               onClickDay={handleDayClick}
             />
 
-            {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
           </div>
           <div className="w-1/4 p-4 bg-gray-100 border-l border-gray-300">
             <h2 className="text-lg font-semibold mb-2">Notes</h2>

@@ -4,7 +4,7 @@ import Table from "../Table/Table";
 
 const ProuditsTable = ({ produits, handleDelete, handleModify }) => {
   const headers = ["Image", "Nom de produit", "Description", "Prix", "Action"];
-  const role = localStorage.getItem('role'); // Retrieve the user's role from localStorage
+  const role = localStorage.getItem('role');
 
   const renderRow = (produit) => (
     <>

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
     const headers = ["Numéro", "Client", "Chauffeur", "Magasin", "Date de livraison", "Statut", "Action"];
-
+    const role = localStorage.getItem('role');
     const renderRow = (livraison) => (
         <>
             <td className="py-6 px-4 border-b border-gray-200">
@@ -31,6 +31,7 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
             renderRow={renderRow}
             handleDelete={handleDelete}
             handleModify={handleModify}
+            role={role}
         />
     );
 }

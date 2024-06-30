@@ -2,7 +2,7 @@ import React from 'react';
 import Table from '../Table/Table';
 const MagasinTable = ({ magasins, handleDelete, handleModify }) => {
     const headers = [ "Nom et Prenom", "Email","Adresse","Créé le","Action"];
-
+    const role = localStorage.getItem('role');
     const renderRow = (magasin) => (
         <>
             <td className="py-8 px-4 border-b border-gray-200">{magasin.first_name+" "+magasin.last_name}</td>
@@ -20,6 +20,7 @@ const MagasinTable = ({ magasins, handleDelete, handleModify }) => {
             renderRow={renderRow} 
             handleDelete={handleDelete} 
             handleModify={handleModify} 
+            role={role}
         />
     );
 }
