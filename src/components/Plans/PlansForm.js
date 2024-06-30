@@ -75,7 +75,7 @@ const PlanForm = ({
           <select
             className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
             name={`${field.name}_${idx}`}
-            value={item || ''}
+            value={item._id || item || ''}
             onChange={(e) => {
               const updatedArray = [...newPlan[field.name]];
               updatedArray[idx] = e.target.value;
@@ -172,7 +172,7 @@ const PlanForm = ({
             <select
               className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
               name={field.name}
-              value={newPlan[field.name] || ''}
+              value={newPlan[field.name]?._id || newPlan[field.name] || ''}
               onChange={handleChange}
             >
               <option value="" disabled>{field.placeholder}</option>
