@@ -36,13 +36,20 @@ const Plan = ({ plan, onEdit }) => {
 };
 
 const CalendarTile = ({ date, plans, onEdit, onDrop }) => {
-  const [, ref] = useDrop({
+  const [{ isOver }, ref] = useDrop({
     accept: ItemType.PLAN,
-    drop: (item) => onDrop(item.id, date),
+    drop: (item) => {
+      if (item && item.id) {
+        onDrop(item.id, date);
+      }
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
   });
 
   return (
-    <div ref={ref} className="tile">
+    <div ref={ref} className={`tile ${isOver ? 'bg-gray-200' : ''}`}>
       {plans.map(plan => (
         <Plan key={plan._id} plan={plan} onEdit={onEdit} />
       ))}

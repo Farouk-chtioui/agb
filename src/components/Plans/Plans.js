@@ -116,9 +116,10 @@ const Plans = () => {
   };
 
   const handleDrop = async (planId, newDate) => {
+    console.log("Dropping plan", planId, "to new date", newDate);
     const updatedPlan = plans.find(plan => plan._id === planId);
     if (updatedPlan) {
-      updatedPlan.Date = newDate;
+      updatedPlan.Date = newDate.toISOString().split('T')[0];
       await modifyPlan(updatedPlan._id, updatedPlan);
       fetchData();
     }

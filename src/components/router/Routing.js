@@ -20,6 +20,7 @@ function Routing() {
     <Routes>
       <Route path="/" element={<PublicRoute element={<Login />} />} />
       <Route path="admin/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['admin']} />} />
+      <Route path="market/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['market']} />} />
       <Route path="/livraison/listes" element={<ProtectedRoute element={<Livraison />} requiredRoles={['admin']} />} />
       <Route path="/clients" element={<ProtectedRoute element={<Clients />} requiredRoles={['admin']} />} />
       <Route path="/magasins" element={<ProtectedRoute element={<Magasins />} requiredRoles={['admin']} />} />

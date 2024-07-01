@@ -31,7 +31,7 @@ function Dashboard({ title }) {
         { title: 'Fiche de route', path: '/chauffeurs/sub4' }
       ]
     },
-    { title: 'Utilisateurs', icon: FaUsers, path: '/utilisateurs', roles: ['admin','market'] },
+    { title: 'Utilisateurs', icon: FaUsers, path: '/utilisateurs', roles: ['admin'] },
     {
       title: 'Plans', icon: FaRegChartBar, roles: ['admin'], subItems: [
         { title: 'Gérer le plans', path: '/plans/sub5' },
