@@ -3,11 +3,11 @@ import { fetchClients } from '../../api/clientService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
-import { addLivraison, fetchLivraisons, searchLivraisons,deleteLivraison } from '../../api/livraisonService';
-import LivraisonForm from './LivraisonForm'; 
-import LivraisonTable from './LivraisonTable'; 
+import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison } from '../../api/livraisonService';
+import LivraisonForm from './LivraisonForm';
+import LivraisonTable from './LivraisonTable';
 import Search from '../searchbar/Search';
-import Pagination from '../Pagination/Pagination'; 
+import Pagination from '../Pagination/Pagination';
 import Dashboard from '../dashboard/Dashboard';
 
 function Livraison() {
@@ -24,9 +24,9 @@ function Livraison() {
     Periode: '',
     client: '',
     products: [],
-    market: '', 
-    driver: '', 
-    status: false,
+    market: '',
+    driver: '',
+    
   });
   const [showForm, setShowForm] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -92,6 +92,7 @@ function Livraison() {
 
   const handleAddLivraison = async (livraisonData) => {
     try {
+      livraisonData.status = 'En attente'; // Ensure status is set
       await addLivraison(livraisonData);
       fetchLivraisonsData();
       setShowForm(false);
@@ -115,34 +116,39 @@ function Livraison() {
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
-  
+
     if (name === 'products') {
-      const ids = value.split(',').map((id) => id.trim());
-      const updatedProducts = ids.map(productId => ({
-        productId,
-        quantity: 0,  
-        dropoff: false,
-        assembly: false,
-        install: false
-      }));
-      setNewLivraison((prevState) => ({
-        ...prevState,
-        [name]: updatedProducts,
-      }));
+        const ids = value.split(',').map((id) => id.trim());
+        const updatedProducts = ids.map(productId => ({
+            productId,
+            quantity: 0,  
+            Dépôt: false,
+            Montage: false,
+            Install: false
+        }));
+        setNewLivraison((prevState) => ({
+            ...prevState,
+            [name]: updatedProducts,
+        }));
     } else if (type === 'checkbox') {
-      setNewLivraison((prevState) => ({
-        ...prevState,
-        [name]: checked,
-      }));
+        setNewLivraison((prevState) => ({
+            ...prevState,
+            [name]: checked,
+        }));
+    } else if (type === 'number') {
+        setNewLivraison((prevState) => ({
+            ...prevState,
+            [name]: parseInt(value, 10), 
+        }));
     } else {
- 
-      setNewLivraison((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
+        setNewLivraison((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
     }
-  }, []);
-  
+}, []);
+
+
 
   const handleSearch = async (searchTerm) => {
     if (searchTerm === '') {
@@ -158,15 +164,16 @@ function Livraison() {
       }
     }
   };
+
   const handleDelete = async (id) => {
-    try{
+    try {
       await deleteLivraison(id);
       fetchLivraisonsData();
-
-    }catch(error){
+    } catch (error) {
       console.error('Error deleting livraison', error);
     }
-  }
+  };
+
   const resetForm = () => {
     setNewLivraison({
       NumeroCommande: '',
@@ -177,14 +184,12 @@ function Livraison() {
       Periode: '',
       client: '',
       products: [],
-      market: '', 
-      driver: '', 
-      status: false,
+      market: '',
+      driver: '',
     });
     setIsEditMode(false);
     setCurrentLivraison(null);
   };
-
 
   return (
     <div className="flex">
@@ -216,7 +221,7 @@ function Livraison() {
           />
         )}
 
-        <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete}  />
+        <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete} handleModify={setCurrentLivraison} />
 
         {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
       </div>

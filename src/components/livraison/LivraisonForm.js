@@ -13,18 +13,20 @@ const LivraisonForm = ({
     products,
     drivers
 }) => {
-    const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: '', Dépôt: false, Montage: false, Install: false }]);
+    const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
     const [currentStep, setCurrentStep] = useState(0);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const livraisonData = { ...newLivraison, products: productList };
+        console.log('Submitting livraison data:', livraisonData); // Log the data
         if (isEditMode) {
             handleEditLivraison(livraisonData);
         } else {
             handleAddLivraison(livraisonData);
         }
     };
+    
 
     const addProduct = () => {
         setProductList([...productList, { productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
@@ -32,7 +34,7 @@ const LivraisonForm = ({
 
     const handleProductChange = (index, field, value) => {
         const newProducts = [...productList];
-        newProducts[index][field] = value;
+        newProducts[index][field] = field === 'quantity' ? parseInt(value, 10) : value;
         setProductList(newProducts);
     };
 
@@ -204,7 +206,7 @@ const LivraisonForm = ({
                                         type="number"
                                         placeholder="Quantity"
                                         value={product.quantity}
-                                        onChange={(e) => handleProductChange(index, 'quantity', e.target.value)}
+                                        onChange={(e) => handleProductChange(index, 'quantity', parseInt(e.target.value, 10))}
                                     />
                                     <div className="flex space-x-1">
                                         <button
