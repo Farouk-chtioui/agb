@@ -26,7 +26,6 @@ function Livraison() {
     products: [],
     market: '',
     driver: '',
-    
   });
   const [showForm, setShowForm] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -92,7 +91,7 @@ function Livraison() {
 
   const handleAddLivraison = async (livraisonData) => {
     try {
-      livraisonData.status = 'En attente'; // Ensure status is set
+      livraisonData.status = 'En attente';
       await addLivraison(livraisonData);
       fetchLivraisonsData();
       setShowForm(false);
@@ -104,8 +103,6 @@ function Livraison() {
 
   const handleEditLivraison = async (livraisonData) => {
     try {
-      // Implement the edit logic here, for example:
-      // await editLivraison(livraisonData.id, livraisonData);
       fetchLivraisonsData();
       setShowForm(false);
       resetForm();
@@ -118,37 +115,35 @@ function Livraison() {
     const { name, value, type, checked } = e.target;
 
     if (name === 'products') {
-        const ids = value.split(',').map((id) => id.trim());
-        const updatedProducts = ids.map(productId => ({
-            productId,
-            quantity: 0,  
-            Dépôt: false,
-            Montage: false,
-            Install: false
-        }));
-        setNewLivraison((prevState) => ({
-            ...prevState,
-            [name]: updatedProducts,
-        }));
+      const ids = value.split(',').map((id) => id.trim());
+      const updatedProducts = ids.map(productId => ({
+        productId,
+        quantity: 0,
+        Dépôt: false,
+        Montage: false,
+        Install: false
+      }));
+      setNewLivraison((prevState) => ({
+        ...prevState,
+        [name]: updatedProducts,
+      }));
     } else if (type === 'checkbox') {
-        setNewLivraison((prevState) => ({
-            ...prevState,
-            [name]: checked,
-        }));
+      setNewLivraison((prevState) => ({
+        ...prevState,
+        [name]: checked,
+      }));
     } else if (type === 'number') {
-        setNewLivraison((prevState) => ({
-            ...prevState,
-            [name]: parseInt(value, 10), 
-        }));
+      setNewLivraison((prevState) => ({
+        ...prevState,
+        [name]: parseInt(value, 10),
+      }));
     } else {
-        setNewLivraison((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
+      setNewLivraison((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
     }
-}, []);
-
-
+  }, []);
 
   const handleSearch = async (searchTerm) => {
     if (searchTerm === '') {
@@ -209,6 +204,7 @@ function Livraison() {
         {showForm && (
           <LivraisonForm
             newLivraison={newLivraison}
+            setNewLivraison={setNewLivraison} // Pass the state updater function here
             handleChange={handleChange}
             handleAddLivraison={handleAddLivraison}
             handleEditLivraison={handleEditLivraison}

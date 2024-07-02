@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import ClientForm from '../clients/ClientForm'; // Adjust the import path as needed
+import { addClient } from "../../api/clientService"; // Make sure the import path is correct
 import './style.css';
 
 const LivraisonForm = ({
     newLivraison,
+    setNewLivraison, // Add setNewLivraison here
     handleChange,
     handleAddLivraison,
     handleEditLivraison,
@@ -15,18 +18,46 @@ const LivraisonForm = ({
 }) => {
     const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
     const [currentStep, setCurrentStep] = useState(0);
+    const [showClientForm, setShowClientForm] = useState(false); // State to manage ClientForm visibility
+    const [newClient, setNewClient] = useState({
+        first_name: '',
+        last_name: '',
+        address1: '',
+        address2: '',
+        phone: ''
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const livraisonData = { ...newLivraison, products: productList };
-        console.log('Submitting livraison data:', livraisonData); // Log the data
         if (isEditMode) {
             handleEditLivraison(livraisonData);
         } else {
             handleAddLivraison(livraisonData);
         }
     };
-    
+
+    const handleClientAdd = async (client) => {
+        try {
+            const addedClient = await addClient(client); // Assuming addClient is a function that adds a client and returns the added client
+            clients.push(addedClient);
+            setShowClientForm(false);
+            setNewLivraison((prevState) => ({
+                ...prevState,
+                client: addedClient._id
+            }));
+        } catch (error) {
+            console.error('Error adding client:', error);
+        }
+    };
+
+    const handleClientChange = (e) => {
+        const { name, value } = e.target;
+        setNewClient(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
 
     const addProduct = () => {
         setProductList([...productList, { productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
@@ -181,6 +212,13 @@ const LivraisonForm = ({
                                     </option>
                                 ))}
                             </select>
+                            <button
+                                type="button"
+                                className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                                onClick={() => setShowClientForm(true)}
+                            >
+                                Ajouter un client
+                            </button>
                         </div>
                     )}
                     {currentStep === 2 && (
@@ -305,6 +343,16 @@ const LivraisonForm = ({
                         )}
                     </div>
                 </form>
+
+                {showClientForm && (
+                    <ClientForm
+                        newClient={newClient}
+                        handleChange={handleClientChange}
+                        handleAddClient={handleClientAdd}
+                        setShowForm={setShowClientForm}
+                        isEditMode={false}
+                    />
+                )}
             </div>
         </div>
     );

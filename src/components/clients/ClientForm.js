@@ -9,7 +9,6 @@ const ClientForm = ({
   newClient,
   handleChange,
   handleAddClient,
-  handleEditClient,
   setShowForm,
   isEditMode,
 }) => {
@@ -27,11 +26,7 @@ const ClientForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isEditMode) {
-      handleEditClient(e);
-    } else {
-      handleAddClient(e);
-    }
+    handleAddClient(newClient);
   };
 
   return (
