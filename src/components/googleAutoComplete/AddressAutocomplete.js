@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { debounce } from 'lodash';
 
 const AddressAutocomplete = ({ value, onChange }) => {
     const inputRef = useRef(null);
     const autoCompleteRef = useRef(null);
     const [inputValue, setInputValue] = useState(value || ''); 
-    // Set loaded to true by default to allow manual input initially
-    const [loaded, setLoaded] = useState(true); 
+    const [loaded, setLoaded] = useState(false); 
 
     useEffect(() => {
         const loadScript = (url) => {
@@ -16,7 +16,6 @@ const AddressAutocomplete = ({ value, onChange }) => {
                 script.defer = true;
                 script.onload = () => {
                     resolve();
-                    // Only set loaded to true here if script loads successfully
                     setLoaded(true);
                 };
                 script.onerror = reject;
@@ -40,7 +39,7 @@ const AddressAutocomplete = ({ value, onChange }) => {
                             value: place.formatted_address,
                         },
                     });
-                    setInputValue(place.formatted_address); // Update local state with the selected address
+                    setInputValue(place.formatted_address); 
                 });
 
                 console.log('Autocomplete is set up');
@@ -53,36 +52,40 @@ const AddressAutocomplete = ({ value, onChange }) => {
                 .then(initializeAutocomplete)
                 .catch((error) => {
                     console.error('Error loading Google Maps script:', error);
-                    // Keep loaded true to allow manual input on script load failure
                 });
         } else {
             console.error('Google Maps API key is not defined');
-            // Keep loaded true if API key is not defined
         }
     }, [onChange]);
 
-    // Update local state and call onChange prop with manually typed value
+    const debouncedChangeHandler = useCallback(
+        debounce((e) => {
+            onChange({
+                target: {
+                    name: 'address',
+                    value: e.target.value,
+                },
+            });
+        }, 500),
+        [] // Only recreate the debounced function when the component mounts
+    );
+
     const handleInputChange = (e) => {
         const { value } = e.target;
         setInputValue(value);
-        onChange({
-            target: {
-                name: 'address',
-                value: value,
-            },
-        });
+        debouncedChangeHandler(e);
     };
 
     return (
         <input
             ref={inputRef}
             type="text"
-            value={inputValue} // Use local state for input value
-            onChange={handleInputChange} // Update local state on change
+            value={inputValue} 
+            onChange={handleInputChange} 
             placeholder="Address"
             className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
             disabled={!loaded}
-            style={{ boxShadow: 'none', }}
+            style={{ boxShadow: 'none' }}
         />
     );
 };

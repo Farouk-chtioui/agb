@@ -1,14 +1,15 @@
 import React from 'react';
 import Form from '../Form/Form';
 import PhoneInput from 'react-phone-number-input';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'; // Import the default style
 import '../Form/Form.css';
-import './clientForm.css'; // Import the new CSS for phone input
 
 const ClientForm = ({
   newClient,
   handleChange,
   handleAddClient,
+  handleEditClient,
   setShowForm,
   isEditMode,
 }) => {
@@ -26,7 +27,15 @@ const ClientForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleAddClient(newClient);
+    if (!isValidPhoneNumber(newClient.phone)) {
+      alert("Invalid phone number");
+      return;
+    }
+    if (isEditMode) {
+      handleEditClient(e);
+    } else {
+      handleAddClient(e);
+    }
   };
 
   return (

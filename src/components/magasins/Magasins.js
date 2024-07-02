@@ -23,9 +23,12 @@ const Magasins = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentMagasin, setCurrentMagasin] = useState(null);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
     fetchMagasinsData();
+    const role = localStorage.getItem('role'); // Assuming the role is stored in localStorage
+    setUserRole(role);
   }, [currentPage]);
 
   const fetchMagasinsData = async () => {
@@ -39,6 +42,11 @@ const Magasins = () => {
   };
 
   const handleDelete = async (id) => {
+    const userRole = localStorage.getItem('role'); // Retrieve the role from local storage
+    if (userRole !== 'admin') {
+      alert('You do not have permission to perform this action');
+      return;
+    }
     try {
       await deleteMagasin(id);
       fetchMagasinsData();
@@ -46,7 +54,7 @@ const Magasins = () => {
       console.error('Error deleting magasin', error);
     }
   };
-
+  
   const handleModify = (magasin) => {
     setCurrentMagasin(magasin);
     setNewMagasin(magasin);
@@ -144,7 +152,12 @@ const Magasins = () => {
           />
         )}
 
-        <MagasinTable magasins={filteredMagasins} handleDelete={handleDelete} handleModify={handleModify} />
+        <MagasinTable
+          magasins={filteredMagasins}
+          handleDelete={handleDelete}
+          handleModify={handleModify}
+          userRole={userRole} // Pass the user role to MagasinTable
+        />
 
         {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
       </div>
