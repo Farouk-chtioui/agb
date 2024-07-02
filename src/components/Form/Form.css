@@ -1,3 +1,4 @@
+/* Existing styles */
 .grid {
   display: grid;
   gap: 1.5rem;
@@ -77,6 +78,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   object-fit: contain; 
 }
+
 /* Form.css */
 .form-group {
   margin-bottom: 1rem;
@@ -97,6 +99,13 @@
   border-color: #3182ce;
 }
 
-label{
+label {
   color: #1d4ed8;
+}
+
+
+.scrollable-form-content {
+  max-height: calc(100vh - 200px); 
+  overflow-y: auto;
+  padding-right: 1rem; 
 }

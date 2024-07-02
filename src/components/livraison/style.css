@@ -1,7 +1,9 @@
 /* style.css */
+
 .steps-container {
     display: flex;
     align-items: center;
+    overflow-x: auto; /* Add horizontal scroll if steps overflow */
 }
 
 .step-item {
@@ -116,4 +118,10 @@ button.bg-green-500:hover {
 .custom-width {
     max-width: 800px;
     width: 100%;
+}
+
+.scrollable-form-content {
+    max-height: calc(100vh - 200px); /* Adjust this value as needed */
+    overflow-y: auto;
+    padding-right: 1rem; /* Optional: Add some padding to avoid scrollbar overlap */
 }
