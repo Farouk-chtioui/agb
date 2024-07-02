@@ -4,27 +4,13 @@ import { debounce } from 'lodash';
 const AddressAutocomplete = ({ value, onChange }) => {
     const inputRef = useRef(null);
     const autoCompleteRef = useRef(null);
+    const initializedRef = useRef(false); // Track initialization
     const [inputValue, setInputValue] = useState(value || ''); 
     const [loaded, setLoaded] = useState(false); 
 
     useEffect(() => {
-        const loadScript = (url) => {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = url;
-                script.async = true;
-                script.defer = true;
-                script.onload = () => {
-                    resolve();
-                    setLoaded(true);
-                };
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        };
-
         const initializeAutocomplete = () => {
-            if (window.google) {
+            if (window.google && !initializedRef.current) {
                 const autoComplete = new window.google.maps.places.Autocomplete(inputRef.current, {
                     types: ['address'],
                 });
@@ -33,29 +19,35 @@ const AddressAutocomplete = ({ value, onChange }) => {
 
                 autoComplete.addListener('place_changed', () => {
                     const place = autoComplete.getPlace();
+                    console.log('Place:', place); // Log the place object for debugging
+
+                    const postalCodeComponent = place.address_components.find(component => 
+                        component.types.includes('postal_code')
+                    );
+                    const postalCode = postalCodeComponent ? postalCodeComponent.long_name : '';
+                    
+                    if (!postalCodeComponent) {
+                        console.warn('Postal code not found in address components:', place.address_components);
+                    }
+
                     onChange({
                         target: {
                             name: 'address',
                             value: place.formatted_address,
                         },
+                        postalCode: postalCode, // Include postal code in the returned data
                     });
+
                     setInputValue(place.formatted_address); 
                 });
 
+                setLoaded(true);
+                initializedRef.current = true; // Mark as initialized
                 console.log('Autocomplete is set up');
             }
         };
 
-        const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-        if (apiKey) {
-            loadScript(`https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`)
-                .then(initializeAutocomplete)
-                .catch((error) => {
-                    console.error('Error loading Google Maps script:', error);
-                });
-        } else {
-            console.error('Google Maps API key is not defined');
-        }
+        initializeAutocomplete();
     }, [onChange]);
 
     const debouncedChangeHandler = useCallback(
@@ -67,7 +59,7 @@ const AddressAutocomplete = ({ value, onChange }) => {
                 },
             });
         }, 500),
-        [] // Only recreate the debounced function when the component mounts
+        [onChange] // Recreate debounced function only if onChange changes
     );
 
     const handleInputChange = (e) => {

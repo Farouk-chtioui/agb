@@ -87,7 +87,6 @@ const Plans = () => {
   };
 
   const handleAddPlan = async (plan) => {
-    console.log("Plan being added:", plan);
     await addPlan(plan);
     fetchData();
     setShowForm(false);
@@ -95,7 +94,6 @@ const Plans = () => {
 
   const handleEditPlan = async (planId, plan) => {
     try {
-      console.log("Plan being edited:", plan);
       await modifyPlan(planId, plan);
       fetchData();
       setShowForm(false);
@@ -116,7 +114,6 @@ const Plans = () => {
   };
 
   const handleDrop = async (planId, newDate) => {
-    console.log("Dropping plan", planId, "to new date", newDate);
     const updatedPlan = plans.find(plan => plan._id === planId);
     if (updatedPlan) {
       updatedPlan.Date = newDate.toISOString().split('T')[0];

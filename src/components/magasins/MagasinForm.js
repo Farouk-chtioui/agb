@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Form from '../Form/Form';
 import AddressAutocomplete from '../googleAutoComplete/AddressAutocomplete';
 import '../Form/Form.css';
@@ -11,6 +11,8 @@ const MagasinForm = ({
     setShowForm,
     isEditMode,
 }) => {
+    const [addressData, setAddressData] = useState({ address: newMagasin.address || '', postalCode: '' });
+
     const fields = [
         { name: 'first_name', label: 'Nom', type: 'text', placeholder: 'Nom', colSpan: 1 },
         { name: 'last_name', label: 'Prenom', type: 'text', placeholder: 'Prenom', colSpan: 1 },
@@ -21,6 +23,16 @@ const MagasinForm = ({
         { name: 'numberMi', label: 'Nombre des commandes du midi', type: 'number', placeholder: 'Nombre des commandes du midi', colSpan: 2 },
     ].filter(Boolean);
 
+    const handleAddressChange = (e) => {
+        handleChange(e); // Update the address in newMagasin
+        if (e.postalCode) {
+            setAddressData((prev) => ({ ...prev, address: e.target.value, postalCode: e.postalCode }));
+            console.log('Postal Code:', e.postalCode);
+        } else {
+            setAddressData((prev) => ({ ...prev, address: e.target.value }));
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isEditMode) {
@@ -29,7 +41,6 @@ const MagasinForm = ({
             handleAddMagasin(e);
         }
     };
-    
 
     return (
         <Form
@@ -45,8 +56,8 @@ const MagasinForm = ({
                         <div className={`form-group col-span-${field.colSpan}`} key={field.name}>
                             <label htmlFor={field.name}>{field.label}</label>
                             <AddressAutocomplete
-                                value={newMagasin[field.name]} 
-                                onChange={handleChange}
+                                value={addressData.address} 
+                                onChange={handleAddressChange}
                             />
                         </div>
                     );
