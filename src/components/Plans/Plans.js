@@ -231,7 +231,7 @@ const Plans = () => {
                 <option value="" disabled>Select a Plan</option>
                 {sortedPlans.map(plan => (
                   <option key={plan._id} value={plan._id}>
-                    {format(new Date(plan.Date), 'MMM dd, yyyy')}
+                    {format(new Date(plan.Date), 'MMMM dd, yyyy')}
                   </option>
                 ))}
               </select>

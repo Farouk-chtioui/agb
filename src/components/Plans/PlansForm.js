@@ -35,9 +35,8 @@ const PlanForm = ({
       secteurApresMidi: newPlan.secteurApresMidi?.filter(Boolean).map(item => item._id || item) || [],
       totalMatin: parseInt(newPlan.totalMatin, 10),
       totalMidi: parseInt(newPlan.totalMidi, 10),
+      notes: newPlan.notes // Ensure notes field is included
     };
-
-    console.log("Updated Plan: ", updatedPlan);
 
     if (isEditMode) {
       await handleEditPlan(newPlan._id.toString(), updatedPlan);
@@ -157,6 +156,7 @@ const PlanForm = ({
     },
     { name: 'totalMatin', label: 'Total Matin', type: 'number', placeholder: 'Total Matin', colSpan: 1, value: newPlan.totalMatin || 0 },
     { name: 'totalMidi', label: 'Total Après Midi', type: 'number', placeholder: 'Total Après Midi', colSpan: 1, value: newPlan.totalMidi || 0 },
+    { name: 'notes', label: 'Notes', type: 'textarea', placeholder: 'Add your notes here...', colSpan: 2, value: newPlan.notes || '' }, // Added notes field
   ];
 
   const renderField = (field, index) => {
@@ -190,6 +190,14 @@ const PlanForm = ({
               </button>
             )}
           </div>
+        ) : field.type === 'textarea' ? (
+          <textarea
+            className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+            name={field.name}
+            value={newPlan[field.name] || ''}
+            onChange={handleChange}
+            placeholder={field.placeholder}
+          ></textarea>
         ) : (
           <div className="flex items-center">
             <input
