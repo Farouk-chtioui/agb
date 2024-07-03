@@ -18,10 +18,12 @@ const CalendarCell = ({ day, plansForDay, onClickDay, setSelectedDate, selectedD
   return (
     <div
       ref={drop}
-      className={`col cell ${!day.isSameMonth ? 'disabled' : isSameDay(day.date, selectedDate) ? 'selected' : ''}`}
+      className={`col cell ${!day.isSameMonth ? 'disabled' : ''} ${isSameDay(day.date, selectedDate) ? 'selected' : ''}`}
       onClick={() => {
-        setSelectedDate(day.date);
-        onClickDay(day.date);
+        if (day.isSameMonth) {
+          setSelectedDate(day.date);
+          onClickDay(day.date);
+        }
       }}
     >
       <span className="number">{format(day.date, 'd')}</span>

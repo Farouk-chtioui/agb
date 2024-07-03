@@ -231,3 +231,8 @@
     align-items: flex-start;
   }
 }
+.disabled {
+  color: #ccc; 
+  pointer-events: none; 
+  background-color: #ebebeb; 
+}

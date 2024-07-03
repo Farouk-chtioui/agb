@@ -9,17 +9,16 @@ import {
   subMonths,
   addDays,
   isSameMonth,
-  isSameDay,
 } from 'date-fns';
 import './CalendarComponent.css';
 import CalendarCell from './CalendarCell';
-import { modifyPlan } from '../../api/plansService'; // Import the modifyPlan function
+import { modifyPlan } from '../../api/plansService'; 
 
 const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetchData }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
-  const [showListView, setShowListView] = useState(false); // State to toggle view
-  const [showAllEvents, setShowAllEvents] = useState(false); // State to show all events or today's events
+  const [showListView, setShowListView] = useState(false); 
+  const [showAllEvents, setShowAllEvents] = useState(false); 
 
   const goToToday = () => {
     setCurrentMonth(new Date());
@@ -39,14 +38,14 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetc
       const updatedPlan = {
         Date: newDate,
         market: plan.market._id || plan.market,
-        secteurMatinal: plan.secteurMatinal.map(secteur => secteur._id),
-        secteurApresMidi: plan.secteurApresMidi.map(secteur => secteur._id),
+        secteurMatinal: plan.secteurMatinal.map((secteur) => secteur._id),
+        secteurApresMidi: plan.secteurApresMidi.map((secteur) => secteur._id),
         totalMatin: plan.totalMatin,
         totalMidi: plan.totalMidi,
-        notes: plan.notes
+        notes: plan.notes,
       };
       await modifyPlan(plan._id, updatedPlan);
-      await fetchData(); // Refresh the plans data after update
+      await fetchData();
     } catch (error) {
       console.error('Error updating plan date:', error);
     }
@@ -122,24 +121,23 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetc
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         formattedDate = format(day, dateFormat);
-        const cloneDay = {
-          date: day,
-          isSameMonth: isSameMonth(day, monthStart),
-        };
-        const plansForDay = plans.filter(plan => {
+        const cloneDay = new Date(day);
+        const isCurrentMonth = isSameMonth(day, monthStart);
+        const plansForDay = plans.filter((plan) => {
           const planDate = new Date(plan.Date);
-          return planDate.toDateString() === cloneDay.date.toDateString();
+          return planDate.toDateString() === cloneDay.toDateString();
         });
 
         days.push(
           <CalendarCell
             key={day}
-            day={cloneDay}
+            day={{ date: cloneDay, isSameMonth: isCurrentMonth }}
             plansForDay={plansForDay}
             onClickDay={onClickDay}
             setSelectedDate={setSelectedDate}
             selectedDate={selectedDate}
-            onDrop={handleDrop}  // Pass the onDrop handler
+            onDrop={handleDrop}
+            className={isCurrentMonth ? '' : 'disabled'} // Adding a class to differentiate non-current month days
           />
         );
         day = addDays(day, 1);
@@ -156,7 +154,7 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetc
 
   const renderEventsList = () => {
     const today = new Date().toDateString();
-    const eventsToShow = showAllEvents ? plans : plans.filter(plan => new Date(plan.Date).toDateString() === today);
+    const eventsToShow = showAllEvents ? plans : plans.filter((plan) => new Date(plan.Date).toDateString() === today);
 
     return (
       <div className="events-list">
@@ -192,7 +190,7 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetc
                     className="w-full p-2 border rounded"
                     placeholder="Add your notes here..."
                     value={selectedPlan.notes}
-                    onChange={e => handleChange({ target: { name: 'notes', value: e.target.value } })}
+                    onChange={(e) => handleChange({ target: { name: 'notes', value: e.target.value } })}
                   ></textarea>
                 )}
               </li>
@@ -207,7 +205,7 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetc
     <div className="calendar">
       {renderHeader()}
       {showListView ? (
-        renderEventsList() // Render the events list directly
+        renderEventsList()
       ) : (
         <>
           {renderDays()}

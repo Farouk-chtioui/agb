@@ -85,13 +85,12 @@ const Plans = () => {
       setSelectedPlan(prevPlan => {
         const updatedArray = [...(prevPlan[fieldName] || [])];
         updatedArray[Number(index)] = value;
-        return { ...prevPlan, [fieldName]: updatedArray };
-      });
+        return { ...prevPlan, [fieldName]: updatedArray }}
+      );
     } else {
       setSelectedPlan(prevPlan => ({ ...prevPlan, [name]: value }));
     }
   };
-
   const handleAddPlan = async (plan) => {
     await addPlan(plan);
     fetchData();
@@ -155,7 +154,7 @@ const Plans = () => {
         <Dashboard title="Gérer les plans" />
         <div className="flex-1 container mx-auto p-6 relative flex flex-col pt-24">
           <div className="flex flex-1 overflow-hidden">
-            <div className="w-4/5 h-full overflow-auto"> {/* Adjust width to make the calendar bigger */}
+            <div className="w-4/5 h-full overflow-auto">
               {showForm && (
                 <PlanForm
                   newPlan={selectedPlan}
