@@ -1,5 +1,6 @@
-// Plans.js
 import React, { useState, useEffect } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { format } from 'date-fns';
 import { fetchPlans, deletePlan, addPlan, modifyPlan } from '../../api/plansService';
 import { fetchMagasins } from '../../api/marketService';
@@ -29,8 +30,7 @@ const Plans = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredPlans, setFilteredPlans] = useState([]);
-  const [selectedPlanForNotes, setSelectedPlanForNotes] = useState('');
-  const [note, setNote] = useState('');
+  const [showAllNotes, setShowAllNotes] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -142,117 +142,77 @@ const Plans = () => {
     setIsEditMode(false);
   };
 
-  const handleNoteChange = (e) => {
-    setNote(e.target.value);
+  const toggleShowAllNotes = () => {
+    setShowAllNotes(!showAllNotes);
   };
 
-  const handlePlanSelectForNotes = (e) => {
-    setSelectedPlanForNotes(e.target.value);
-  };
-  const handleNoteSubmit = async () => {
-    const selectedPlan = plans.find(plan => plan._id === selectedPlanForNotes);
-    if (selectedPlan) {
-      try {
-        await modifyPlan(selectedPlan._id, { notes: note });
-        fetchData();
-        setNote('');
-        setSelectedPlanForNotes('');
-      } catch (error) {
-        console.error('Error submitting note:', error);
-      }
-    }
-  };
-  
-  
-  
-
-  // Sort plans by date in descending order
-  const sortedPlans = [...plans].sort((a, b) => new Date(b.Date) - new Date(a.Date));
+  const today = new Date().toDateString();
+  const todayNotes = plans.filter(plan => new Date(plan.Date).toDateString() === today && plan.notes);
 
   return (
-    <div className="flex h-screen">
-      <Dashboard title="Gérer les plans" />
-      <div className="flex-1 container mx-auto p-6 relative flex flex-col pt-24">
-        <div className="flex justify-between items-center mb-4">
-          <Search setData={handleSearch} title={"Tous les plans"} />
-          <button
-            className="custom-color2 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition"
-            onClick={() => {
-              setShowForm(true);
-              setIsEditMode(false);
-              setSelectedPlan({
-                Date: '',
-                market: '',
-                secteurMatinal: [],
-                secteurApresMidi: [],
-                totalMatin: '',
-                totalMidi: '',
-                notes: '' // Add notes field
-              });
-            }}
-          >
-            Ajouter un plan
-          </button>
-        </div>
+    <DndProvider backend={HTML5Backend}>
+      <div className="flex h-screen">
+        <Dashboard title="Gérer les plans" />
+        <div className="flex-1 container mx-auto p-6 relative flex flex-col pt-24">
+          <div className="flex flex-1 overflow-hidden">
+            <div className="w-4/5 h-full overflow-auto"> {/* Adjust width to make the calendar bigger */}
+              {showForm && (
+                <PlanForm
+                  newPlan={selectedPlan}
+                  handleChange={handleChange}
+                  handleAddPlan={handleAddPlan}
+                  handleEditPlan={handleEditPlan}
+                  handleDeletePlan={handleDeletePlan}
+                  setShowForm={handleEditFormClose}
+                  isEditMode={isEditMode}
+                  markets={markets}
+                  secteurs={secteurs}
+                />
+              )}
 
-        <div className="flex flex-1 overflow-hidden">
-          <div className="w-3/4 h-full overflow-auto">
-            {showForm && (
-              <PlanForm
-                newPlan={selectedPlan}
+              <CalendarComponent
+                plans={plans}
+                onEdit={handlePlanSelect}
+                onDrop={handleDrop}
+                onClickDay={handleDayClick}
                 handleChange={handleChange}
-                handleAddPlan={handleAddPlan}
-                handleEditPlan={handleEditPlan}
-                handleDeletePlan={handleDeletePlan}
-                setShowForm={handleEditFormClose}
-                isEditMode={isEditMode}
-                markets={markets}
-                secteurs={secteurs}
+                selectedPlan={selectedPlan}
+                fetchData={fetchData}  // Pass the fetchData function to CalendarComponent
               />
-            )}
-
-            <CalendarComponent
-              plans={plans}
-              onEdit={handlePlanSelect}
-              onDrop={handleDrop}
-              onClickDay={handleDayClick}
-              handleChange={handleChange}
-              selectedPlan={selectedPlan}
-            />
-          </div>
-          <div className="w-1/4 p-4 bg-gray-100 border-l border-gray-300">
-            <h2 className="text-lg font-semibold mb-2">Add Notes to a Plan</h2>
-            <div className="mb-4">
-              <select
-                className="w-full p-2 border rounded"
-                value={selectedPlanForNotes}
-                onChange={handlePlanSelectForNotes}
-              >
-                <option value="" disabled>Select a Plan</option>
-                {sortedPlans.map(plan => (
-                  <option key={plan._id} value={plan._id}>
-                    {format(new Date(plan.Date), 'MMMM dd, yyyy')}
-                  </option>
-                ))}
-              </select>
             </div>
-            <textarea
-              className="w-full h-32 p-2 border rounded mb-4"
-              placeholder="Add your notes here..."
-              value={note}
-              onChange={handleNoteChange}
-            ></textarea>
-            <button
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-              onClick={handleNoteSubmit}
-              disabled={!selectedPlanForNotes || !note}
-            >
-              Submit Note
-            </button>
+            <div className="w-1/5 p-4 bg-gray-100 border-l border-gray-300 overflow-auto">
+              <h2 className="text-lg font-semibold mb-2">Today's Notes</h2>
+              {todayNotes.length > 0 ? (
+                todayNotes.map(note => (
+                  <div key={note._id} className="sticky-note mb-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-md shadow-sm">
+                    <strong>{format(new Date(note.Date), 'MMM dd, yyyy')}</strong>
+                    <p>{note.notes}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No notes for today</p>
+              )}
+              <button
+                className="w-full bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-600 transition"
+                onClick={toggleShowAllNotes}
+              >
+                {showAllNotes ? 'Hide All Notes' : 'Show All Notes'}
+              </button>
+              {showAllNotes && (
+                <div className="mt-4">
+                  {plans.filter(plan => plan.notes).map(note => (
+                    <div key={note._id} className="note mb-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-md shadow-sm">
+                      <strong>{format(new Date(note.Date), 'MMM dd, yyyy')}</strong>
+                      <p>{note.notes}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </DndProvider>
   );
 };
 

@@ -1,4 +1,3 @@
-// CalendarComponent.js
 import React, { useState } from 'react';
 import {
   format,
@@ -13,11 +12,14 @@ import {
   isSameDay,
 } from 'date-fns';
 import './CalendarComponent.css';
+import CalendarCell from './CalendarCell';
+import { modifyPlan } from '../../api/plansService'; // Import the modifyPlan function
 
-const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan }) => {
+const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetchData }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [showListView, setShowListView] = useState(false); // State to toggle view
+  const [showAllEvents, setShowAllEvents] = useState(false); // State to show all events or today's events
 
   const goToToday = () => {
     setCurrentMonth(new Date());
@@ -28,8 +30,30 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan }) =>
     setShowListView(!showListView);
   };
 
+  const toggleShowAllEvents = () => {
+    setShowAllEvents(!showAllEvents);
+  };
+
+  const handleDrop = async (plan, newDate) => {
+    try {
+      const updatedPlan = {
+        Date: newDate,
+        market: plan.market._id || plan.market,
+        secteurMatinal: plan.secteurMatinal.map(secteur => secteur._id),
+        secteurApresMidi: plan.secteurApresMidi.map(secteur => secteur._id),
+        totalMatin: plan.totalMatin,
+        totalMidi: plan.totalMidi,
+        notes: plan.notes
+      };
+      await modifyPlan(plan._id, updatedPlan);
+      await fetchData(); // Refresh the plans data after update
+    } catch (error) {
+      console.error('Error updating plan date:', error);
+    }
+  };
+
   const renderHeader = () => {
-    const dateFormat = "MMMM yyyy";
+    const dateFormat = 'MMMM yyyy';
 
     return (
       <div className="header row flex-middle">
@@ -56,13 +80,20 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan }) =>
             {showListView ? 'View Calendar' : 'View Events List'}
           </button>
         </div>
+        {showListView && (
+          <div className="col col-toggle">
+            <button className="btn-toggle" onClick={toggleShowAllEvents}>
+              {showAllEvents ? "Show Today's Events" : 'Show All Events'}
+            </button>
+          </div>
+        )}
       </div>
     );
   };
 
   const renderDays = () => {
     const days = [];
-    const dateFormat = "eee";
+    const dateFormat = 'eee';
     const startDate = startOfWeek(currentMonth);
 
     for (let i = 0; i < 7; i++) {
@@ -82,51 +113,34 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan }) =>
     const startDate = startOfWeek(monthStart);
     const endDate = endOfWeek(monthEnd);
 
-    const dateFormat = "d";
+    const dateFormat = 'd';
     const rows = [];
     let days = [];
     let day = startDate;
-    let formattedDate = "";
+    let formattedDate = '';
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         formattedDate = format(day, dateFormat);
-        const cloneDay = day;
+        const cloneDay = {
+          date: day,
+          isSameMonth: isSameMonth(day, monthStart),
+        };
         const plansForDay = plans.filter(plan => {
           const planDate = new Date(plan.Date);
-          return planDate.toDateString() === cloneDay.toDateString();
+          return planDate.toDateString() === cloneDay.date.toDateString();
         });
 
         days.push(
-          <div
-            className={`col cell ${!isSameMonth(day, monthStart) ? "disabled" : isSameDay(day, selectedDate) ? "selected" : ""}`}
+          <CalendarCell
             key={day}
-            onClick={() => {
-              setSelectedDate(cloneDay);
-              onClickDay(cloneDay);
-            }}
-          >
-            <span className="number">{formattedDate}</span>
-            {plansForDay.map((plan, index) => (
-              <div key={index} className="event">
-                {Array.isArray(plan.secteurMatinal) && plan.secteurMatinal.map((secteur, idx) => (
-                  <div key={`matinal-${idx}`} className="secteur-matinal">
-                    {secteur.name} - 8:00 AM
-                  </div>
-                ))}
-                {Array.isArray(plan.secteurApresMidi) && plan.secteurApresMidi.map((secteur, idx) => (
-                  <div key={`apresMidi-${idx}`} className="secteur-apres-midi">
-                    {secteur.name} - 12:00 PM
-                  </div>
-                ))}
-                {plan.notes && (
-                  <div className="notes">
-                    Notes: {plan.notes}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+            day={cloneDay}
+            plansForDay={plansForDay}
+            onClickDay={onClickDay}
+            setSelectedDate={setSelectedDate}
+            selectedDate={selectedDate}
+            onDrop={handleDrop}  // Pass the onDrop handler
+          />
         );
         day = addDays(day, 1);
       }
@@ -141,41 +155,50 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan }) =>
   };
 
   const renderEventsList = () => {
+    const today = new Date().toDateString();
+    const eventsToShow = showAllEvents ? plans : plans.filter(plan => new Date(plan.Date).toDateString() === today);
+
     return (
       <div className="events-list">
-        <h2 className="events-list-title">All Events</h2>
-        <ul className="events-list-items">
-          {plans.map((plan, index) => (
-            <li key={index} className="events-list-item">
-              <strong className="events-list-date">{new Date(plan.Date).toDateString()}</strong>
-              <ul className="events-list-details">
-                {Array.isArray(plan.secteurMatinal) && plan.secteurMatinal.map((secteur, idx) => (
-                  <li key={`matinal-${idx}`} className="events-list-detail">
-                    Matinal: {secteur.name} - 8:00 AM
-                  </li>
-                ))}
-                {Array.isArray(plan.secteurApresMidi) && plan.secteurApresMidi.map((secteur, idx) => (
-                  <li key={`apresMidi-${idx}`} className="events-list-detail">
-                    Apres Midi: {secteur.name} - 12:00 PM
-                  </li>
-                ))}
-                {plan.notes && (
-                  <li className="events-list-detail">
-                    Notes: {plan.notes}
-                  </li>
+        <h2 className="events-list-title">{showAllEvents ? 'All Events' : "Today's Events"}</h2>
+        {eventsToShow.length === 0 ? (
+          <p>No events to display</p>
+        ) : (
+          <ul className="events-list-items">
+            {eventsToShow.map((plan, index) => (
+              <li key={index} className="events-list-item">
+                <strong className="events-list-date">{new Date(plan.Date).toDateString()}</strong>
+                <ul className="events-list-details">
+                  {Array.isArray(plan.secteurMatinal) &&
+                    plan.secteurMatinal.map((secteur, idx) => (
+                      <li key={`matinal-${idx}`} className="events-list-detail">
+                        Matinal: {secteur.name} - 8:00 AM
+                      </li>
+                    ))}
+                  {Array.isArray(plan.secteurApresMidi) &&
+                    plan.secteurApresMidi.map((secteur, idx) => (
+                      <li key={`apresMidi-${idx}`} className="events-list-detail">
+                        Apres Midi: {secteur.name} - 12:00 PM
+                      </li>
+                    ))}
+                  {plan.notes && (
+                    <li className="events-list-detail bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-2 mt-2 rounded-md">
+                      Notes: {plan.notes}
+                    </li>
+                  )}
+                </ul>
+                {selectedPlan._id === plan._id && (
+                  <textarea
+                    className="w-full p-2 border rounded"
+                    placeholder="Add your notes here..."
+                    value={selectedPlan.notes}
+                    onChange={e => handleChange({ target: { name: 'notes', value: e.target.value } })}
+                  ></textarea>
                 )}
-              </ul>
-              {selectedPlan._id === plan._id && (
-                <textarea
-                  className="w-full p-2 border rounded"
-                  placeholder="Add your notes here..."
-                  value={selectedPlan.notes}
-                  onChange={(e) => handleChange({ target: { name: 'notes', value: e.target.value } })}
-                ></textarea>
-              )}
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     );
   };
