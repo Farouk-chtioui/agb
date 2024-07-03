@@ -1,4 +1,6 @@
+// Plans.js
 import React, { useState, useEffect } from 'react';
+import { format } from 'date-fns';
 import { fetchPlans, deletePlan, addPlan, modifyPlan } from '../../api/plansService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchSectures } from '../../api/sectureService';
@@ -20,12 +22,15 @@ const Plans = () => {
     secteurMatinal: [],
     secteurApresMidi: [],
     totalMatin: '',
-    totalMidi: ''
+    totalMidi: '',
+    notes: '' // Add notes field
   });
   const [isEditMode, setIsEditMode] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredPlans, setFilteredPlans] = useState([]);
+  const [selectedPlanForNotes, setSelectedPlanForNotes] = useState('');
+  const [note, setNote] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -58,7 +63,8 @@ const Plans = () => {
         secteurMatinal: [],
         secteurApresMidi: [],
         totalMatin: '',
-        totalMidi: ''
+        totalMidi: '',
+        notes: '' // Add notes field
       });
       setShowForm(true);
       setIsEditMode(false);
@@ -101,7 +107,7 @@ const Plans = () => {
       console.error('Error editing plan:', error);
     }
   };
-  
+
   const handleDeletePlan = async (planId) => {
     await deletePlan(planId);
     fetchData();
@@ -130,16 +136,65 @@ const Plans = () => {
       secteurMatinal: [],
       secteurApresMidi: [],
       totalMatin: '',
-      totalMidi: ''
+      totalMidi: '',
+      notes: '' // Add notes field
     });
     setIsEditMode(false);
   };
+
+  const handleNoteChange = (e) => {
+    setNote(e.target.value);
+  };
+
+  const handlePlanSelectForNotes = (e) => {
+    setSelectedPlanForNotes(e.target.value);
+  };
+  const handleNoteSubmit = async () => {
+    const selectedPlan = plans.find(plan => plan._id === selectedPlanForNotes);
+    if (selectedPlan) {
+      try {
+        await modifyPlan(selectedPlan._id, { notes: note });
+        fetchData();
+        setNote('');
+        setSelectedPlanForNotes('');
+      } catch (error) {
+        console.error('Error submitting note:', error);
+      }
+    }
+  };
+  
+  
+  
+
+  // Sort plans by date in descending order
+  const sortedPlans = [...plans].sort((a, b) => new Date(b.Date) - new Date(a.Date));
 
   return (
     <div className="flex h-screen">
       <Dashboard title="Gérer les plans" />
       <div className="flex-1 container mx-auto p-6 relative flex flex-col pt-24">
-         
+        <div className="flex justify-between items-center mb-4">
+          <Search setData={handleSearch} title={"Tous les plans"} />
+          <button
+            className="custom-color2 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition"
+            onClick={() => {
+              setShowForm(true);
+              setIsEditMode(false);
+              setSelectedPlan({
+                Date: '',
+                market: '',
+                secteurMatinal: [],
+                secteurApresMidi: [],
+                totalMatin: '',
+                totalMidi: '',
+                notes: '' // Add notes field
+              });
+            }}
+          >
+            Ajouter un plan
+          </button>
+        </div>
+
         <div className="flex flex-1 overflow-hidden">
           <div className="w-3/4 h-full overflow-auto">
             {showForm && (
@@ -161,11 +216,39 @@ const Plans = () => {
               onEdit={handlePlanSelect}
               onDrop={handleDrop}
               onClickDay={handleDayClick}
+              handleChange={handleChange}
+              selectedPlan={selectedPlan}
             />
           </div>
-          <div className="w-1/4 p-4 bg-gray-100 border-l border-gray-300 overflow-auto">
-            <h2 className="text-lg font-semibold mb-2">Notes</h2>
-            <textarea className="w-full h-full p-2 border rounded" placeholder="Add your notes here..."></textarea>
+          <div className="w-1/4 p-4 bg-gray-100 border-l border-gray-300">
+            <h2 className="text-lg font-semibold mb-2">Add Notes to a Plan</h2>
+            <div className="mb-4">
+              <select
+                className="w-full p-2 border rounded"
+                value={selectedPlanForNotes}
+                onChange={handlePlanSelectForNotes}
+              >
+                <option value="" disabled>Select a Plan</option>
+                {sortedPlans.map(plan => (
+                  <option key={plan._id} value={plan._id}>
+                    {format(new Date(plan.Date), 'MMM dd, yyyy')}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <textarea
+              className="w-full h-32 p-2 border rounded mb-4"
+              placeholder="Add your notes here..."
+              value={note}
+              onChange={handleNoteChange}
+            ></textarea>
+            <button
+              className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+              onClick={handleNoteSubmit}
+              disabled={!selectedPlanForNotes || !note}
+            >
+              Submit Note
+            </button>
           </div>
         </div>
       </div>

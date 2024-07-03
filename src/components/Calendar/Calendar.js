@@ -1,4 +1,4 @@
-// Calendar.js
+// CalendarComponent.js
 import React, { useState } from 'react';
 import {
   format,
@@ -14,13 +14,18 @@ import {
 } from 'date-fns';
 import './CalendarComponent.css';
 
-const CalendarComponent = ({ plans, onClickDay }) => {
+const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
+  const [showListView, setShowListView] = useState(false); // State to toggle view
 
   const goToToday = () => {
     setCurrentMonth(new Date());
     setSelectedDate(new Date());
+  };
+
+  const toggleView = () => {
+    setShowListView(!showListView);
   };
 
   const renderHeader = () => {
@@ -46,6 +51,11 @@ const CalendarComponent = ({ plans, onClickDay }) => {
             Aujourd'hui
           </button>
         </div>
+        <div className="col col-toggle">
+          <button className="btn-toggle" onClick={toggleView}>
+            {showListView ? 'View Calendar' : 'View Events List'}
+          </button>
+        </div>
       </div>
     );
   };
@@ -57,7 +67,7 @@ const CalendarComponent = ({ plans, onClickDay }) => {
 
     for (let i = 0; i < 7; i++) {
       days.push(
-        <div className="col col-center" key={i}>
+        <div className="col col-center day-name" key={i}>
           {format(addDays(startDate, i), dateFormat)}
         </div>
       );
@@ -109,6 +119,11 @@ const CalendarComponent = ({ plans, onClickDay }) => {
                     {secteur.name} - 12:00 PM
                   </div>
                 ))}
+                {plan.notes && (
+                  <div className="notes">
+                    Notes: {plan.notes}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -125,11 +140,57 @@ const CalendarComponent = ({ plans, onClickDay }) => {
     return <div className="body">{rows}</div>;
   };
 
+  const renderEventsList = () => {
+    return (
+      <div className="events-list">
+        <h2 className="events-list-title">All Events</h2>
+        <ul className="events-list-items">
+          {plans.map((plan, index) => (
+            <li key={index} className="events-list-item">
+              <strong className="events-list-date">{new Date(plan.Date).toDateString()}</strong>
+              <ul className="events-list-details">
+                {Array.isArray(plan.secteurMatinal) && plan.secteurMatinal.map((secteur, idx) => (
+                  <li key={`matinal-${idx}`} className="events-list-detail">
+                    Matinal: {secteur.name} - 8:00 AM
+                  </li>
+                ))}
+                {Array.isArray(plan.secteurApresMidi) && plan.secteurApresMidi.map((secteur, idx) => (
+                  <li key={`apresMidi-${idx}`} className="events-list-detail">
+                    Apres Midi: {secteur.name} - 12:00 PM
+                  </li>
+                ))}
+                {plan.notes && (
+                  <li className="events-list-detail">
+                    Notes: {plan.notes}
+                  </li>
+                )}
+              </ul>
+              {selectedPlan._id === plan._id && (
+                <textarea
+                  className="w-full p-2 border rounded"
+                  placeholder="Add your notes here..."
+                  value={selectedPlan.notes}
+                  onChange={(e) => handleChange({ target: { name: 'notes', value: e.target.value } })}
+                ></textarea>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   return (
     <div className="calendar">
       {renderHeader()}
-      {renderDays()}
-      {renderCells()}
+      {showListView ? (
+        renderEventsList() // Render the events list directly
+      ) : (
+        <>
+          {renderDays()}
+          {renderCells()}
+        </>
+      )}
     </div>
   );
 };

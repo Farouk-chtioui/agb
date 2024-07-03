@@ -130,7 +130,7 @@ const PlanForm = ({
     },
     {
       name: 'market',
-      label: 'Magasin',
+      label: 'Magasin bloqué',
       type: 'dropdown',
       placeholder: 'Search Magasin',
       colSpan: 1,
