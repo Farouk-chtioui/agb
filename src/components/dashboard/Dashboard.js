@@ -46,10 +46,11 @@ function Dashboard({ title }) {
   const filteredItems = sidebarItems.filter(item => item.roles.includes(role));
 
   return (
-    <div className="flex">
+    <div className="dashboard-container">
       <Sidebar items={filteredItems} />
-      <div className="flex-grow p-6">
-        <h1 className="text-3xl font-bold absolute z-50">{title}</h1>
+      <div className="content">
+        <h1 className="text-3xl font-bold">{title}</h1>
+        {/* Add your main content here */}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+// Plans.js
 import React, { useState, useEffect } from 'react';
 import { fetchPlans, deletePlan, addPlan, modifyPlan } from '../../api/plansService';
 import { fetchMagasins } from '../../api/marketService';
@@ -138,56 +139,31 @@ const Plans = () => {
   return (
     <div className="flex h-screen">
       <Dashboard title="Gérer les plans" />
-      <div className="flex-1 container mx-auto p-6 relative mt-12 flex flex-col">
-        <div className="flex justify-between items-center mb-4">
-          <Search setData={handleSearch} title={"Tous les plans"} />
-          <button
-            className="custom-color2 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition"
-            onClick={() => {
-              setShowForm(true);
-              setIsEditMode(false);
-              setSelectedPlan({
-                Date: '',
-                market: '',
-                secteurMatinal: [],
-                secteurApresMidi: [],
-                totalMatin: '',
-                totalMidi: ''
-              });
-            }}
-          >
-            Ajouter un plan
-          </button>
-        </div>
-
-        <div className="flex flex-1">
-          <div className="w-3/4">
-            {showForm && (
-              <PlanForm
-                newPlan={selectedPlan}
-                handleChange={handleChange}
-                handleAddPlan={handleAddPlan}
-                handleEditPlan={handleEditPlan}
-                handleDeletePlan={handleDeletePlan}
-                setShowForm={handleEditFormClose}
-                isEditMode={isEditMode}
-                markets={markets}
-                secteurs={secteurs}
-              />
-            )}
-
-            <CalendarComponent
-              plans={plans}
-              onEdit={handlePlanSelect}
-              onDrop={handleDrop}
-              onClickDay={handleDayClick}
+      <div className="flex flex-1">
+        <div className="w-full">
+          {showForm && (
+            <PlanForm
+              newPlan={selectedPlan}
+              handleChange={handleChange}
+              handleAddPlan={handleAddPlan}
+              handleEditPlan={handleEditPlan}
+              handleDeletePlan={handleDeletePlan}
+              setShowForm={handleEditFormClose}
+              isEditMode={isEditMode}
+              markets={markets}
+              secteurs={secteurs}
             />
-
-          </div>
-          <div className="w-1/4 p-4 bg-gray-100 border-l border-gray-300">
-            <h2 className="text-lg font-semibold mb-2">Notes</h2>
-            <textarea className="w-full h-full p-2 border rounded" placeholder="Add your notes here..."></textarea>
-          </div>
+          )}
+          <CalendarComponent
+            plans={plans}
+            onEdit={handlePlanSelect}
+            onDrop={handleDrop}
+            onClickDay={handleDayClick}
+          />
+        </div>
+        <div className="notes-section">
+          <h2 className="text-lg font-semibold mb-2">Notes</h2>
+          <textarea className="w-full h-full p-2 border rounded" placeholder="Add your notes here..."></textarea>
         </div>
       </div>
     </div>
