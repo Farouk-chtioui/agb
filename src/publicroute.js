@@ -22,7 +22,11 @@ const PublicRoute = ({ element }) => {
 
   const redirectPath = getRedirectPath(role);
 
-  return token && location.pathname === '/' ? <Navigate to={redirectPath} replace /> : element;
+  if (token && location.pathname === '/') {
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  return element;
 };
 
 export default PublicRoute;

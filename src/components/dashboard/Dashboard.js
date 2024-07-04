@@ -34,7 +34,7 @@ function Dashboard({ title }) {
     { title: 'Utilisateurs', icon: FaUsers, path: '/utilisateurs', roles: ['admin'] },
     {
       title: 'Plans', icon: FaRegChartBar, roles: ['admin'], subItems: [
-        { title: 'Gérer le plans', path: '/plans/sub5' },
+        { title: 'Gérer le plans', path: '/plans' },
         { title: 'Secture', path: '/plans/secture' }
       ]
     },

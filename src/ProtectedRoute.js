@@ -1,4 +1,3 @@
-// src/ProtectedRoute.js
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
@@ -7,11 +6,7 @@ const ProtectedRoute = ({ element, requiredRoles = [] }) => {
   const role = localStorage.getItem('role');
 
   if (!token) {
-    return <Navigate to="/" replace />;
-  }
-
-  if (role === 'admin') {
-    return element;
+    return <Navigate to="/login" replace />;
   }
 
   if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
@@ -22,3 +17,4 @@ const ProtectedRoute = ({ element, requiredRoles = [] }) => {
 };
 
 export default ProtectedRoute;
+  

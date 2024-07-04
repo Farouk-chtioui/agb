@@ -1,4 +1,3 @@
-// src/routes/Routing.js
 import { Routes, Route } from 'react-router-dom';
 import Login from '../login/Login';
 import Dashboard from '../dashboard/Dashboard';
@@ -19,8 +18,8 @@ function Routing() {
   return (
     <Routes>
       <Route path="/" element={<PublicRoute element={<Login />} />} />
-      <Route path="admin/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['admin']} />} />
-      <Route path="market/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['market']} />} />
+      <Route path="/admin/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['admin']} />} />
+      <Route path="/market/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['market']} />} />
       <Route path="/livraison/listes" element={<ProtectedRoute element={<Livraison />} requiredRoles={['admin']} />} />
       <Route path="/clients" element={<ProtectedRoute element={<Clients />} requiredRoles={['admin']} />} />
       <Route path="/magasins" element={<ProtectedRoute element={<Magasins />} requiredRoles={['admin']} />} />
@@ -30,7 +29,7 @@ function Routing() {
       <Route path="/plans/secture" element={<ProtectedRoute element={<Secture />} requiredRoles={['admin']} />} />
       <Route path="/settings" element={<ProtectedRoute element={<Settings />} requiredRoles={['admin']} />} />
       <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
-      <Route path="/test" element={<Plans/>}/>
+      <Route path="/plans" element={<Plans />} />
     </Routes>
   );
 }
