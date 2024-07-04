@@ -123,10 +123,18 @@ const Plans = () => {
     const updatedPlan = plans.find(plan => plan._id === planId);
     if (updatedPlan) {
       updatedPlan.Date = newDate.toISOString().split('T')[0];
+  
+      if (updatedPlan.market) {
+        updatedPlan.market = updatedPlan.market._id || updatedPlan.market;
+      } else {
+        updatedPlan.market = null;
+      }
+  
       await modifyPlan(updatedPlan._id, updatedPlan);
       fetchData();
     }
   };
+  
 
   const handleEditFormClose = () => {
     setShowForm(false);

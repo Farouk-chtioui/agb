@@ -41,7 +41,7 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetc
     try {
       const updatedPlan = {
         Date: newDate,
-        market: plan.market._id || plan.market,
+        market: plan.market ? (plan.market._id || plan.market) : null,
         secteurMatinal: plan.secteurMatinal.map((secteur) => secteur._id),
         secteurApresMidi: plan.secteurApresMidi.map((secteur) => secteur._id),
         totalMatin: plan.totalMatin,

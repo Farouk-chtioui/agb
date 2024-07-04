@@ -17,7 +17,9 @@ const PlanForm = ({
 
   useEffect(() => {
     if (isEditMode && newPlan.Date) {
-      const formattedDate = new Date(newPlan.Date).toISOString().substr(0, 10);
+      const localDate = new Date(newPlan.Date);
+      const timezoneOffset = localDate.getTimezoneOffset() * 60000;
+      const formattedDate = new Date(localDate.getTime() - timezoneOffset).toISOString().split('T')[0];
       if (newPlan.Date !== formattedDate) {
         handleChange({ target: { name: 'Date', value: formattedDate } });
       }
@@ -33,10 +35,14 @@ const PlanForm = ({
       return;
     }
 
+    const localDate = new Date(newPlan.Date);
+    const timezoneOffset = localDate.getTimezoneOffset() * 60000;
+    const adjustedDate = new Date(localDate.getTime() - timezoneOffset).toISOString().split('T')[0];
+
     const updatedPlan = {
       ...newPlan,
-      Date: new Date(newPlan.Date),
-      market: newPlan.market?._id || newPlan.market,
+      Date: adjustedDate,
+      market: newPlan.market ? (newPlan.market._id || newPlan.market) : null,
       secteurMatinal: newPlan.secteurMatinal?.filter(Boolean).map(item => item._id || item) || [],
       secteurApresMidi: newPlan.secteurApresMidi?.filter(Boolean).map(item => item._id || item) || [],
       totalMatin: parseInt(newPlan.totalMatin, 10),
@@ -44,7 +50,6 @@ const PlanForm = ({
       notes: newPlan.notes // Ensure notes field is included
     };
 
-    // Remove market field if it's empty or null
     if (!updatedPlan.market) {
       delete updatedPlan.market;
     }
@@ -149,7 +154,7 @@ const PlanForm = ({
       placeholder: 'Search Magasin',
       colSpan: 1,
       options: markets.map(market => ({ value: market._id, label: market.first_name })),
-      value: newPlan.market?._id || newPlan.market || '',
+      value: newPlan.market ? (newPlan.market._id || newPlan.market) : '',
     },
     {
       name: 'secteurMatinal',
