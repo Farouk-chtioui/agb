@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Dashboard({ title }) {
   const navigate = useNavigate();
-  const role = localStorage.getItem('role'); // Retrieve the user's role from localStorage
+  const role = localStorage.getItem('role'); 
 
   const handleLogout = () => {
     localStorage.removeItem('token');

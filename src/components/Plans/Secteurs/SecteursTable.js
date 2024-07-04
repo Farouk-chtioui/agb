@@ -3,6 +3,8 @@ import Table from '../../Table/Table';
 
 const SectureTable = ({ sectures, handleDelete, handleModify }) => {
     const header = ["Nom de Secture", "Codes Postaux", "Action"];
+    const role = localStorage.getItem('role');
+
     const renderRow = (secture) => (
         <>
             <td className="py-2 px-4 border-b border-gray-200">{secture.name}</td>
@@ -18,7 +20,7 @@ const SectureTable = ({ sectures, handleDelete, handleModify }) => {
         </>
     );
     return (
-        <Table headers={header} data={sectures} renderRow={renderRow} handleDelete={handleDelete} handleModify={handleModify} />
+        <Table headers={header} data={sectures} renderRow={renderRow} handleDelete={handleDelete} handleModify={handleModify} role={role}/>
     );
 }
 
