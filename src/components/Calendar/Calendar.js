@@ -12,21 +12,25 @@ import {
 } from 'date-fns';
 import './CalendarComponent.css';
 import CalendarCell from './CalendarCell';
-import { modifyPlan } from '../../api/plansService'; 
+import { modifyPlan } from '../../api/plansService';
 
 const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetchData }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
-  const [showListView, setShowListView] = useState(false); 
-  const [showAllEvents, setShowAllEvents] = useState(false); 
+  const [showListView, setShowListView] = useState(false);
+  const [showAllEvents, setShowAllEvents] = useState(false);
 
   const goToToday = () => {
     setCurrentMonth(new Date());
     setSelectedDate(new Date());
+    if (showListView) {
+      setShowAllEvents(false);
+    }
   };
 
   const toggleView = () => {
     setShowListView(!showListView);
+    setShowAllEvents(false);
   };
 
   const toggleShowAllEvents = () => {
@@ -69,23 +73,21 @@ const CalendarComponent = ({ plans, onClickDay, handleChange, selectedPlan, fetc
             &raquo;
           </div>
         </div>
-        <div className="col col-today">
-          <button className="btn-today" onClick={goToToday}>
-            Aujourd'hui
-          </button>
-        </div>
-        <div className="col col-toggle">
+        <div className="button-container">
+          {!showListView && (
+            <button className="btn-today" onClick={goToToday}>
+              Aujourd'hui
+            </button>
+          )}
           <button className="btn-toggle" onClick={toggleView}>
             {showListView ? 'View Calendar' : 'View Events List'}
           </button>
-        </div>
-        {showListView && (
-          <div className="col col-toggle">
+          {showListView && (
             <button className="btn-toggle" onClick={toggleShowAllEvents}>
               {showAllEvents ? "Show Today's Events" : 'Show All Events'}
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   };

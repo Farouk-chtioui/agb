@@ -13,9 +13,8 @@ function Dashboard({ title }) {
     navigate('/');
   };
 
-  // Define the sidebar items with roles
   const sidebarItems = [
-    { title: 'Dashboard', icon: FaHome, path: '/dashboard', roles: ['admin', 'market', 'driver', 'user'] },
+    { title: 'Dashboard', icon: FaHome, path: `/${role}/dashboard`, roles: ['admin', 'market', 'driver', 'user'] },
     {
       title: 'Livraison', icon: FaTruck, roles: ['admin'], subItems: [
         { title: 'Listes des livraisons', path: '/livraison/listes' },
@@ -42,7 +41,6 @@ function Dashboard({ title }) {
     { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout, roles: ['admin', 'market', 'driver', 'user'] }
   ];
 
-  // Filter items based on the user's role
   const filteredItems = sidebarItems.filter(item => item.roles.includes(role));
 
   return (

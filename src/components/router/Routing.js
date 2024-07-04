@@ -24,7 +24,7 @@ function Routing() {
       <Route path="/clients" element={<ProtectedRoute element={<Clients />} requiredRoles={['admin']} />} />
       <Route path="/magasins" element={<ProtectedRoute element={<Magasins />} requiredRoles={['admin']} />} />
       <Route path="/produits" element={<ProtectedRoute element={<Produits />} requiredRoles={['admin', 'market']} />} />
-      <Route path="/chauffeurs/Gérer" element={<ProtectedRoute element={<Chauffeurs />} requiredRoles={['driver']} />} />
+      <Route path="/chauffeurs/Gérer" element={<ProtectedRoute element={<Chauffeurs />} requiredRoles={['admin']} />} />
       <Route path="/utilisateurs" element={<ProtectedRoute element={<Utilisateurs />} requiredRoles={['admin']} />} />
       <Route path="/plans/secture" element={<ProtectedRoute element={<Secture />} requiredRoles={['admin']} />} />
       <Route path="/settings" element={<ProtectedRoute element={<Settings />} requiredRoles={['admin']} />} />
