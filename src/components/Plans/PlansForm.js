@@ -27,6 +27,12 @@ const PlanForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if ((!newPlan.secteurMatinal || newPlan.secteurMatinal.length === 0) &&
+        (!newPlan.secteurApresMidi || newPlan.secteurApresMidi.length === 0)) {
+      alert('Please select at least one Secteur Matinal or Secteur Après Midi.');
+      return;
+    }
+
     const updatedPlan = {
       ...newPlan,
       Date: new Date(newPlan.Date),
@@ -37,6 +43,11 @@ const PlanForm = ({
       totalMidi: parseInt(newPlan.totalMidi, 10),
       notes: newPlan.notes // Ensure notes field is included
     };
+
+    // Remove market field if it's empty or null
+    if (!updatedPlan.market) {
+      delete updatedPlan.market;
+    }
 
     if (isEditMode) {
       await handleEditPlan(newPlan._id.toString(), updatedPlan);
@@ -51,10 +62,14 @@ const PlanForm = ({
     setShowForm(false);
   };
 
-  const handleClearField = (fieldName, index) => {
-    const newArray = [...newPlan[fieldName]];
-    newArray.splice(index, 1);
-    handleChange({ target: { name: fieldName, value: newArray } });
+  const handleClearField = (fieldName, index = null) => {
+    if (Array.isArray(newPlan[fieldName])) {
+      const newArray = [...newPlan[fieldName]];
+      newArray.splice(index, 1);
+      handleChange({ target: { name: fieldName, value: newArray } });
+    } else {
+      handleChange({ target: { name: fieldName, value: '' } });
+    }
   };
 
   const handleAddField = (fieldName, valueToAdd) => {
@@ -121,7 +136,7 @@ const PlanForm = ({
   const fields = [
     {
       name: 'Date',
-      label: 'Date de la livraison',
+      label: 'Date de la livraison *',
       type: 'date',
       placeholder: 'Date de la livraison',
       colSpan: 1,
@@ -138,7 +153,7 @@ const PlanForm = ({
     },
     {
       name: 'secteurMatinal',
-      label: 'Secteurs Matinal',
+      label: 'Secteurs Matinal *',
       type: 'arrayDropdown',
       placeholder: 'Search Secteur Matinal',
       colSpan: 1,
@@ -147,15 +162,15 @@ const PlanForm = ({
     },
     {
       name: 'secteurApresMidi',
-      label: 'Secteurs Après Midi',
+      label: 'Secteurs Après Midi *',
       type: 'arrayDropdown',
       placeholder: 'Search Secteur Après Midi',
       colSpan: 1,
       options: secteurs.map(sector => ({ value: sector._id, label: sector.name })),
       value: newPlan.secteurApresMidi || [],
     },
-    { name: 'totalMatin', label: 'Total Matin', type: 'number', placeholder: 'Total Matin', colSpan: 1, value: newPlan.totalMatin || 0 },
-    { name: 'totalMidi', label: 'Total Après Midi', type: 'number', placeholder: 'Total Après Midi', colSpan: 1, value: newPlan.totalMidi || 0 },
+    { name: 'totalMatin', label: 'Total Matin *', type: 'number', placeholder: 'Total Matin', colSpan: 1, value: newPlan.totalMatin || 0 },
+    { name: 'totalMidi', label: 'Total Après Midi *', type: 'number', placeholder: 'Total Après Midi', colSpan: 1, value: newPlan.totalMidi || 0 },
     { name: 'notes', label: 'Notes', type: 'textarea', placeholder: 'Add your notes here...', colSpan: 2, value: newPlan.notes || '' }, // Added notes field
   ];
 
@@ -173,7 +188,7 @@ const PlanForm = ({
               className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
               name={field.name}
               value={newPlan[field.name]?._id || newPlan[field.name] || ''}
-              onChange={handleChange}
+              onChange={(e) => handleChange({ target: { name: field.name, value: e.target.value } })}
             >
               <option value="" disabled>{field.placeholder}</option>
               {field.options.map(option => (
