@@ -6,7 +6,7 @@ import Magasins from '../magasins/Magasins';
 import Produits from '../Produit/Produit';
 import Chauffeurs from '../chauffeurs/Gérer les chauffeurs/Chauffeurs';
 import Utilisateurs from '../utilisateurs/Utilisateurs';
-import Secture from '../Plans/Secteurs/Secteurs';
+import Secteurs from '../Plans/Secteurs/Secteurs';
 import Settings from '../settings/Settings';
 import ProtectedRoute from '../../ProtectedRoute';
 import PublicRoute from '../../publicroute';
@@ -26,7 +26,7 @@ function Routing() {
       <Route path="/produits" element={<ProtectedRoute element={<Produits />} requiredRoles={['admin', 'market']} />} />
       <Route path="/chauffeurs/Gérer" element={<ProtectedRoute element={<Chauffeurs />} requiredRoles={['admin']} />} />
       <Route path="/utilisateurs" element={<ProtectedRoute element={<Utilisateurs />} requiredRoles={['admin']} />} />
-      <Route path="/plans/secture" element={<ProtectedRoute element={<Secture />} requiredRoles={['admin']} />} />
+      <Route path="/plans/secteurs" element={<ProtectedRoute element={<Secteurs />} requiredRoles={['admin']} />} />
       <Route path="/settings" element={<ProtectedRoute element={<Settings />} requiredRoles={['admin']} />} />
       <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
       <Route path="/plans" element={<Plans />} />

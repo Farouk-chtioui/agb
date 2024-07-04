@@ -24,7 +24,7 @@ const Plans = () => {
     secteurApresMidi: [],
     totalMatin: '',
     totalMidi: '',
-    notes: '' // Add notes field
+    notes: ''
   });
   const [isEditMode, setIsEditMode] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -51,7 +51,7 @@ const Plans = () => {
   const handleDayClick = (date) => {
     const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
     const existingPlan = plans.find(plan => new Date(plan.Date).toDateString() === localDate.toDateString());
-    
+
     if (existingPlan) {
       setSelectedPlan(existingPlan);
       setShowForm(true);
@@ -64,7 +64,7 @@ const Plans = () => {
         secteurApresMidi: [],
         totalMatin: '',
         totalMidi: '',
-        notes: '' // Add notes field
+        notes: ''
       });
       setShowForm(true);
       setIsEditMode(false);
@@ -80,17 +80,18 @@ const Plans = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     const [fieldName, index] = name.split('_');
-    
+
     if (index !== undefined) {
       setSelectedPlan(prevPlan => {
         const updatedArray = [...(prevPlan[fieldName] || [])];
         updatedArray[Number(index)] = value;
-        return { ...prevPlan, [fieldName]: updatedArray }}
-      );
+        return { ...prevPlan, [fieldName]: updatedArray };
+      });
     } else {
       setSelectedPlan(prevPlan => ({ ...prevPlan, [name]: value }));
     }
   };
+
   const handleAddPlan = async (plan) => {
     await addPlan(plan);
     fetchData();
@@ -136,7 +137,7 @@ const Plans = () => {
       secteurApresMidi: [],
       totalMatin: '',
       totalMidi: '',
-      notes: '' // Add notes field
+      notes: ''
     });
     setIsEditMode(false);
   };
@@ -176,7 +177,7 @@ const Plans = () => {
                 onClickDay={handleDayClick}
                 handleChange={handleChange}
                 selectedPlan={selectedPlan}
-                fetchData={fetchData}  // Pass the fetchData function to CalendarComponent
+                fetchData={fetchData}
               />
             </div>
             <div className="w-1/5 p-4 bg-gray-100 border-l border-gray-300 overflow-auto">

@@ -20,9 +20,13 @@ const PublicRoute = ({ element }) => {
     }
   };
 
+  if (!token) {
+    return element;
+  }
+
   const redirectPath = getRedirectPath(role);
 
-  if (token && location.pathname === '/') {
+  if (location.pathname === '/') {
     return <Navigate to={redirectPath} replace />;
   }
 

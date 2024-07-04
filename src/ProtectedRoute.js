@@ -6,7 +6,7 @@ const ProtectedRoute = ({ element, requiredRoles = [] }) => {
   const role = localStorage.getItem('role');
 
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
