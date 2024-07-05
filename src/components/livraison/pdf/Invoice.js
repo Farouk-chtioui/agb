@@ -3,26 +3,41 @@ import { useParams } from 'react-router-dom';
 import { Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import { fetchbyCommande } from '../../../api/livraisonService';
 import logo from '../../../images/logo1.png';
+
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 40,
     fontFamily: 'Helvetica',
     fontSize: 12,
-    lineHeight: 1.5,
+    lineHeight: 1.6,
     color: '#4a4a4a'
   },
   logo: {
     position: 'absolute',
-    top: 30,
-    right: 30,
+    top: 40,
+    left: 40,
     width: 100,
     height: 50
   },
+  headerInfo: {
+    position: 'absolute',
+    top: 30,
+    right: 40,
+    textAlign: 'right',
+    fontSize: 10,
+    color: '#666',
+  },
+  contactDetails: {
+    fontSize: 10,
+    color: '#666',
+    textAlign: 'right'
+  },
   header: {
-    fontSize: 18,
-    marginBottom: 20,
+    fontSize: 20,
+    marginBottom: 30,
     fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'center',
+    marginTop: 60,
   },
   subHeader: {
     fontSize: 14,
@@ -66,6 +81,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 5
   },
+
   observation: {
     marginTop: 10,
     fontStyle: 'italic'
@@ -73,7 +89,8 @@ const styles = StyleSheet.create({
   signature: {
     marginTop: 30,
     fontSize: 12,
-  }
+  },
+ 
 });
 
 const InvoiceDocument = ({ data }) => {
@@ -88,6 +105,12 @@ const InvoiceDocument = ({ data }) => {
       <Page size="A4" style={styles.page}>
         <Image src={logo} style={styles.logo} />
         <Text style={styles.header}>Confirmation de la commande N°{livraison.NumeroCommande}</Text>
+        <View style={styles.contactDetails}>
+          <Text>AGB Transport</Text>
+          <Text>test@gmail.com</Text>
+          <Text>+123456789</Text>
+          <Text>123 Test ., City, Country</Text>
+        </View>
         <View style={styles.section}>
           <Text style={styles.subHeader}>Commande pour:</Text>
           <Text style={styles.text}>{livraison.client?.first_name} {livraison.client?.last_name}</Text>
@@ -118,7 +141,8 @@ const InvoiceDocument = ({ data }) => {
         <Text style={styles.observation}>Observations : {livraison.Observations}</Text>
 
         {livraison.products && livraison.products.length > 0 && (
-          <Text style={styles.text}>Total à payer : {livraison.products.reduce((total, product) => total + (product.productId.price * product.quantity), 0)}€</Text>        )}
+          <Text style={styles.text}>Total à payer : {livraison.products.reduce((total, product) => total + (product.productId.price * product.quantity), 0)}€</Text>
+        )}
         <Text style={styles.text}>Solde Magasin : 0€</Text>  {/* to be adjusted for later use */}
 
         <Text style={styles.signature}>
@@ -130,6 +154,7 @@ const InvoiceDocument = ({ data }) => {
     </Document>
   );
 }
+
 const InvoicePDF = () => {
   const { NumeroCommande } = useParams(); 
   const [data, setData] = useState(null);

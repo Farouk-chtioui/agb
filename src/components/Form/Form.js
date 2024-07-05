@@ -9,18 +9,20 @@ const Form = ({
   setShowForm,
   isEditMode,
   title,
-  fields = [], // Initialize fields as an empty array if not provided
+  fields = [], 
   renderField,
-  handleDelete // New prop to handle deletion
+  handleDelete
 }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  
   useEffect(() => {
     if (isEditMode && formData) {
       fields.forEach(field => {
         if (field.type !== 'file' && formData[field.name] !== undefined) {
-          if (formData[field.name] !== field.value) {
+          if (formData[field.name] !== (formData[field.name] || '')) {
+            console.log(`Updating field ${field.name} with value ${formData[field.name]}`);
             handleChange({ target: { name: field.name, value: formData[field.name] || '' } });
           }
         }

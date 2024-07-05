@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
+const token = localStorage.getItem('token');
 
 export async function fetchDrivers(page) {
   try {
@@ -14,7 +15,11 @@ export async function fetchDrivers(page) {
 
 export async function deleteDriver(id) {
   try {
-    await axios.delete(`${API_URL}/driver/${id}`);
+    await axios.delete(`${API_URL}/driver/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
   } catch (error) {
     console.error('Error deleting driver', error);
     throw error;
@@ -23,7 +28,11 @@ export async function deleteDriver(id) {
 
 export async function addDriver(driver) {
   try {
-    const response = await axios.post(`${API_URL}/driver`, driver);
+    const response = await axios.post(`${API_URL}/driver`, driver, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error adding driver', error);
@@ -33,7 +42,11 @@ export async function addDriver(driver) {
 
 export async function modifyDriver(driver) {
   try {
-    const response = await axios.patch(`${API_URL}/driver/${driver._id}`, driver);
+    const response = await axios.patch(`${API_URL}/driver/${driver._id}`, driver, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error modifying driver', error);
@@ -44,7 +57,7 @@ export async function modifyDriver(driver) {
 export async function searchDrivers(searchTerm) {
   try {
     const response = await axios.get(`${API_URL}/driver/search/${searchTerm}`);
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error('Error searching drivers', error);
     throw error;
