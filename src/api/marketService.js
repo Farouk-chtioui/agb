@@ -2,26 +2,18 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const axiosInstance = axios.create({
-  baseURL: API_URL,
-});
-
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+const getToken = () => {
+  return localStorage.getItem('token');
+};
 
 export async function fetchMagasins(page) {
   try {
-    const response = await axiosInstance.get(`/market?page=${page}`);
+    const token = getToken();
+    const response = await axios.get(`${API_URL}/market?page=${page}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error fetching magasins', error);
@@ -31,7 +23,12 @@ export async function fetchMagasins(page) {
 
 export async function deleteMagasin(id) {
   try {
-    await axiosInstance.delete(`/market/${id}`);
+    const token = getToken();
+    await axios.delete(`${API_URL}/market/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
   } catch (error) {
     console.error('Error deleting magasin', error);
     throw error;
@@ -40,7 +37,12 @@ export async function deleteMagasin(id) {
 
 export async function addMagasin(magasin) {
   try {
-    const response = await axiosInstance.post(`/market`, magasin);
+    const token = getToken();
+    const response = await axios.post(`${API_URL}/market`, magasin, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error adding magasin', error);
@@ -50,7 +52,12 @@ export async function addMagasin(magasin) {
 
 export async function modifyMagasin(magasin) {
   try {
-    const response = await axiosInstance.patch(`/market/${magasin._id}`, magasin);
+    const token = getToken();
+    const response = await axios.patch(`${API_URL}/market/${magasin._id}`, magasin, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error modifying magasin', error);
@@ -60,7 +67,12 @@ export async function modifyMagasin(magasin) {
 
 export async function searchMagasins(searchTerm) {
   try {
-    const response = await axiosInstance.get(`/market/search/${searchTerm}`);
+    const token = getToken();
+    const response = await axios.get(`${API_URL}/market/search/${searchTerm}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error searching magasins', error);
