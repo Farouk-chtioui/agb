@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { fetchPlans, deletePlan, addPlan, modifyPlan } from '../../api/plansService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchSectures } from '../../api/sectureService';
@@ -49,8 +49,8 @@ const Plans = () => {
   };
 
   const handleDayClick = (date) => {
-    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-    const existingPlan = plans.find(plan => new Date(plan.Date).toDateString() === localDate.toDateString());
+    const formattedDate = format(new Date(date), 'yyyy-MM-dd'); // Convert to 'yyyy-MM-dd'
+    const existingPlan = plans.find(plan => format(new Date(plan.Date), 'yyyy-MM-dd') === formattedDate);
 
     if (existingPlan) {
       setSelectedPlan(existingPlan);
@@ -58,7 +58,7 @@ const Plans = () => {
       setIsEditMode(true);
     } else {
       setSelectedPlan({
-        Date: localDate.toISOString().split('T')[0],
+        Date: formattedDate,
         market: '',
         secteurMatinal: [],
         secteurApresMidi: [],
@@ -93,14 +93,22 @@ const Plans = () => {
   };
 
   const handleAddPlan = async (plan) => {
-    await addPlan(plan);
+    const formattedPlan = {
+      ...plan,
+      Date: format(new Date(plan.Date), 'yyyy-MM-dd') // Convert to 'yyyy-MM-dd'
+    };
+    await addPlan(formattedPlan);
     fetchData();
     setShowForm(false);
   };
 
   const handleEditPlan = async (planId, plan) => {
     try {
-      await modifyPlan(planId, plan);
+      const formattedPlan = {
+        ...plan,
+        Date: format(new Date(plan.Date), 'yyyy-MM-dd') // Convert to 'yyyy-MM-dd'
+      };
+      await modifyPlan(planId, formattedPlan);
       fetchData();
       setShowForm(false);
     } catch (error) {
@@ -119,22 +127,22 @@ const Plans = () => {
     setIsSearchActive(true);
   };
 
-  const handleDrop = async (planId, newDate) => {
-    const updatedPlan = plans.find(plan => plan._id === planId);
-    if (updatedPlan) {
-      updatedPlan.Date = newDate.toISOString().split('T')[0];
-  
-      if (updatedPlan.market) {
-        updatedPlan.market = updatedPlan.market._id || updatedPlan.market;
-      } else {
-        updatedPlan.market = null;
-      }
-  
-      await modifyPlan(updatedPlan._id, updatedPlan);
-      fetchData();
+ const handleDrop = async (planId, newDate) => {
+  const formattedDate = format(new Date(newDate), 'yyyy-MM-dd'); // Convert to 'yyyy-MM-dd'
+  const updatedPlan = plans.find(plan => plan._id === planId);
+  if (updatedPlan) {
+    updatedPlan.Date = formattedDate;
+
+    if (updatedPlan.market) {
+      updatedPlan.market = updatedPlan.market._id || updatedPlan.market;
+    } else {
+      updatedPlan.market = null;
     }
-  };
-  
+
+    await modifyPlan(updatedPlan._id, updatedPlan);
+    fetchData();
+  }
+};
 
   const handleEditFormClose = () => {
     setShowForm(false);
@@ -154,8 +162,8 @@ const Plans = () => {
     setShowAllNotes(!showAllNotes);
   };
 
-  const today = new Date().toDateString();
-  const todayNotes = plans.filter(plan => new Date(plan.Date).toDateString() === today && plan.notes);
+  const today = format(new Date(), 'yyyy-MM-dd'); // Get today's date in 'yyyy-MM-dd' format
+  const todayNotes = plans.filter(plan => plan.Date === today && plan.notes);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -193,7 +201,7 @@ const Plans = () => {
               {todayNotes.length > 0 ? (
                 todayNotes.map(note => (
                   <div key={note._id} className="sticky-note mb-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-md shadow-sm">
-                    <strong>{format(new Date(note.Date), 'MMM dd, yyyy')}</strong>
+                    <strong>{format(parseISO(note.Date), 'MMM dd, yyyy')}</strong>
                     <p>{note.notes}</p>
                   </div>
                 ))
@@ -210,7 +218,7 @@ const Plans = () => {
                 <div className="mt-4">
                   {plans.filter(plan => plan.notes).map(note => (
                     <div key={note._id} className="note mb-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-md shadow-sm">
-                      <strong>{format(new Date(note.Date), 'MMM dd, yyyy')}</strong>
+                      <strong>{format(parseISO(note.Date), 'MMM dd, yyyy')}</strong>
                       <p>{note.notes}</p>
                     </div>
                   ))}

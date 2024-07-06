@@ -7,7 +7,8 @@ const CalendarCell = ({ day, plansForDay, onClickDay, setSelectedDate, selectedD
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: 'plan',
     drop: (item) => {
-      onDrop(item.plan, day.date);
+      const formattedDate = format(day.date, 'yyyy-MM-dd'); 
+      onDrop(item.plan, formattedDate);
     },
     collect: monitor => ({
       isOver: !!monitor.isOver(),
