@@ -1,15 +1,13 @@
-// src/components/Login.js
 import React, { useState, useEffect } from 'react';
 import logo from '../../images/logo1.png';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../../api/authService';
+import { loginUser, refreshToken } from '../../api/authService';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -33,11 +31,39 @@ export default function Login() {
     }
   };
 
+  const checkTokenExpiry = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+    const expiry = tokenPayload.exp * 1000;
+    const now = Date.now();
+
+    if (expiry - now < 5 * 60 * 1000) { // Refresh if the token will expire in less than 5 minutes
+      try {
+        console.log('Token about to expire:', token); // Debugging statement
+        const response = await refreshToken(token);
+        if (response.data && response.data.token) {
+          console.log('Token refreshed successfully:', response.data.token); // Debugging statement
+          localStorage.setItem('token', response.data.token);
+        } else {
+          console.log('Failed to refresh token');
+        }
+      } catch (error) {
+        console.error('Failed to refresh token:', error);
+      }
+    }
+  };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       setEmail(user.email);
     }
+
+    const interval = setInterval(checkTokenExpiry, 60 * 1000); // Check every minute
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
