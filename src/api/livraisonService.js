@@ -10,49 +10,53 @@ export async function addLivraison(livraison) {
         throw error;
     }
 }
-export async function fetchLivraisons(){
-    try {
-        const response=await axios.get(`${API_URL}/livraison`);
-        return response.data
-    }catch(error){
-        console.error('Error fetching clients',error)
-        throw error;
-    }
 
-}
-export async function searchLivraisons(searchTerm){
-    try{
-        const response=await axios.get(`${API_URL}/liraison/search/${searchTerm}`);
-        return response.data
+export async function fetchLivraisons(page) {
+    try {
+        const response = await axios.get(`${API_URL}/livraison?page=${page}`);
+        return response.data;
     } catch (error) {
-        console.error('Error searching clients', error);
+        console.error('Error fetching livraisons', error);
         throw error;
     }
 }
-export async function fetchbyCommande(NumeroCommande){
-    try{
-        const response=await axios.get(`${API_URL}/livraison/${NumeroCommande}`);
-        return response.data
-    }catch(error){
-        console.error('Error fetching clients',error)
+
+export async function searchLivraisons(searchTerm) {
+    try {
+        const response = await axios.get(`${API_URL}/livraison/search/${searchTerm}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error searching livraisons', error);
         throw error;
     }
 }
-export async function modifyLivraison(livraison){
-    try{
-        const response=await axios.put(`${API_URL}/livraison/${livraison.id}`,livraison);
-        return response.data
-    }catch(error){
-        console.error('Error fetching clients',error)
+
+export async function fetchbyCommande(NumeroCommande) {
+    try {
+        const response = await axios.get(`${API_URL}/livraison/${NumeroCommande}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching livraison by commande', error);
         throw error;
     }
 }
-export async function deleteLivraison(id){
-    try{
-        const response=await axios.delete(`${API_URL}/livraison/${id}`);
-        return response.data
-    }catch(error){
-        console.error('Error fetching clients',error)
+
+export async function modifyLivraison(livraison) {
+    try {
+        const response = await axios.put(`${API_URL}/livraison/${livraison.id}`, livraison);
+        return response.data;
+    } catch (error) {
+        console.error('Error modifying livraison', error);
+        throw error;
+    }
+}
+
+export async function deleteLivraison(id) {
+    try {
+        const response = await axios.delete(`${API_URL}/livraison/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting livraison', error);
         throw error;
     }
 }

@@ -167,7 +167,7 @@ const Plans = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex h-screen">
+       <div className="flex h-screen">
         <Dashboard title="Gérer les plans" />
         <div className="flex-1 container mx-auto p-6 relative flex flex-col pt-24">
           <div className="flex flex-1 overflow-hidden">
