@@ -147,18 +147,19 @@ function Livraison() {
 
   const handleSearch = async (searchTerm) => {
     if (searchTerm === '') {
-      setFilteredLivraisons(livraisons);
-      setIsSearchActive(false);
+        setFilteredLivraisons(livraisons);
+        setIsSearchActive(false);
     } else {
-      try {
-        const response = await searchLivraisons(searchTerm);
-        setFilteredLivraisons(response);
-        setIsSearchActive(true);
-      } catch (error) {
-        console.error('Error searching livraisons', error);
-      }
+        try {
+            const response = await searchLivraisons(searchTerm);
+            setFilteredLivraisons(response);
+            setIsSearchActive(true);
+        } catch (error) {
+            console.error('Error searching livraisons', error);
+        }
     }
-  };
+};
+
 
   const handleDelete = async (id) => {
     try {
