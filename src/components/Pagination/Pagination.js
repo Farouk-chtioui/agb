@@ -1,7 +1,7 @@
 import React from 'react';
 import './Pagination.css';
 const Pagination = ({ currentPage, setCurrentPage }) => {
-  const totalPages = 4; // Set this to the total number of pages
+  const totalPages = 4; 
 
   const handlePageClick = (page) => {
     setCurrentPage(page);
