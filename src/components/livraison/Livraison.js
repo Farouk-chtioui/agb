@@ -110,6 +110,12 @@ function Livraison() {
       console.error('Error editing livraison', error);
     }
   };
+  const handleModify = (livraison) => {
+    setCurrentLivraison(livraison);
+    setNewLivraison(livraison);
+    setIsEditMode(true);
+    setShowForm(true);
+  };
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
@@ -201,11 +207,11 @@ function Livraison() {
         >
           Ajouter une livraison
         </button>
-
+  
         {showForm && (
           <LivraisonForm
             newLivraison={newLivraison}
-            setNewLivraison={setNewLivraison} // Pass the state updater function here
+            setNewLivraison={setNewLivraison}
             handleChange={handleChange}
             handleAddLivraison={handleAddLivraison}
             handleEditLivraison={handleEditLivraison}
@@ -215,11 +221,12 @@ function Livraison() {
             markets={markets}
             products={products}
             drivers={drivers}
+            currentLivraison={currentLivraison}
           />
         )}
-
-        <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete} handleModify={setCurrentLivraison} />
-
+  
+        <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete} handleModify={handleModify} />
+  
         {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
       </div>
     </div>

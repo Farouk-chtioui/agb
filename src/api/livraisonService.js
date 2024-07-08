@@ -43,7 +43,7 @@ export async function fetchbyCommande(NumeroCommande) {
 
 export async function modifyLivraison(livraison) {
     try {
-        const response = await axios.put(`${API_URL}/livraison/${livraison.id}`, livraison);
+        const response = await axios.patch(`${API_URL}/livraison/${livraison.id}`, livraison);
         return response.data;
     } catch (error) {
         console.error('Error modifying livraison', error);

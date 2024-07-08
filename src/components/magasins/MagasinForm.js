@@ -24,7 +24,7 @@ const MagasinForm = ({
     ].filter(Boolean);
 
     const handleAddressChange = (e) => {
-        handleChange(e); // Update the address in newMagasin
+        handleChange(e); 
         if (e.postalCode) {
             setAddressData((prev) => ({ ...prev, address: e.target.value, postalCode: e.postalCode }));
             console.log('Postal Code:', e.postalCode);
@@ -35,6 +35,10 @@ const MagasinForm = ({
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!addressData.postalCode) {
+            alert('Please provide an address with a postal code.');
+            return;
+        }
         if (isEditMode) {
             handleEditMagasin(e);
         } else {

@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import ClientForm from '../clients/ClientForm'; // Adjust the import path as needed
 import { addClient } from "../../api/clientService"; // Make sure the import path is correct
 import './style.css';
 
 const LivraisonForm = ({
     newLivraison,
-    setNewLivraison, // Add setNewLivraison here
+    setNewLivraison,
     handleChange,
     handleAddLivraison,
     handleEditLivraison,
@@ -14,7 +14,8 @@ const LivraisonForm = ({
     clients,
     markets,
     products,
-    drivers
+    drivers,
+    currentLivraison
 }) => {
     const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
     const [currentStep, setCurrentStep] = useState(0);
@@ -26,6 +27,13 @@ const LivraisonForm = ({
         address2: '',
         phone: ''
     });
+
+    // Use useEffect to update productList when currentLivraison changes
+    useEffect(() => {
+        if (isEditMode && currentLivraison) {
+            setProductList(currentLivraison.products.length > 0 ? currentLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
+        }
+    }, [currentLivraison, isEditMode]);
 
     const handleSubmit = (e) => {
         e.preventDefault();

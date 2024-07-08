@@ -4,7 +4,7 @@ import { debounce } from 'lodash';
 const AddressAutocomplete = ({ value, onChange }) => {
     const inputRef = useRef(null);
     const autoCompleteRef = useRef(null);
-    const initializedRef = useRef(false); // Track initialization
+    const initializedRef = useRef(false);
     const [inputValue, setInputValue] = useState(value || ''); 
     const [loaded, setLoaded] = useState(false); 
 
@@ -19,7 +19,7 @@ const AddressAutocomplete = ({ value, onChange }) => {
 
                 autoComplete.addListener('place_changed', () => {
                     const place = autoComplete.getPlace();
-                    console.log('Place:', place); // Log the place object for debugging
+                    console.log('Place:', place);
 
                     const postalCodeComponent = place.address_components.find(component => 
                         component.types.includes('postal_code')
@@ -27,7 +27,7 @@ const AddressAutocomplete = ({ value, onChange }) => {
                     const postalCode = postalCodeComponent ? postalCodeComponent.long_name : '';
                     
                     if (!postalCodeComponent) {
-                        console.warn('Postal code not found in address components:', place.address_components);
+                        alert('Please select an address with a postal code.');
                     }
 
                     onChange({
