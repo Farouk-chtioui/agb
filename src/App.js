@@ -5,9 +5,9 @@ import './index.css'; // Ensure this path matches your file structure
 
 function App() {
   return (
-    <div>
+    <>
       <Routing/>
-    </div>
+    </>
   );
 }
 

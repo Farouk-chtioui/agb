@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { fetchMagasins, deleteMagasin, addMagasin, searchMagasins, modifyMagasin } from '../../api/marketService';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchMagasins, deleteMagasin, addMagasin, modifyMagasin, searchMagasins } from '../../redux/reducers/magasinReducer';
 import Dashboard from '../dashboard/Dashboard';
 import Search from '../searchbar/Search';
 import MagasinForm from './MagasinForm';
@@ -7,8 +8,11 @@ import MagasinTable from './MagasinTable';
 import Pagination from '../Pagination/Pagination';
 
 const Magasins = () => {
-  const [magasins, setMagasins] = useState([]);
-  const [filteredMagasins, setFilteredMagasins] = useState([]);
+  const dispatch = useDispatch();
+  const magasins = useSelector((state) => state.magasins.items);
+  const loading = useSelector((state) => state.magasins.loading);
+  const error = useSelector((state) => state.magasins.error);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [newMagasin, setNewMagasin] = useState({
@@ -26,35 +30,19 @@ const Magasins = () => {
   const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
-    fetchMagasinsData();
-    const role = localStorage.getItem('role'); // Assuming the role is stored in localStorage
+    console.log("Component Mounted");
+    dispatch(fetchMagasins(currentPage));
+    const role = localStorage.getItem('role');
     setUserRole(role);
-  }, [currentPage]);
+    return () => {
+      console.log("Component Unmounted");
+    };
+  }, [dispatch, currentPage]);
 
-  const fetchMagasinsData = async () => {
-    try {
-      const data = await fetchMagasins(currentPage);
-      setMagasins(data);
-      setFilteredMagasins(data);
-    } catch (error) {
-      console.error('Error fetching magasins', error);
-    }
+  const handleDelete = (id) => {
+    dispatch(deleteMagasin(id));
   };
 
-  const handleDelete = async (id) => {
-    const userRole = localStorage.getItem('role'); // Retrieve the role from local storage
-    if (userRole !== 'admin') {
-      alert('You do not have permission to perform this action');
-      return;
-    }
-    try {
-      await deleteMagasin(id);
-      fetchMagasinsData();
-    } catch (error) {
-      console.error('Error deleting magasin', error);
-    }
-  };
-  
   const handleModify = (magasin) => {
     setCurrentMagasin(magasin);
     setNewMagasin(magasin);
@@ -62,66 +50,51 @@ const Magasins = () => {
     setShowForm(true);
   };
 
-  const handleEditMagasin = async (e) => {
+  const handleEditMagasin = (e) => {
     e.preventDefault();
-    try {
-      await modifyMagasin(newMagasin);
-      fetchMagasinsData();
-      setShowForm(false);
-      setIsEditMode(false);
-      setCurrentMagasin(null);
-      setNewMagasin({
-        first_name: '',
-        last_name: '',
-        email: '',
-        password: '',
-        address: '',
-        numberMa: '',
-        numberMi: ''
-      });
-    } catch (error) {
-      console.error('Error modifying magasin', error);
-    }
+    dispatch(modifyMagasin(newMagasin));
+    setShowForm(false);
+    setIsEditMode(false);
+    setCurrentMagasin(null);
+    setNewMagasin({
+      first_name: '',
+      last_name: '',
+      email: '',
+      password: '',
+      address: '',
+      numberMa: '',
+      numberMi: ''
+    });
   };
 
-  const handleAddMagasin = async (e) => {
+  const handleAddMagasin = (e) => {
     e.preventDefault();
-    try {
-      await addMagasin(newMagasin);
-      fetchMagasinsData();
-      setShowForm(false);
-    } catch (error) {
-      console.error('Error adding magasin', error);
-    }
+    dispatch(addMagasin(newMagasin));
+    setShowForm(false);
   };
 
   const handleChange = useCallback((e) => {
     const { name, value, type } = e.target;
-    setNewMagasin(prevState => ({
+    setNewMagasin((prevState) => ({
       ...prevState,
       [name]: type === 'number' ? Number(value) : value,
     }));
   }, []);
 
-  const handleSearch = async (searchTerm) => {
+  const handleSearch = (searchTerm) => {
     if (searchTerm === '') {
-      setFilteredMagasins(magasins);
       setIsSearchActive(false);
+      dispatch(fetchMagasins(currentPage));
     } else {
-      try {
-        const response = await searchMagasins(searchTerm);
-        setFilteredMagasins(response);
-        setIsSearchActive(true);
-      } catch (error) {
-        console.error('Error searching magasins', error);
-      }
+      dispatch(searchMagasins(searchTerm));
+      setIsSearchActive(true);
     }
   };
 
   return (
     <div className="flex">
       <Dashboard title="Gérer les magasins" />
-      <div className="flex-1 container mx-auto p-9 relative mt-20 ">
+      <div className="flex-1 container mx-auto p-9 relative mt-20">
         <Search setData={handleSearch} title={"Tous les magasins"} />
         <button
           className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
@@ -137,7 +110,8 @@ const Magasins = () => {
               numberMa: '',
               numberMi: ''
             });
-          }}>
+          }}
+        >
           Ajouter un magasin
         </button>
 
@@ -153,10 +127,10 @@ const Magasins = () => {
         )}
 
         <MagasinTable
-          magasins={filteredMagasins}
+          magasins={magasins}
           handleDelete={handleDelete}
           handleModify={handleModify}
-          userRole={userRole} // Pass the user role to MagasinTable
+          userRole={userRole}
         />
 
         {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}

@@ -13,24 +13,28 @@ import PublicRoute from '../../publicroute';
 import Livraison from '../livraison/Livraison';
 import InvoicePDF from '../livraison/pdf/Invoice';
 import Plans from '../Plans/Plans';
+import { Provider } from 'react-redux';
+import store from '../../redux/store';
 
 function Routing() {
   return (
-    <Routes>
-      <Route path="/" element={<PublicRoute element={<Login />} />} />
-      <Route path="/admin/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['admin']} />} />
-      <Route path="/market/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['market']} />} />
-      <Route path="/livraison/listes" element={<ProtectedRoute element={<Livraison />} requiredRoles={['admin']} />} />
-      <Route path="/clients" element={<ProtectedRoute element={<Clients />} requiredRoles={['admin']} />} />
-      <Route path="/magasins" element={<ProtectedRoute element={<Magasins />} requiredRoles={['admin']} />} />
-      <Route path="/produits" element={<ProtectedRoute element={<Produits />} requiredRoles={['admin', 'market']} />} />
-      <Route path="/chauffeurs/Gérer" element={<ProtectedRoute element={<Chauffeurs />} requiredRoles={['admin']} />} />
-      <Route path="/utilisateurs" element={<ProtectedRoute element={<Utilisateurs />} requiredRoles={['admin']} />} />
-      <Route path="/plans/secteurs" element={<ProtectedRoute element={<Secteurs />} requiredRoles={['admin']} />} />
-      <Route path="/settings" element={<ProtectedRoute element={<Settings />} requiredRoles={['admin']} />} />
-      <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
-      <Route path="/plans" element={<Plans />} />
-    </Routes>
+    <Provider store={store}>
+      <Routes>
+        <Route path="/" element={<PublicRoute element={<Login />} />} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['admin']} />} />
+        <Route path="/market/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['market']} />} />
+        <Route path="/livraison/listes" element={<ProtectedRoute element={<Livraison />} requiredRoles={['admin']} />} />
+        <Route path="/clients" element={<ProtectedRoute element={<Clients />} requiredRoles={['admin']} />} />
+        <Route path="/magasins" element={<ProtectedRoute element={<Magasins />} requiredRoles={['admin']} />} />
+        <Route path="/produits" element={<ProtectedRoute element={<Produits />} requiredRoles={['admin', 'market']} />} />
+        <Route path="/chauffeurs/Gérer" element={<ProtectedRoute element={<Chauffeurs />} requiredRoles={['admin']} />} />
+        <Route path="/utilisateurs" element={<ProtectedRoute element={<Utilisateurs />} requiredRoles={['admin']} />} />
+        <Route path="/plans/secteurs" element={<ProtectedRoute element={<Secteurs />} requiredRoles={['admin']} />} />
+        <Route path="/settings" element={<ProtectedRoute element={<Settings />} requiredRoles={['admin']} />} />
+        <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
+        <Route path="/plans" element={<Plans />} />
+      </Routes>
+    </Provider>
   );
 }
 
