@@ -38,7 +38,8 @@ function Dashboard({ title }) {
       ]
     },
     { title: 'Settings', icon: FaCog, path: '/settings', roles: ['admin'] },
-    { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout, roles: ['admin', 'market', 'driver', 'user'] }
+    { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout, roles: ['admin', 'market', 'driver', 'user'] },
+    {title:"test",icon:FaHome,path:"/test",roles:["admin"]}
   ];
 
   const filteredItems = sidebarItems.filter(item => item.roles.includes(role));

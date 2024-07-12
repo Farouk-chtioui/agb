@@ -15,7 +15,7 @@ import InvoicePDF from '../livraison/pdf/Invoice';
 import Plans from '../Plans/Plans';
 import { Provider } from 'react-redux';
 import store from '../../redux/store';
-
+import ParentComponent from '../test/Temp';
 function Routing() {
   return (
     <Provider store={store}>
@@ -32,6 +32,7 @@ function Routing() {
         <Route path="/plans/secteurs" element={<ProtectedRoute element={<Secteurs />} requiredRoles={['admin']} />} />
         <Route path="/settings" element={<ProtectedRoute element={<Settings />} requiredRoles={['admin']} />} />
         <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
+        <Route path="/test" element={<ParentComponent />} />
         <Route path="/plans" element={<Plans />} />
       </Routes>
     </Provider>
