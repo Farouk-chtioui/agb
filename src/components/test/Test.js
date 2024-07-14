@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { FaClipboardList, FaUser, FaShoppingCart, FaTruck } from 'react-icons/fa';
+import { addDemande_de_Livraison } from '../../api/Demandes_de_Livraisons'; // Adjust the import path as needed
 
-const LivraisonForm = ({ clients, products }) => {
+const LivraisonForm = ({ clients, products, markets, drivers }) => {
     const [newLivraison, setNewLivraison] = useState({
         NumeroCommande: '',
         Référence: '',
@@ -8,6 +10,8 @@ const LivraisonForm = ({ clients, products }) => {
         Observations: '',
         client: '',
         products: [{ productId: '', quantity: 1, Depose: false, Montage: false, Install: false }],
+        market: '',
+        driver: '',
         Prix: '',
         Date: ''
     });
@@ -45,9 +49,33 @@ const LivraisonForm = ({ clients, products }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Submitting:', newLivraison);
+        try {
+            // Construct payload with nested objects
+            const payload = {
+                ...newLivraison,
+                client: newLivraison.client || undefined,
+                market: newLivraison.market || undefined,
+                driver: newLivraison.driver || undefined,
+                products: newLivraison.products.map(product => ({
+                    ...product,
+                    productId: product.productId || undefined
+                }))
+            };
+
+            const response = await addDemande_de_Livraison(payload);
+            console.log('Successfully submitted:', response.data);
+        } catch (error) {
+            console.error('Error submitting data:', error.response ? error.response.data : error.message);
+        }
+    };
+
+    const scrollToSection = (sectionId) => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
     };
 
     return (
@@ -55,22 +83,38 @@ const LivraisonForm = ({ clients, products }) => {
             <h2 className="text-2xl font-semibold text-center mb-6">Demandes de Livraisons</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <div className="col-span-1">
-                    <div className="bg-gray-100 p-4 rounded-lg mb-4">
+                    <div
+                        onClick={() => scrollToSection('informations-generales')}
+                        className="bg-gray-100 p-4 rounded-lg mb-4 flex items-center cursor-pointer"
+                    >
+                        <FaClipboardList className="mr-2 text-blue-500" />
                         <h3 className="font-semibold">Informations Générales</h3>
                     </div>
-                    <div className="bg-gray-100 p-4 rounded-lg mb-4">
+                    <div
+                        onClick={() => scrollToSection('client')}
+                        className="bg-gray-100 p-4 rounded-lg mb-4 flex items-center cursor-pointer"
+                    >
+                        <FaUser className="mr-2 text-green-500" />
                         <h3 className="font-semibold">Client</h3>
                     </div>
-                    <div className="bg-gray-100 p-4 rounded-lg mb-4">
+                    <div
+                        onClick={() => scrollToSection('produits')}
+                        className="bg-gray-100 p-4 rounded-lg mb-4 flex items-center cursor-pointer"
+                    >
+                        <FaShoppingCart className="mr-2 text-blue-500" />
                         <h3 className="font-semibold">Produits de la Commande</h3>
                     </div>
-                    <div className="bg-gray-100 p-4 rounded-lg">
+                    <div
+                        onClick={() => scrollToSection('date')}
+                        className="bg-gray-100 p-4 rounded-lg flex items-center cursor-pointer"
+                    >
+                        <FaTruck className="mr-2 text-pink-500" />
                         <h3 className="font-semibold">Date de la Livraison</h3>
                     </div>
                 </div>
-                <div className="col-span-3">
+                <div className="col-span-3 space-y-8">
                     <form onSubmit={handleSubmit}>
-                        <div className="mb-6">
+                        <div id="informations-generales" className="mb-6">
                             <h3 className="text-xl font-semibold mb-4">Informations Générales</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -84,7 +128,7 @@ const LivraisonForm = ({ clients, products }) => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-gray-700">Référence</label>
+                                    <label className="block text-gray-700">Référence </label>
                                     <input
                                         type="text"
                                         name="Référence"
@@ -115,7 +159,7 @@ const LivraisonForm = ({ clients, products }) => {
                             </div>
                         </div>
 
-                        <div className="mb-6">
+                        <div id="client" className="mb-6">
                             <h3 className="text-xl font-semibold mb-4">Client</h3>
                             <label className="block text-gray-700">Ajouter un client</label>
                             <select
@@ -126,14 +170,14 @@ const LivraisonForm = ({ clients, products }) => {
                             >
                                 <option value="">Choisir un Client</option>
                                 {clients.map((client) => (
-                                    <option key={client.id} value={client.id}>
-                                        {client.name}
+                                    <option key={client._id} value={client._id}>
+                                        {client.first_name}
                                     </option>
                                 ))}
                             </select>
                         </div>
 
-                        <div className="mb-6">
+                        <div id="produits" className="mb-6">
                             <h3 className="text-xl font-semibold mb-4">Produits de la Commande</h3>
                             {newLivraison.products.map((product, index) => (
                                 <div key={index} className="mb-4">
@@ -146,7 +190,7 @@ const LivraisonForm = ({ clients, products }) => {
                                     >
                                         <option value="">Select Product</option>
                                         {products.map((prod) => (
-                                            <option key={prod.id} value={prod.id}>
+                                            <option key={prod._id} value={prod._id}>
                                                 {prod.name}
                                             </option>
                                         ))}
@@ -199,7 +243,43 @@ const LivraisonForm = ({ clients, products }) => {
                             </button>
                         </div>
 
-                        <div className="mb-6">
+                        <div id="market" className="mb-6">
+                            <h3 className="text-xl font-semibold mb-4">Market</h3>
+                            <label className="block text-gray-700">Choisir un Market</label>
+                            <select
+                                name="market"
+                                value={newLivraison.market}
+                                onChange={handleChange}
+                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                            >
+                                <option value="">Choisir un Market</option>
+                                {markets.map((market) => (
+                                    <option key={market._id} value={market._id}>
+                                        {market.first_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div id="driver" className="mb-6">
+                            <h3 className="text-xl font-semibold mb-4">Driver</h3>
+                            <label className="block text-gray-700">Choisir un Driver</label>
+                            <select
+                                name="driver"
+                                value={newLivraison.driver}
+                                onChange={handleChange}
+                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                            >
+                                <option value="">Choisir un Driver</option>
+                                {drivers.map((driver) => (
+                                    <option key={driver._id} value={driver._id}>
+                                        {driver.first_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div id="date" className="mb-6">
                             <h3 className="text-xl font-semibold mb-4">Date de la Livraison</h3>
                             <label className="block text-gray-700">Prix de la livraison (Le prix est calculé automatiquement)</label>
                             <input
