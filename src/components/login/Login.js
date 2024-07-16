@@ -13,23 +13,25 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await loginUser(email, password, rememberMe);
-      if (response.data && response.data.token) {
-        const { token, role } = response.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', role);
-        if (rememberMe) {
-          localStorage.setItem('user', JSON.stringify({ email }));
+        const response = await loginUser(email, password, rememberMe);
+        if (response.data && response.data.token) {
+            const { token, role, userId } = response.data;
+            localStorage.setItem('token', token);
+            localStorage.setItem('role', role);
+            localStorage.setItem('userId', userId); 
+            if (rememberMe) {
+                localStorage.setItem('user', JSON.stringify({ email }));
+            }
+            navigate(`/${role}/dashboard`);
+        } else {
+            alert('Invalid credentials');
         }
-        navigate(`/${role}/dashboard`);
-      } else {
-        alert('Invalid credentials');
-      }
     } catch (error) {
-      console.error(error);
-      alert('Invalid credentials');
+        console.error(error);
+        alert('Invalid credentials');
     }
-  };
+};
+
 
   const checkTokenExpiry = async () => {
     const token = localStorage.getItem('token');

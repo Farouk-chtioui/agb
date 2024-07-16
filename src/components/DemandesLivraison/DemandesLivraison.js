@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import LivraisonForm from './Test'; // Adjust the import path as needed
-import { fetchClients } from '../../api/clientService'; // Adjust the import path as needed
-import { fetchProducts } from '../../api/productService'; // Adjust the import path as needed
-import { fetchMagasins } from '../../api/marketService'; // Adjust the import path as needed
-import { fetchDrivers } from '../../api/driverService'; // Adjust the import path as needed
-import Dashboard from '../dashboard/Dashboard'; // Adjust the import path as needed
+import LivraisonForm from './LivraisonForm';
+import { fetchClients } from '../../api/clientService'; 
+import { fetchProducts } from '../../api/productService'; 
+import { fetchMagasins } from '../../api/marketService'; 
+import { fetchDrivers } from '../../api/driverService'; 
+import Dashboard from '../dashboard/Dashboard'; 
 
-const ParentComponent = () => {
+const DemandesLivraison = () => {
     const [clients, setClients] = useState([]);
     const [products, setProducts] = useState([]);
     const [markets, setMarkets] = useState([]);
@@ -40,15 +40,15 @@ const ParentComponent = () => {
     }
 
     return (
-        <div className="flex h-screen">
+        <div className="flex h-screen bg-white-100">
             <Dashboard title="Gestion des Livraisons" />
-            <div className="parent-component flex-1 overflow-y-auto">
-                <div className="max-w-6xl mx-auto p-4">
-                    <LivraisonForm clients={clients} products={products} markets={markets} drivers={drivers} />
+            <div className="flex-1 overflow-y-auto">
+                <div className="max-w-6xl mx-auto p-8">
+                    <LivraisonForm clients={clients} products={products} />
                 </div>
             </div>
         </div>
     );
 };
 
-export default ParentComponent;
+export default DemandesLivraison;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Sidebar from '../sidebar/Sidebar';
-import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaCog, FaSignOutAlt,FaStickyNote } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 function Dashboard({ title }) {
@@ -18,7 +18,7 @@ function Dashboard({ title }) {
     {
       title: 'Livraison', icon: FaTruck, roles: ['admin'], subItems: [
         { title: 'Listes des livraisons', path: '/livraison/listes' },
-        { title: 'Demandes des livraisons', path: '/livraison/demandes' }
+        { title: 'Demandes des livraisons', path: '/commands/pending' }
       ]
     },
     { title: 'Clients', icon: FaUserAlt, path: '/clients', roles: ['admin'] },
@@ -39,7 +39,10 @@ function Dashboard({ title }) {
     },
     { title: 'Settings', icon: FaCog, path: '/settings', roles: ['admin'] },
     { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout, roles: ['admin', 'market', 'driver', 'user'] },
-    {title:"test",icon:FaHome,path:"/test",roles:["admin"]}
+    {title:"Livraisons",icon:FaTruck ,roles:["admin","market"],subItems: [
+      { title: 'Liste des livraisons', path: '/livraison/demandes' },
+      { title: 'Proposer une livraison', path: '/commands/propositions' }
+    ]}
   ];
 
   const filteredItems = sidebarItems.filter(item => item.roles.includes(role));
