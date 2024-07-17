@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaClipboardList, FaUser, FaShoppingCart, FaTruck } from 'react-icons/fa';
-import { addDemande_de_Livraison } from '../../api/Demandes_de_Livraisons'; // Adjust the import path as needed
+import { addLivraison } from '../../api/livraisonService'; // Adjust the import path as needed
 
 const LivraisonForm = ({ clients, products }) => {
     const [newLivraison, setNewLivraison] = useState({
@@ -11,6 +11,7 @@ const LivraisonForm = ({ clients, products }) => {
         client: '',
         products: [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }],
         market: '',
+        driver: '',  // Ensure driver is included in the state but set to an empty string initially
         Prix: '',
         Date: ''
     });
@@ -63,17 +64,22 @@ const LivraisonForm = ({ clients, products }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Construct payload with nested objects
+            // Construct payload with nested objects and conditionally include the driver field
             const payload = {
                 ...newLivraison,
                 client: newLivraison.client || undefined,
                 products: newLivraison.products.map(product => ({
                     ...product,
                     productId: product.productId || undefined
-                }))
+                })),
             };
 
-            const response = await addDemande_de_Livraison(payload);
+            // Remove driver if not set
+            if (!newLivraison.driver) {
+                delete payload.driver;
+            }
+
+            const response = await addLivraison(payload);
             console.log('Successfully submitted:', response.data);
         } catch (error) {
             console.error('Error submitting data:', error.response ? error.response.data : error.message);

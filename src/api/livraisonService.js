@@ -51,6 +51,16 @@ export async function modifyLivraison(livraison) {
     }
 }
 
+export const modifyDriver = async ({ id, driver }) => {
+    console.log('modifyDriver - ID:', id); // Log the ID
+    try {
+        const response = await axios.patch(`${API_URL}/livraison/${id}/driver`, { driver });
+        return response.data;
+    } catch (error) {
+        console.error('Error modifying driver', error);
+        throw error;
+    }
+};
 export async function deleteLivraison(id) {
     try {
         const response = await axios.delete(`${API_URL}/livraison/${id}`);
@@ -59,4 +69,16 @@ export async function deleteLivraison(id) {
         console.error('Error deleting livraison', error);
         throw error;
     }
+   
 }
+
+export const updateStatus = async (id, status) => {
+    try {
+        const response = await axios.patch(`${API_URL}/livraison/${id}/status`, { status });
+        return response.data;
+    } catch (error) {
+        console.error('Error updating status', error);
+        throw error;
+    }
+}
+

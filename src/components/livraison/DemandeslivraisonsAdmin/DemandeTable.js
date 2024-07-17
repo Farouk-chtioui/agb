@@ -36,10 +36,12 @@ const DemandeTable = ({ demandes, handleDelete, handleAddDriver }) => {
         );
     };
 
+    const filteredDemandes = demandes.filter(demande => demande.status === 'En attente');
+
     return (
         <Table
             headers={headers}
-            data={demandes}
+            data={filteredDemandes}
             renderRow={renderRow}
             handleDelete={handleDelete}
             handleThirdAction={handleAddDriver}

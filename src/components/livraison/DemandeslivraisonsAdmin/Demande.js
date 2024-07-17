@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getDemandes_de_Livraisons, deleteDemande_de_Livraison } from '../../../api/Demandes_de_Livraisons';
+import { fetchLivraisons, deleteLivraison, modifyDriver,updateStatus } from '../../../api/livraisonService';
 import DemandeTable from './DemandeTable';
 import Dashboard from '../../dashboard/Dashboard';
 import Search from '../../searchbar/Search';
@@ -7,21 +7,21 @@ import Pagination from '../../Pagination/Pagination';
 import AddDriverForm from './addDriverForm'; // Adjust the import path as needed
 
 function Demandes() {
-    const [demandes, setdemandes] = useState([]);
+    const [demandes, setDemandes] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [filteredDemandes, setFilteredDemandes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedDemandeId, setSelectedDemandeId] = useState(null);
-    const [formData, setFormData] = useState({});
+    const [selectedDemande, setSelectedDemande] = useState(null); // Hold the entire demande object
+    const [formData, setFormData] = useState({ driver: '' });
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                const data = await getDemandes_de_Livraisons();
-                setdemandes(data);
+                const data = await fetchLivraisons();
+                setDemandes(data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error loading data', error);
@@ -32,16 +32,17 @@ function Demandes() {
 
     const handleDelete = async (demandeId) => {
         try {
-            await deleteDemande_de_Livraison(demandeId);
-            const data = await getDemandes_de_Livraisons();
-            setdemandes(data);
+            await deleteLivraison(demandeId);
+            const data = await fetchLivraisons();
+            setDemandes(data);
         } catch (error) {
             console.error('Error deleting demande', error);
         }
     };
 
-    const handleAddDriver = (demandeId) => {
-        setSelectedDemandeId(demandeId);
+    const handleAddDriver = (demande) => {
+        console.log('handleAddDriver - Selected Demande:', demande); // Log the entire demande object
+        setSelectedDemande(demande);
         setIsModalOpen(true);
     };
 
@@ -52,11 +53,20 @@ function Demandes() {
         });
     };
 
-    const handleSubmit = async (demandeId) => {
-        console.log('Assign driver to demande:', demandeId, 'with data:', formData);
-        // Add your submit logic here
-        setIsModalOpen(false);
+    const handleModify = async () => {
+        try {
+            await modifyDriver({ id: selectedDemande._id, driver: formData.driver });
+            await updateStatus(selectedDemande._id, 'À la livraison');
+    
+            const data = await fetchLivraisons();
+            setDemandes(data);
+    
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Error updating livraison:', error);
+        }
     };
+    
 
     const handleSearch = useCallback((searchTerm) => {
         setSearchTerm(searchTerm);
@@ -86,7 +96,7 @@ function Demandes() {
 
     return (
         <div className="flex h-screen bg-white-100">
-            <Dashboard/>
+            <Dashboard />
             <div className="flex-1 overflow-y-auto">
                 <div className="max-w-6xl mx-auto p-8">
                     <Search setData={handleSearch} title="Tout les demandes de livraison" />
@@ -100,9 +110,9 @@ function Demandes() {
             </div>
             {isModalOpen && (
                 <AddDriverForm
-                    demandeId={selectedDemandeId}
+                    livraisonId={selectedDemande ? selectedDemande._id : ''}
                     handleChange={handleChange}
-                    handleSubmit={handleSubmit}
+                    handleModify={handleModify}
                     setShowForm={setIsModalOpen}
                 />
             )}

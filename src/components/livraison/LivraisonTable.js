@@ -43,10 +43,12 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
         );
     };
 
+    const filteredLivraisons = livraisons.filter(livraison => livraison.status !== 'En attente');
+
     return (
         <Table
             headers={headers}
-            data={livraisons}
+            data={filteredLivraisons}
             renderRow={renderRow}
             handleDelete={handleDelete}
             handleModify={handleModify}
