@@ -39,7 +39,7 @@ function Dashboard({ title }) {
     },
     { title: 'Settings', icon: FaCog, path: '/settings', roles: ['admin'] },
     { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout, roles: ['admin', 'market', 'driver', 'user'] },
-    {title:"Livraisons",icon:FaTruck ,roles:["admin","market"],subItems: [
+    {title:"Demande Livraison",icon:FaTruck ,roles:["admin","market"],subItems: [
       { title: 'Liste des livraisons', path: '/livraison/demandes' },
       { title: 'Proposer une livraison', path: '/commands/propositions' }
     ]}
