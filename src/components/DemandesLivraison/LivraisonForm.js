@@ -4,7 +4,7 @@ import { addLivraison } from '../../api/livraisonService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const LivraisonForm = ({ clients, products }) => {
+const LivraisonForm = ({ clients, products, secteurs }) => {
     const [newLivraison, setNewLivraison] = useState({
         NumeroCommande: '',
         Référence: '',
@@ -18,6 +18,8 @@ const LivraisonForm = ({ clients, products }) => {
         Date: ''
     });
 
+    const [clientCodePostal, setClientCodePostal] = useState('');
+
     useEffect(() => {
         const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
         const role = localStorage.getItem('role');
@@ -29,6 +31,15 @@ const LivraisonForm = ({ clients, products }) => {
             }));
         }
     }, []);
+
+    useEffect(() => {
+        if (newLivraison.client) {
+            const selectedClient = clients.find(client => client._id === newLivraison.client);
+            if (selectedClient) {
+                setClientCodePostal(selectedClient.code_postal);
+            }
+        }
+    }, [newLivraison.client, clients]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -69,6 +80,14 @@ const LivraisonForm = ({ clients, products }) => {
             toast.error('Veuillez remplir tous les champs obligatoires.');
             return;
         }
+
+        // Check if the client's code_postal is in the secteurs list
+        const isCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
+        if (!isCodePostalValid) {
+            toast.error('Le code postal du client ne fait pas partie des secteurs disponibles.');
+            return;
+        }
+
         try {
             const payload = {
                 ...newLivraison,
