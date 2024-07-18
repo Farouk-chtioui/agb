@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaClipboardList, FaUser, FaShoppingCart, FaTruck } from 'react-icons/fa';
 import { addLivraison } from '../../api/livraisonService';
+import { fetchMagasins } from '../../api/marketService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -19,9 +20,9 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
     });
 
     const [clientCodePostal, setClientCodePostal] = useState('');
+    const [marketCodePostal, setMarketCodePostal] = useState('');
 
     useEffect(() => {
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
         const role = localStorage.getItem('role');
         const userId = localStorage.getItem('userId');
         if (role === 'market' && userId) {
@@ -29,6 +30,21 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
                 ...prev,
                 market: userId
             }));
+
+            // Fetch the market's address
+            const fetchMarketAddress = async () => {
+                try {
+                    const response = await fetchMagasins();
+                    const market = response.find(m => m._id === userId);
+                    if (market) {
+                        setMarketCodePostal(market.codePostal);
+                    }
+                } catch (error) {
+                    console.error('Error fetching market address:', error);
+                }
+            };
+
+            fetchMarketAddress();
         }
     }, []);
 
@@ -81,10 +97,17 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
             return;
         }
 
-        // Check if the client's code_postal is in the secteurs list
-        const isCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
-        if (!isCodePostalValid) {
+        // Check if the client's code_postal and the market's code_postal are in the secteurs list
+        const isClientCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
+        const isMarketCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(marketCodePostal)));
+
+        if (!isClientCodePostalValid) {
             toast.error('Le code postal du client ne fait pas partie des secteurs disponibles.');
+            return;
+        }
+
+        if (!isMarketCodePostalValid) {
+            toast.error('Le code postal du marché ne fait pas partie des secteurs disponibles. Veuillez contacter l\'administrateur.');
             return;
         }
 

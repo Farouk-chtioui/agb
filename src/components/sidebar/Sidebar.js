@@ -1,17 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import logo from '../../images/logo1.png';
 
-const Sidebar = ({ items }) => {
-  const [openIndexes, setOpenIndexes] = useState({});
-
-  const toggleDropdown = (index) => {
-    setOpenIndexes((prevState) => ({
-      ...prevState,
-      [index]: !prevState[index],
-    }));
-  };
+const Sidebar = ({ items, openIndexes, toggleDropdown }) => {
 
   const handleClick = (item, index) => {
     if (item.onClick) {

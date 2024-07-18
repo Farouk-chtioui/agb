@@ -5,12 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import { pendingCount } from '../../api/livraisonService';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:3001');
+const socket = io('http://localhost:3001'); // Replace with your server URL
 
 function Dashboard({ title }) {
   const navigate = useNavigate();
   const role = localStorage.getItem('role');
   const [pendingDeliveriesCount, setPendingDeliveriesCount] = useState(0);
+  const [openIndexes, setOpenIndexes] = useState(() => {
+    const savedOpenIndexes = localStorage.getItem('openIndexes');
+    return savedOpenIndexes ? JSON.parse(savedOpenIndexes) : {};
+  });
 
   const fetchPendingDeliveries = async () => {
     try {
@@ -36,7 +40,16 @@ function Dashboard({ title }) {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem('openIndexes');
     navigate('/');
+  };
+
+  const toggleDropdown = (index) => {
+    setOpenIndexes((prevState) => {
+      const newOpenIndexes = { ...prevState, [index]: !prevState[index] };
+      localStorage.setItem('openIndexes', JSON.stringify(newOpenIndexes)); // Save the state to local storage
+      return newOpenIndexes;
+    });
   };
 
   const sidebarItems = [
@@ -81,7 +94,7 @@ function Dashboard({ title }) {
 
   return (
     <div className="flex h-screen">
-      <Sidebar items={filteredItems} />
+      <Sidebar items={filteredItems} openIndexes={openIndexes} toggleDropdown={toggleDropdown} />
       <div className="flex-grow p-6">
         <h1 className="text-3xl font-bold absolute z-50">{title}</h1>
       </div>
