@@ -1,11 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../sidebar/Sidebar';
-import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaCog, FaSignOutAlt,FaStickyNote } from 'react-icons/fa';
+import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { pendingCount } from '../../api/livraisonService';
 
 function Dashboard({ title }) {
   const navigate = useNavigate();
-  const role = localStorage.getItem('role'); 
+  const role = localStorage.getItem('role');
+  const [pendingDeliveriesCount, setPendingDeliveriesCount] = useState(0);
+
+  const fetchPendingDeliveries = async () => {
+    try {
+      const data = await pendingCount();
+      setPendingDeliveriesCount(data.count);
+    } catch (error) {
+      console.error('Error fetching pending deliveries count', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPendingDeliveries();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -15,20 +30,25 @@ function Dashboard({ title }) {
 
   const sidebarItems = [
     { title: 'Dashboard', icon: FaHome, path: `/${role}/dashboard`, roles: ['admin', 'market', 'driver', 'user'] },
-   
     {
       title: 'Livraison', icon: FaTruck, roles: ['admin'], subItems: [
         { title: 'Listes des livraisons', path: '/livraison/listes' },
-        { title: 'Demandes des livraisons', path: '/commands/pending' }
+        { 
+          title: 'Demandes des livraisons', 
+          path: '/commands/pending', 
+          counter: pendingDeliveriesCount 
+        }
       ]
     },
     { title: 'Clients', icon: FaUserAlt, path: '/clients', roles: ['admin'] },
     { title: 'Magasins', icon: FaStore, path: '/magasins', roles: ['admin'] },
     { title: 'Produits', icon: FaBox, path: '/produits', roles: ['admin', 'market'] },
-    {title:"Demande Livraison",icon:FaTruck ,roles:["market"],subItems: [
-      { title: 'Liste des livraisons', path: '/livraison/demandes' },
-      { title: 'Proposer une livraison', path: '/commands/propositions' }
-    ]},
+    {
+      title: 'Demande Livraison', icon: FaTruck, roles: ['market'], subItems: [
+        { title: 'Liste des livraisons', path: '/livraison/demandes' },
+        { title: 'Proposer une livraison', path: '/commands/propositions' }
+      ]
+    },
     {
       title: 'Chauffeurs', icon: FaTruck, roles: ['admin', 'driver'], subItems: [
         { title: 'Gérer les chauffeurs', path: '/chauffeurs/Gérer' },
@@ -44,7 +64,6 @@ function Dashboard({ title }) {
     },
     { title: 'Settings', icon: FaCog, path: '/settings', roles: ['admin'] },
     { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout, roles: ['admin', 'market', 'driver', 'user'] },
-   
   ];
 
   const filteredItems = sidebarItems.filter(item => item.roles.includes(role));

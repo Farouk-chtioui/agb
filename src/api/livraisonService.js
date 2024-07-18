@@ -82,3 +82,12 @@ export const updateStatus = async (id, status) => {
     }
 }
 
+export async function pendingCount() {
+    try {
+        const response = await axios.get(`${API_URL}/livraison/pending/count`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching pending count', error);
+        throw error;
+    }
+}

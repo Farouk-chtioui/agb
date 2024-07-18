@@ -4,7 +4,7 @@ import { addLivraison } from '../../api/livraisonService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const LivraisonForm = ({ clients, products, secteurs }) => {
+const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
     const [newLivraison, setNewLivraison] = useState({
         NumeroCommande: '',
         Référence: '',
@@ -203,19 +203,28 @@ const LivraisonForm = ({ clients, products, secteurs }) => {
                         <div id="client" className="mb-8">
                             <h3 className="text-xl font-semibold mb-4 text-blue-600">Client</h3>
                             <label className="block text-gray-700">Ajouter un client *</label>
-                            <select
-                                name="client"
-                                value={newLivraison.client}
-                                onChange={handleChange}
-                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                            >
-                                <option value="">Choisir un Client</option>
-                                {clients.map((client) => (
-                                    <option key={client._id} value={client._id}>
-                                        {client.first_name}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="flex items-center">
+                                <select
+                                    name="client"
+                                    value={newLivraison.client}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                >
+                                    <option value="">Choisir un Client</option>
+                                    {clients.map((client) => (
+                                        <option key={client._id} value={client._id}>
+                                            {client.first_name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    type="button"
+                                    className="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+                                    onClick={() => setShowClientForm(true)}
+                                >
+                                    Ajouter
+                                </button>
+                            </div>
                         </div>
 
                         <div id="produits" className="mb-8">

@@ -57,11 +57,16 @@ const Sidebar = ({ items }) => {
               {item.subItems && openIndexes[index] && (
                 <ul className={`ml-6 mt-2 transition-all duration-300 ${openIndexes[index] ? 'block' : 'hidden'}`}>
                   {item.subItems.map((subItem, subIndex) => (
-                    <li key={subIndex} className="mb-2">
+                    <li key={subIndex} className="mb-2 flex justify-between items-center">
                       <Link to={subItem.path} className="flex items-center p-2 rounded hover:bg-blue-200 transition-colors duration-200">
                         {subItem.icon && <subItem.icon className="mr-3 h-4 w-4 text-blue-400" />}
                         <span className="text-gray-500 hover:text-blue-500">{subItem.title}</span>
                       </Link>
+                      {subItem.counter !== undefined && (
+                        <span className="bg-red-500 text-white rounded-full px-2 py-1 text-xs">
+                          {subItem.counter}
+                        </span>
+                      )}
                     </li>
                   ))}
                 </ul>
