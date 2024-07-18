@@ -5,8 +5,11 @@ import Dashboard from '../../dashboard/Dashboard';
 import Search from '../../searchbar/Search';
 import Pagination from '../../Pagination/Pagination';
 import AddDriverForm from './addDriverForm'; // Adjust the import path as needed
+import io from 'socket.io-client';
 
-function Demandes({ fetchPendingDeliveries }) { // Accept the function as a prop
+const socket = io('http://localhost:3001'); // Replace with your server URL
+
+function Demandes() {
     const [demandes, setDemandes] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -23,20 +26,19 @@ function Demandes({ fetchPendingDeliveries }) { // Accept the function as a prop
                 const data = await fetchLivraisons();
                 setDemandes(data);
                 setLoading(false);
-                fetchPendingDeliveries(); // Fetch pending deliveries count on load
             } catch (error) {
                 console.error('Error loading data', error);
             }
         };
         loadData();
-    }, [fetchPendingDeliveries]); // Add fetchPendingDeliveries as a dependency
+    }, []);
 
     const handleDelete = async (demandeId) => {
         try {
             await deleteLivraison(demandeId);
             const data = await fetchLivraisons();
             setDemandes(data);
-            fetchPendingDeliveries(); // Update count after deletion
+            socket.emit('statusChange'); // Emit WebSocket event after deletion
         } catch (error) {
             console.error('Error deleting demande', error);
         }
@@ -62,7 +64,7 @@ function Demandes({ fetchPendingDeliveries }) { // Accept the function as a prop
     
             const data = await fetchLivraisons();
             setDemandes(data);
-            fetchPendingDeliveries(); // Update count after status change
+            socket.emit('statusChange', { id: selectedDemande._id, status: 'À la livraison' }); // Emit WebSocket event after status change
     
             setIsModalOpen(false);
         } catch (error) {

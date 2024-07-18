@@ -3,6 +3,9 @@ import Sidebar from '../sidebar/Sidebar';
 import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { pendingCount } from '../../api/livraisonService';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3001');
 
 function Dashboard({ title }) {
   const navigate = useNavigate();
@@ -20,6 +23,14 @@ function Dashboard({ title }) {
 
   useEffect(() => {
     fetchPendingDeliveries();
+
+    socket.on('updatePendingCount', (data) => {
+      setPendingDeliveriesCount(data.count);
+    });
+
+    return () => {
+      socket.off('updatePendingCount');
+    };
   }, []);
 
   const handleLogout = () => {
