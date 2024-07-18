@@ -11,7 +11,7 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
             case 'En attente':
                 return { label: 'En attente', color: 'text-blue-600' };
             case 'À la livraison':
-                return { label: 'À la livraison', color: 'text-yellow-600' };
+                return { label: 'A la livraison', color: 'text-yellow-600' };
             case 'Livré':
                 return { label: 'Livré', color: 'text-green-600' };
             case 'Annulé':

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaClipboardList, FaUser, FaShoppingCart, FaTruck } from 'react-icons/fa';
-import { addLivraison } from '../../api/livraisonService'; // Adjust the import path as needed
+import { addLivraison } from '../../api/livraisonService';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LivraisonForm = ({ clients, products }) => {
     const [newLivraison, setNewLivraison] = useState({
@@ -11,7 +13,7 @@ const LivraisonForm = ({ clients, products }) => {
         client: '',
         products: [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }],
         market: '',
-        driver: '',  // Ensure driver is included in the state but set to an empty string initially
+        driver: '',
         Prix: '',
         Date: ''
     });
@@ -63,8 +65,11 @@ const LivraisonForm = ({ clients, products }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date) {
+            toast.error('Veuillez remplir tous les champs obligatoires.');
+            return;
+        }
         try {
-            // Construct payload with nested objects and conditionally include the driver field
             const payload = {
                 ...newLivraison,
                 client: newLivraison.client || undefined,
@@ -74,15 +79,16 @@ const LivraisonForm = ({ clients, products }) => {
                 })),
             };
 
-            // Remove driver if not set
             if (!newLivraison.driver) {
                 delete payload.driver;
             }
 
             const response = await addLivraison(payload);
             console.log('Successfully submitted:', response.data);
+            toast.success('Livraison soumise avec succès!');
         } catch (error) {
             console.error('Error submitting data:', error.response ? error.response.data : error.message);
+            toast.error('Erreur lors de la soumission de la livraison.');
         }
     };
 
@@ -95,6 +101,7 @@ const LivraisonForm = ({ clients, products }) => {
 
     return (
         <div className="p-6 bg-white rounded-lg shadow-md">
+            <ToastContainer />
             <h2 className="text-3xl font-semibold text-center mb-8 text-blue-600">Demandes de Livraisons</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div className="col-span-1 space-y-4">
@@ -133,7 +140,7 @@ const LivraisonForm = ({ clients, products }) => {
                             <h3 className="text-xl font-semibold mb-4 text-blue-600">Informations Générales</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-gray-700">N° de la Commande</label>
+                                    <label className="block text-gray-700">N° de la Commande*</label>
                                     <input
                                         type="text"
                                         name="NumeroCommande"
@@ -143,7 +150,7 @@ const LivraisonForm = ({ clients, products }) => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-gray-700">Référence </label>
+                                    <label className="block text-gray-700">Référence*</label>
                                     <input
                                         type="text"
                                         name="Référence"
@@ -176,7 +183,7 @@ const LivraisonForm = ({ clients, products }) => {
 
                         <div id="client" className="mb-8">
                             <h3 className="text-xl font-semibold mb-4 text-blue-600">Client</h3>
-                            <label className="block text-gray-700">Ajouter un client</label>
+                            <label className="block text-gray-700">Ajouter un client *</label>
                             <select
                                 name="client"
                                 value={newLivraison.client}
@@ -196,7 +203,7 @@ const LivraisonForm = ({ clients, products }) => {
                             <h3 className="text-xl font-semibold mb-4 text-blue-600">Produits de la Commande</h3>
                             {newLivraison.products.map((product, index) => (
                                 <div key={index} className="mb-4">
-                                    <label className="block text-gray-700">Article</label>
+                                    <label className="block text-gray-700">Article *</label>
                                     <select
                                         name="productId"
                                         value={product.productId}
@@ -215,7 +222,7 @@ const LivraisonForm = ({ clients, products }) => {
                                         name="quantity"
                                         value={product.quantity}
                                         onChange={(e) => handleProductChange(index, 'quantity', e.target.value)}
-                                        placeholder="Quantité"
+                                        placeholder="Quantité *"
                                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 mb-2"
                                     />
                                     <div className="flex items-center space-x-4">
@@ -275,7 +282,7 @@ const LivraisonForm = ({ clients, products }) => {
                             >
                                 Calculez le prix
                             </button>
-                            <label className="block text-gray-700">Date de la livraison</label>
+                            <label className="block text-gray-700">Date de la livraison*</label>
                             <input
                                 type="date"
                                 name="Date"

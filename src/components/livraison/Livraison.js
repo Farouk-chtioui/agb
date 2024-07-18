@@ -9,6 +9,8 @@ import LivraisonTable from './LivraisonTable';
 import Search from '../searchbar/Search';
 import Pagination from '../Pagination/Pagination';
 import Dashboard from '../dashboard/Dashboard';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Livraison() {
   const [clients, setClients] = useState([]);
@@ -96,8 +98,10 @@ function Livraison() {
       fetchLivraisonsData();
       setShowForm(false);
       resetForm();
+      toast.success('Livraison ajoutée avec succès!');
     } catch (error) {
       console.error('Error adding livraison', error);
+      toast.error('Erreur lors de l\'ajout de la livraison.');
     }
   };
 
@@ -106,10 +110,13 @@ function Livraison() {
       fetchLivraisonsData();
       setShowForm(false);
       resetForm();
+      toast.success('Livraison modifiée avec succès!');
     } catch (error) {
       console.error('Error editing livraison', error);
+      toast.error('Erreur lors de la modification de la livraison.');
     }
   };
+
   const handleModify = (livraison) => {
     setCurrentLivraison(livraison);
     setNewLivraison(livraison);
@@ -164,15 +171,18 @@ function Livraison() {
             console.error('Error searching livraisons', error);
         }
     }
-};
-
+  };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteLivraison(id);
-      fetchLivraisonsData();
-    } catch (error) {
-      console.error('Error deleting livraison', error);
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette livraison?')) {
+      try {
+        await deleteLivraison(id);
+        fetchLivraisonsData();
+        toast.success('Livraison supprimée avec succès!');
+      } catch (error) {
+        console.error('Error deleting livraison', error);
+        toast.error('Erreur lors de la suppression de la livraison.');
+      }
     }
   };
 
@@ -197,6 +207,7 @@ function Livraison() {
     <div className="flex">
       <Dashboard />
       <div className="flex-1 container mx-auto p-9 relative mt-20">
+        <ToastContainer />
         <Search setData={handleSearch} title={'Tout les livraisons'} />
         <button
           className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import ClientForm from '../clients/ClientForm'; // Adjust the import path as needed
-import { addClient } from "../../api/clientService"; // Make sure the import path is correct
+import ClientForm from '../clients/ClientForm';
+import { addClient } from "../../api/clientService";
+import { toast } from 'react-toastify';
 import './style.css';
 
 const LivraisonForm = ({
@@ -19,7 +20,7 @@ const LivraisonForm = ({
 }) => {
     const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
     const [currentStep, setCurrentStep] = useState(0);
-    const [showClientForm, setShowClientForm] = useState(false); // State to manage ClientForm visibility
+    const [showClientForm, setShowClientForm] = useState(false);
     const [newClient, setNewClient] = useState({
         first_name: '',
         last_name: '',
@@ -28,7 +29,6 @@ const LivraisonForm = ({
         phone: ''
     });
 
-    // Use useEffect to update productList when currentLivraison changes
     useEffect(() => {
         if (isEditMode && currentLivraison) {
             setProductList(currentLivraison.products.length > 0 ? currentLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
@@ -37,25 +37,32 @@ const LivraisonForm = ({
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date) {
+            toast.error('Veuillez remplir tous les champs obligatoires.');
+            return;
+        }
         const livraisonData = { ...newLivraison, products: productList };
         if (isEditMode) {
             handleEditLivraison(livraisonData);
         } else {
             handleAddLivraison(livraisonData);
         }
+        setShowForm(false); // Close the form on successful submission
     };
 
     const handleClientAdd = async () => {
         try {
-            const addedClient = await addClient(newClient); // Assuming addClient is a function that adds a client and returns the added client
+            const addedClient = await addClient(newClient);
             clients.push(addedClient);
             setShowClientForm(false);
             setNewLivraison((prevState) => ({
                 ...prevState,
                 client: addedClient._id
             }));
+            toast.success('Client ajouté avec succès!');
         } catch (error) {
             console.error('Error adding client:', error);
+            toast.error('Erreur lors de l\'ajout du client.');
         }
     };
 

@@ -15,6 +15,7 @@ function Dashboard({ title }) {
 
   const sidebarItems = [
     { title: 'Dashboard', icon: FaHome, path: `/${role}/dashboard`, roles: ['admin', 'market', 'driver', 'user'] },
+   
     {
       title: 'Livraison', icon: FaTruck, roles: ['admin'], subItems: [
         { title: 'Listes des livraisons', path: '/livraison/listes' },
@@ -24,6 +25,10 @@ function Dashboard({ title }) {
     { title: 'Clients', icon: FaUserAlt, path: '/clients', roles: ['admin'] },
     { title: 'Magasins', icon: FaStore, path: '/magasins', roles: ['admin'] },
     { title: 'Produits', icon: FaBox, path: '/produits', roles: ['admin', 'market'] },
+    {title:"Demande Livraison",icon:FaTruck ,roles:["market"],subItems: [
+      { title: 'Liste des livraisons', path: '/livraison/demandes' },
+      { title: 'Proposer une livraison', path: '/commands/propositions' }
+    ]},
     {
       title: 'Chauffeurs', icon: FaTruck, roles: ['admin', 'driver'], subItems: [
         { title: 'Gérer les chauffeurs', path: '/chauffeurs/Gérer' },
@@ -39,10 +44,7 @@ function Dashboard({ title }) {
     },
     { title: 'Settings', icon: FaCog, path: '/settings', roles: ['admin'] },
     { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout, roles: ['admin', 'market', 'driver', 'user'] },
-    {title:"Demande Livraison",icon:FaTruck ,roles:["admin","market"],subItems: [
-      { title: 'Liste des livraisons', path: '/livraison/demandes' },
-      { title: 'Proposer une livraison', path: '/commands/propositions' }
-    ]}
+   
   ];
 
   const filteredItems = sidebarItems.filter(item => item.roles.includes(role));

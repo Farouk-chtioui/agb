@@ -4,6 +4,9 @@ import PhoneInput from 'react-phone-number-input';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'; // Import the default style
 import '../Form/Form.css';
+import AddressAutocomplete from '../googleAutoComplete/AddressAutocomplete'; // Adjust the import path as needed
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ClientForm = ({
   newClient,
@@ -16,8 +19,8 @@ const ClientForm = ({
   const fields = [
     { name: 'first_name', label: 'Nom', type: 'text', placeholder: 'Nom', colSpan: 1 },
     { name: 'last_name', label: 'Prenom', type: 'text', placeholder: 'Prenom', colSpan: 1 },
-    { name: 'address1', label: 'Adresse de la Livraison', type: 'text', placeholder: 'Adresse de la Livraison', colSpan: 2 },
-    { name: 'address2', label: 'Adresse Alternative', type: 'text', placeholder: 'Adresse Alternative', colSpan: 2 },
+    { name: 'address1', label: 'Adresse de la Livraison', type: 'autocomplete', placeholder: 'Adresse de la Livraison', colSpan: 2 },
+    { name: 'address2', label: 'Adresse Alternative', type: 'autocomplete', placeholder: 'Adresse Alternative', colSpan: 2 },
     { name: 'phone', label: 'Phone', type: 'phone', placeholder: 'Phone', colSpan: 2 },
   ].filter(Boolean);
 
@@ -25,10 +28,19 @@ const ClientForm = ({
     handleChange({ target: { name: 'phone', value } });
   };
 
+  const handleAddressChange = (name, value, postalCode) => {
+    handleChange({ target: { name, value } });
+    if (name === 'address1') {
+      handleChange({ target: { name: 'code_postal', value: postalCode } });
+    } else if (name === 'address2') {
+      handleChange({ target: { name: 'code_postal2', value: postalCode } });
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!isValidPhoneNumber(newClient.phone)) {
-      alert("Invalid phone number");
+      toast.error("Invalid phone number");
       return;
     }
     if (isEditMode) {
@@ -60,6 +72,16 @@ const ClientForm = ({
                   className="phone-input"
                 />
               </div>
+            </div>
+          );
+        } else if (field.type === 'autocomplete') {
+          return (
+            <div className={`form-group col-span-${field.colSpan}`} key={index}>
+              <label htmlFor={field.name} className="block text-blue-700 mb-2">{field.label}</label>
+              <AddressAutocomplete
+                value={newClient[field.name]}
+                onChange={(e) => handleAddressChange(field.name, e.target.value, e.postalCode)}
+              />
             </div>
           );
         }
