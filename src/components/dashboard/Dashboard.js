@@ -95,9 +95,7 @@ function Dashboard({ title }) {
   return (
     <div className="flex h-screen">
       <Sidebar items={filteredItems} openIndexes={openIndexes} toggleDropdown={toggleDropdown} />
-      <div className="flex-grow p-6">
-        <h1 className="text-3xl font-bold absolute z-50">{title}</h1>
-      </div>
+     
     </div>
   );
 }

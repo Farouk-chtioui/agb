@@ -99,29 +99,29 @@ function Demandes() {
     const currentPageData = currentData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     return (
-        <div className="flex h-screen bg-white-100">
-            <Dashboard />
-            <div className="flex-1 overflow-y-auto">
-                <div className="max-w-6xl mx-auto p-8">
-                    <Search setData={handleSearch} title="Tout les demandes de livraison" />
-                    <DemandeTable
-                        demandes={currentPageData}
-                        handleDelete={handleDelete}
-                        handleAddDriver={handleAddDriver}
-                    />
-                    <Pagination pageCount={pageCount} currentPage={currentPage} handlePaginationChange={handlePaginationChange} />
-                </div>
-            </div>
-            {isModalOpen && (
+        <div className="flex h-screen">
+          <Dashboard />
+          <div className="flex-1 flex flex-col h-screen overflow-y-auto">
+            <div className="container mx-auto p-9 relative mt-20">
+              <Search setData={handleSearch} title="Toutes les demandes de livraison" />
+              <DemandeTable
+                demandes={currentPageData}
+                handleDelete={handleDelete}
+                handleAddDriver={handleAddDriver}
+              />
+              <Pagination pageCount={pageCount} currentPage={currentPage} handlePaginationChange={handlePaginationChange} />
+              {isModalOpen && (
                 <AddDriverForm
-                    livraisonId={selectedDemande ? selectedDemande._id : ''}
-                    handleChange={handleChange}
-                    handleModify={handleModify}
-                    setShowForm={setIsModalOpen}
+                  livraisonId={selectedDemande ? selectedDemande._id : ''}
+                  handleChange={handleChange}
+                  handleModify={handleModify}
+                  setShowForm={setIsModalOpen}
                 />
-            )}
+              )}
+            </div>
+          </div>
         </div>
-    );
-}
-
-export default Demandes;
+      );
+    }      
+    export default Demandes;
+      

@@ -93,7 +93,7 @@ function Livraison() {
 
   const handleAddLivraison = async (livraisonData) => {
     try {
-      livraisonData.status = 'En attente';
+      livraisonData.status = 'A la livraison';
       await addLivraison(livraisonData);
       fetchLivraisonsData();
       setShowForm(false);
