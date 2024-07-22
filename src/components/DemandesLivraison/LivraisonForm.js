@@ -97,7 +97,6 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
             return;
         }
 
-        // Check if the client's code_postal and the market's code_postal are in the secteurs list
         const isClientCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
         const isMarketCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(marketCodePostal)));
 

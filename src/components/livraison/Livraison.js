@@ -4,6 +4,7 @@ import { fetchDrivers } from '../../api/driverService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
 import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison } from '../../api/livraisonService';
+import { fetchSectures } from '../../api/sectureService'; 
 import LivraisonForm from './LivraisonForm';
 import LivraisonTable from './LivraisonTable';
 import Search from '../searchbar/Search';
@@ -17,6 +18,7 @@ function Livraison() {
   const [drivers, setDrivers] = useState([]);
   const [markets, setMarkets] = useState([]);
   const [products, setProducts] = useState([]);
+  const [secteurs, setSecteurs] = useState([]);  // New state for secteurs
   const [newLivraison, setNewLivraison] = useState({
     NumeroCommande: '',
     Référence: '',
@@ -43,6 +45,7 @@ function Livraison() {
     fetchMarketsData();
     fetchLivraisonsData();
     fetchProductsData();
+    fetchSecteursData();  // Fetch secteurs data
   }, [currentPage]);
 
   const fetchClientsData = async () => {
@@ -91,19 +94,28 @@ function Livraison() {
     }
   };
 
-  const handleAddLivraison = async (livraisonData) => {
+  const fetchSecteursData = async () => {
     try {
-      livraisonData.status = 'A la livraison';
-      await addLivraison(livraisonData);
-      fetchLivraisonsData();
-      setShowForm(false);
-      resetForm();
-      toast.success('Livraison ajoutée avec succès!');
+      const data = await fetchSectures();
+      setSecteurs(data);
     } catch (error) {
-      console.error('Error adding livraison', error);
-      toast.error('Erreur lors de l\'ajout de la livraison.');
+      console.error('Error fetching secteurs', error);
     }
   };
+
+  const handleAddLivraison = async (livraisonData) => {
+    try {
+        livraisonData.status = 'À la livraison';
+        await addLivraison(livraisonData);
+        fetchLivraisonsData();
+        setShowForm(false); 
+        resetForm();
+        toast.success('Livraison ajoutée avec succès!');
+    } catch (error) {
+        console.error('Error adding livraison', error);
+        toast.error('Erreur lors de l\'ajout de la livraison.');
+    }
+};
 
   const handleEditLivraison = async (livraisonData) => {
     try {
@@ -232,6 +244,7 @@ function Livraison() {
             markets={markets}
             products={products}
             drivers={drivers}
+            secteurs={secteurs}  // Pass secteurs as a prop
             currentLivraison={currentLivraison}
           />
         )}

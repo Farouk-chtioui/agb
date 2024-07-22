@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ClientForm from '../clients/ClientForm';
 import { addClient } from "../../api/clientService";
+import { fetchMagasins } from '../../api/marketService';
 import { toast } from 'react-toastify';
 import './style.css';
 
@@ -16,6 +17,7 @@ const LivraisonForm = ({
     markets,
     products,
     drivers,
+    secteurs = [],  
     currentLivraison
 }) => {
     const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
@@ -25,15 +27,54 @@ const LivraisonForm = ({
         first_name: '',
         last_name: '',
         address1: '',
+        code_postal: '',
         address2: '',
+        code_postal2: '',
         phone: ''
     });
-
+    const [clientCodePostal, setClientCodePostal] = useState('');
+    const [marketCodePostal, setMarketCodePostal] = useState('');
+console.log(marketCodePostal);
     useEffect(() => {
         if (isEditMode && currentLivraison) {
             setProductList(currentLivraison.products.length > 0 ? currentLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
         }
     }, [currentLivraison, isEditMode]);
+
+    useEffect(() => {
+        const role = localStorage.getItem('role');
+        const userId = localStorage.getItem('userId');
+        if (role === 'market' && userId) {
+            setNewLivraison((prev) => ({
+                ...prev,
+                market: userId
+            }));
+
+            // Fetch the market's address
+            const fetchMarketAddress = async () => {
+                try {
+                    const response = await fetchMagasins();
+                    const market = response.find(m => m._id === userId);
+                    if (market) {
+                        setMarketCodePostal(market.codePostal);
+                    }
+                } catch (error) {
+                    console.error('Error fetching market address:', error);
+                }
+            };
+
+            fetchMarketAddress();
+        }
+    }, []);
+
+    useEffect(() => {
+        if (newLivraison.client) {
+            const selectedClient = clients.find(client => client._id === newLivraison.client);
+            if (selectedClient) {
+                setClientCodePostal(selectedClient.code_postal);
+            }
+        }
+    }, [newLivraison.client, clients]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -41,6 +82,21 @@ const LivraisonForm = ({
             toast.error('Veuillez remplir tous les champs obligatoires.');
             return;
         }
+
+        // Check if the client's code_postal and the market's code_postal are in the secteurs list
+        const isClientCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
+        const isMarketCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(marketCodePostal)));
+
+        if (!isClientCodePostalValid) {
+            toast.error('Le code postal du client ne fait pas partie des secteurs disponibles.');
+            return;
+        }
+
+        if (!isMarketCodePostalValid) {
+            toast.error('Le code postal du marché ne fait pas partie des secteurs disponibles. Veuillez contacter l\'administrateur.');
+            return;
+        }
+
         const livraisonData = { ...newLivraison, products: productList };
         if (isEditMode) {
             handleEditLivraison(livraisonData);
