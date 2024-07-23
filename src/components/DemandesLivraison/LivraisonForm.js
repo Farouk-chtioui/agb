@@ -4,6 +4,9 @@ import { addLivraison } from '../../api/livraisonService';
 import { fetchMagasins } from '../../api/marketService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import io from 'socket.io-client'; // Import io from socket.io-client
+
+const socket = io('http://localhost:3001'); // Initialize socket
 
 const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
     const [newLivraison, setNewLivraison] = useState({
@@ -96,20 +99,20 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
             toast.error('Veuillez remplir tous les champs obligatoires.');
             return;
         }
-
+    
         const isClientCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
         const isMarketCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(marketCodePostal)));
-
+    
         if (!isClientCodePostalValid) {
             toast.error('Le code postal du client ne fait pas partie des secteurs disponibles.');
             return;
         }
-
+    
         if (!isMarketCodePostalValid) {
             toast.error('Le code postal du marché ne fait pas partie des secteurs disponibles. Veuillez contacter l\'administrateur.');
             return;
         }
-
+    
         try {
             const payload = {
                 ...newLivraison,
@@ -119,19 +122,28 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
                     productId: product.productId || undefined
                 })),
             };
-
+    
             if (!newLivraison.driver) {
                 delete payload.driver;
             }
-
+    
             const response = await addLivraison(payload);
-            console.log('Successfully submitted:', response.data);
-            toast.success('Livraison soumise avec succès!');
+            console.log('Successfully submitted:', response);
+    
+            if (response && response._id) {
+                socket.emit('addLivraison', { id: response._id }); // Emit WebSocket event after adding livraison
+                toast.success('Livraison soumise avec succès!');
+            } else {
+                console.error('Unexpected response structure:', response);
+                toast.error('Erreur lors de la soumission de la livraison. Réponse inattendue.');
+            }
         } catch (error) {
             console.error('Error submitting data:', error.response ? error.response.data : error.message);
             toast.error('Erreur lors de la soumission de la livraison.');
         }
     };
+    
+    
 
     const scrollToSection = (sectionId) => {
         const section = document.getElementById(sectionId);
