@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { pendingCount } from '../../api/livraisonService';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:3001'); // Replace with your server URL
+const socket = io('http://localhost:3001');
 
 function Dashboard({ title }) {
   const navigate = useNavigate();
@@ -32,8 +32,14 @@ function Dashboard({ title }) {
       setPendingDeliveriesCount(data.count);
     });
 
+    socket.on('statusChange', () => {
+      console.log('Received statusChange event in Dashboard');
+      fetchPendingDeliveries(); // Reload the pending deliveries count
+    });
+
     return () => {
       socket.off('updatePendingCount');
+      socket.off('statusChange');
     };
   }, []);
 
@@ -95,7 +101,6 @@ function Dashboard({ title }) {
   return (
     <div className="flex h-screen">
       <Sidebar items={filteredItems} openIndexes={openIndexes} toggleDropdown={toggleDropdown} />
-     
     </div>
   );
 }

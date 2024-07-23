@@ -31,19 +31,39 @@ function Demandes() {
             }
         };
         loadData();
+
+        socket.on('statusChange', () => {
+            loadData(); // Reload the data when the status changes
+        });
+
+        return () => {
+            socket.off('statusChange');
+        };
     }, []);
 
     const handleDelete = async (demandeId) => {
         try {
             await deleteLivraison(demandeId);
-            const data = await fetchLivraisons();
-            setDemandes(data);
-            socket.emit('statusChange'); // Emit WebSocket event after deletion
+            console.log('Deleted demande with ID:', demandeId);
+            socket.emit('statusChange', { id: demandeId, status: 'deleted' }); // Emit WebSocket event with data
         } catch (error) {
             console.error('Error deleting demande', error);
         }
     };
-
+    
+    const handleModify = async () => {
+        try {
+            await modifyDriver({ id: selectedDemande._id, driver: formData.driver });
+            await updateStatus(selectedDemande._id, 'À la livraison');
+            console.log('Modified demande with ID:', selectedDemande._id);
+            socket.emit('statusChange', { id: selectedDemande._id, status: 'À la livraison' }); // Emit WebSocket event with data
+    
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Error updating livraison:', error);
+        }
+    };
+    
     const handleAddDriver = (demande) => {
         console.log('handleAddDriver - Selected Demande:', demande); // Log the entire demande object
         setSelectedDemande(demande);
@@ -57,20 +77,7 @@ function Demandes() {
         });
     };
 
-    const handleModify = async () => {
-        try {
-            await modifyDriver({ id: selectedDemande._id, driver: formData.driver });
-            await updateStatus(selectedDemande._id, 'À la livraison');
-    
-            const data = await fetchLivraisons();
-            setDemandes(data);
-            socket.emit('statusChange', { id: selectedDemande._id, status: 'À la livraison' }); // Emit WebSocket event after status change
-    
-            setIsModalOpen(false);
-        } catch (error) {
-            console.error('Error updating livraison:', error);
-        }
-    };
+
 
     const handleSearch = useCallback((searchTerm) => {
         setSearchTerm(searchTerm);
@@ -100,28 +107,28 @@ function Demandes() {
 
     return (
         <div className="flex h-screen">
-          <Dashboard />
-          <div className="flex-1 flex flex-col h-screen overflow-y-auto">
-            <div className="container mx-auto p-9 relative mt-20">
-              <Search setData={handleSearch} title="Toutes les demandes de livraison" />
-              <DemandeTable
-                demandes={currentPageData}
-                handleDelete={handleDelete}
-                handleAddDriver={handleAddDriver}
-              />
-              <Pagination pageCount={pageCount} currentPage={currentPage} handlePaginationChange={handlePaginationChange} />
-              {isModalOpen && (
-                <AddDriverForm
-                  livraisonId={selectedDemande ? selectedDemande._id : ''}
-                  handleChange={handleChange}
-                  handleModify={handleModify}
-                  setShowForm={setIsModalOpen}
-                />
-              )}
+            <Dashboard />
+            <div className="flex-1 flex flex-col h-screen overflow-y-auto">
+                <div className="container mx-auto p-9 relative mt-20">
+                    <Search setData={handleSearch} title="Toutes les demandes de livraison" />
+                    <DemandeTable
+                        demandes={currentPageData}
+                        handleDelete={handleDelete}
+                        handleAddDriver={handleAddDriver}
+                    />
+                    <Pagination pageCount={pageCount} currentPage={currentPage} handlePaginationChange={handlePaginationChange} />
+                    {isModalOpen && (
+                        <AddDriverForm
+                            livraisonId={selectedDemande ? selectedDemande._id : ''}
+                            handleChange={handleChange}
+                            handleModify={handleModify}
+                            setShowForm={setIsModalOpen}
+                        />
+                    )}
+                </div>
             </div>
-          </div>
         </div>
-      );
-    }      
-    export default Demandes;
-      
+    );
+}
+
+export default Demandes;

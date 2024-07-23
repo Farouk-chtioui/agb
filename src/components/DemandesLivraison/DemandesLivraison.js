@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import LivraisonForm from './LivraisonForm';
 import ClientForm from '../clients/ClientForm'; 
-import { fetchClients } from '../../api/clientService';
+import { fetchClients, addClient } from '../../api/clientService';
 import { fetchProducts } from '../../api/productService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchSectures } from '../../api/sectureService'; 
 import Dashboard from '../dashboard/Dashboard';
-import { addClient } from '../../api/clientService'; 
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3001');
 
 const DemandesLivraison = () => {
     const [clients, setClients] = useState([]);
@@ -66,6 +68,7 @@ const DemandesLivraison = () => {
                 code_postal2: '',
                 phone: ''
             });
+            socket.emit('statusChange', { id: addedClient._id, status: 'added' }); // Emit WebSocket event after adding client
         } catch (error) {
             console.error('Error adding client', error);
         }
