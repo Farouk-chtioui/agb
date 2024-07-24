@@ -28,6 +28,7 @@ const DemandeTable = ({ demandes, handleDelete, handleAddDriver }) => {
                 <td className="py-6 px-4 border-b border-gray-200">{demande.market?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.Date}</td>
                 <td className={`py-6 px-4 border-b border-gray-200 flex items-center justify-center gap-2 ${statusInfo.color}`}>
+                    <span className={`w-2 h-2 rounded-full inline-block ${statusInfo.color}`}></span>
                     <span className="font-poppins font-normal text-base leading-6">
                         {statusInfo.label}
                     </span>

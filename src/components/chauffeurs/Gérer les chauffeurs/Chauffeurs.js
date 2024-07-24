@@ -5,6 +5,8 @@ import Search from '../../searchbar/Search';
 import DriverForm from './DriverForm';
 import DriverTable from './DriverTable';
 import Pagination from '../../Pagination/Pagination';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './chauffeurs.css';
 
 const Chauffeurs = () => {
@@ -31,17 +33,23 @@ const Chauffeurs = () => {
       const data = await fetchDrivers(currentPage);
       setDrivers(data);
       setFilteredDrivers(data);
+      toast.success('Chauffeurs récupérés avec succès!');
     } catch (error) {
       console.error('Error fetching drivers', error);
+      toast.error('Erreur lors de la récupération des chauffeurs.');
     }
   };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteDriver(id);
-      fetchDriversData();
-    } catch (error) {
-      console.error('Error deleting driver', error);
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce chauffeur?')) {
+      try {
+        await deleteDriver(id);
+        fetchDriversData();
+        toast.success('Chauffeur supprimé avec succès!');
+      } catch (error) {
+        console.error('Error deleting driver', error);
+        toast.error('Erreur lors de la suppression du chauffeur.');
+      }
     }
   };
 
@@ -58,16 +66,10 @@ const Chauffeurs = () => {
       await modifyDriver(newDriver);
       fetchDriversData();
       setShowForm(false);
-      setIsEditMode(false);
-      setCurrentDriver(null);
-      setNewDriver({
-        first_name: '',
-        last_name: '',
-        email: '',
-        password: ''
-      });
+      toast.success('Chauffeur modifié avec succès!');
     } catch (error) {
       console.error('Error modifying driver', error);
+      toast.error('Erreur lors de la modification du chauffeur.');
     }
   };
 
@@ -77,8 +79,10 @@ const Chauffeurs = () => {
       await addDriver(newDriver);
       fetchDriversData();
       setShowForm(false);
+      toast.success('Chauffeur ajouté avec succès!');
     } catch (error) {
       console.error('Error adding driver', error);
+      toast.error('Erreur lors de l\'ajout du chauffeur.');
     }
   };
 
@@ -99,8 +103,10 @@ const Chauffeurs = () => {
         const response = await searchDrivers(searchTerm);
         setFilteredDrivers(response);
         setIsSearchActive(true);
+        toast.success('Recherche effectuée avec succès!');
       } catch (error) {
         console.error('Error searching drivers', error);
+        toast.error('Erreur lors de la recherche des chauffeurs.');
       }
     }
   };
@@ -109,6 +115,7 @@ const Chauffeurs = () => {
     <div className="flex">
       <Dashboard title="Gérer les chauffeurs" />
       <div className="flex-1 container mx-auto p-9 relative mt-20 ">
+        <ToastContainer />
         <Search setData={handleSearch} title={"Tout les chauffeurs"} />
         <button
           className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"

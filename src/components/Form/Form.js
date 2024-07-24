@@ -16,7 +16,6 @@ const Form = ({
   const [imagePreview, setImagePreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  
   useEffect(() => {
     if (isEditMode && formData) {
       fields.forEach(field => {
@@ -69,13 +68,30 @@ const Form = ({
   };
 
   const handleDeleteClick = () => {
-    if (window.confirm('Are you sure you want to delete this plan?')) {
+    if (window.confirm('Are you sure you want to delete this item?')) {
       handleDelete();
     }
   };
 
+  const closeModal = () => {
+    setShowForm(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50" onKeyDown={handleKeyDown}>
       <div className="bg-white p-10 rounded-2xl shadow-lg w-1/2 h-auto max-h-screen overflow-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-semibold text-blue-600 font-custom">
@@ -83,7 +99,7 @@ const Form = ({
           </h2>
           <button
             className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-2xl"
-            onClick={() => setShowForm(false)}
+            onClick={closeModal}
           >
             &times;
           </button>

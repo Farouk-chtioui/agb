@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fetchDrivers } from '../../../api/driverService';
 import Form from '../../Form/Form';
+import { toast } from 'react-toastify';
 
 const AddDriverForm = ({ livraisonId, handleChange, handleModify, setShowForm }) => {
     const [drivers, setDrivers] = useState([]);
@@ -43,14 +44,22 @@ const AddDriverForm = ({ livraisonId, handleChange, handleModify, setShowForm })
     useEffect(() => {
     }, [livraisonId]);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await handleModify();
+            setShowForm(false);
+        } catch (error) {
+            console.error('Error updating livraison:', error);
+            toast.error('Error assigning driver.');
+        }
+    };
+
     return (
         <Form
             formData={formData}
             handleChange={handleLocalChange}
-            handleSubmit={(e) => {
-                e.preventDefault();
-                handleModify();
-            }}
+            handleSubmit={handleSubmit}
             setShowForm={setShowForm}
             title="Assign Driver"
             fields={fields}

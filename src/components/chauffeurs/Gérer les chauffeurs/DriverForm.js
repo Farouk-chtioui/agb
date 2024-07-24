@@ -8,8 +8,7 @@ const DriverForm = ({
   handleAddDriver, 
   handleEditDriver, 
   setShowForm, 
-  isEditMode, 
-   
+  isEditMode 
 }) => {
 
   const fields = [

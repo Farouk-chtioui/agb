@@ -43,7 +43,7 @@ const DemandesLivraison = () => {
                 setProducts(productsData);
                 setMarkets(marketsData);
                 setDrivers(driversData);
-                setSecteurs(secteursData); // Set secteurs data
+                setSecteurs(secteursData); 
                 setLoading(false);
             } catch (error) {
                 console.error('Error loading data', error);

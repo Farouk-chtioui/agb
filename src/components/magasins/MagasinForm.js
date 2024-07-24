@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addMagasin, modifyMagasin,setPostalCode } from '../../redux/reducers/magasinReducer';
+import { addMagasin, modifyMagasin, setPostalCode } from '../../redux/reducers/magasinReducer';
 import Form from '../Form/Form';
 import AddressAutocomplete from '../googleAutoComplete/AddressAutocomplete';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../Form/Form.css';
 
 const MagasinForm = ({
@@ -46,7 +48,7 @@ const MagasinForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!addressData.codePostal) {
-      alert('Please provide an address with a postal code.');
+      toast.error('Please provide an address with a postal code.');
       return;
     }
     const magasinData = {
@@ -56,11 +58,13 @@ const MagasinForm = ({
     };
     if (isEditMode) {
       await dispatch(modifyMagasin(magasinData));
+      toast.success('Magasin modifié avec succès!');
     } else {
       const resultAction = await dispatch(addMagasin(magasinData));
       if (addMagasin.fulfilled.match(resultAction)) {
         const addedMagasin = resultAction.payload;
         dispatch(setPostalCode({ marketId: addedMagasin._id, postalCode: addressData.codePostal }));
+        toast.success('Magasin ajouté avec succès!');
       }
     }
     setShowForm(false);

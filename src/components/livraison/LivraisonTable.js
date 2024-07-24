@@ -9,17 +9,17 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
     const getStatusLabel = (status) => {
         switch (status) {
             case 'En attente':
-                return { label: 'En attente', color: 'text-blue-600' };
+                return { label: 'En attente', color: 'text-blue-600', bgColor: 'bg-blue-600' };
             case 'À la livraison':
-                return { label: 'A la livraison', color: 'text-yellow-600' };
+                return { label: 'A la livraison', color: 'text-yellow-600', bgColor: 'bg-yellow-600' };
             case 'Livré':
-                return { label: 'Livré', color: 'text-green-600' };
+                return { label: 'Livré', color: 'text-green-600', bgColor: 'bg-green-600' };
             case 'Annulé':
-                return { label: 'Annulé', color: 'text-red-600' };
+                return { label: 'Annulé', color: 'text-red-600', bgColor: 'bg-red-600' };
             case 'Retardé':
-                return { label: 'Retardé', color: 'text-orange-600' };
+                return { label: 'Retardé', color: 'text-orange-600', bgColor: 'bg-orange-600' };
             default:
-                return { label: 'Inconnu', color: 'text-gray-600' };
+                return { label: 'Inconnu', color: 'text-gray-600', bgColor: 'bg-gray-600' };
         }
     };
 
@@ -34,7 +34,8 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
                 <td className="py-6 px-4 border-b border-gray-200">{livraison.driver?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">{livraison.market?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">{livraison.Date}</td>
-                <td className={`py-6 px-4 border-b border-gray-200 flex items-center justify-center gap-2 ${statusInfo.color}`}>
+                <td className={`py-6 px-4 border-b border-gray-200 flex items-center gap-2 ${statusInfo.color}`}>
+                    <span className={`w-3 h-3 rounded-full ${statusInfo.bgColor}`} />
                     <span className="font-poppins font-normal text-base leading-6">
                         {statusInfo.label}
                     </span>

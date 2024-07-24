@@ -6,6 +6,8 @@ import Search from '../searchbar/Search';
 import MagasinForm from './MagasinForm';
 import MagasinTable from './MagasinTable';
 import Pagination from '../Pagination/Pagination';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Magasins = () => {
   const dispatch = useDispatch();
@@ -30,17 +32,14 @@ const Magasins = () => {
   const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
-    console.log("Component Mounted");
     dispatch(fetchMagasins(currentPage));
     const role = localStorage.getItem('role');
     setUserRole(role);
-    return () => {
-      console.log("Component Unmounted");
-    };
   }, [dispatch, currentPage]);
 
   const handleDelete = (id) => {
     dispatch(deleteMagasin(id));
+    toast.success('Magasin supprimé avec succès!');
   };
 
   const handleModify = (magasin) => {
@@ -95,6 +94,7 @@ const Magasins = () => {
     <div className="flex">
       <Dashboard title="Gérer les magasins" />
       <div className="flex-1 container mx-auto p-9 relative mt-20">
+        <ToastContainer />
         <Search setData={handleSearch} title={"Tous les magasins"} />
         <button
           className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
