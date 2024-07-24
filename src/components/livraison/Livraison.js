@@ -4,7 +4,7 @@ import { fetchDrivers } from '../../api/driverService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
 import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison } from '../../api/livraisonService';
-import { fetchSectures } from '../../api/sectureService'; 
+import { fetchSectures } from '../../api/sectureService';
 import LivraisonForm from './LivraisonForm';
 import LivraisonTable from './LivraisonTable';
 import Search from '../searchbar/Search';
@@ -18,7 +18,7 @@ function Livraison() {
   const [drivers, setDrivers] = useState([]);
   const [markets, setMarkets] = useState([]);
   const [products, setProducts] = useState([]);
-  const [secteurs, setSecteurs] = useState([]);  // New state for secteurs
+  const [secteurs, setSecteurs] = useState([]); // New state for secteurs
   const [newLivraison, setNewLivraison] = useState({
     NumeroCommande: '',
     Référence: '',
@@ -45,7 +45,7 @@ function Livraison() {
     fetchMarketsData();
     fetchLivraisonsData();
     fetchProductsData();
-    fetchSecteursData();  // Fetch secteurs data
+    fetchSecteursData(); // Fetch secteurs data
   }, [currentPage]);
 
   const fetchClientsData = async () => {
@@ -105,17 +105,17 @@ function Livraison() {
 
   const handleAddLivraison = async (livraisonData) => {
     try {
-        livraisonData.status = 'À la livraison';
-        await addLivraison(livraisonData);
-        fetchLivraisonsData();
-        setShowForm(false); 
-        resetForm();
-        toast.success('Livraison ajoutée avec succès!');
+      livraisonData.status = 'À la livraison';
+      await addLivraison(livraisonData);
+      fetchLivraisonsData();
+      setShowForm(false);
+      resetForm();
+      toast.success('Livraison ajoutée avec succès!');
     } catch (error) {
-        console.error('Error adding livraison', error);
-        toast.error('Erreur lors de l\'ajout de la livraison.');
+      console.error('Error adding livraison', error);
+      toast.error('Erreur lors de l\'ajout de la livraison.');
     }
-};
+  };
 
   const handleEditLivraison = async (livraisonData) => {
     try {
@@ -172,16 +172,16 @@ function Livraison() {
 
   const handleSearch = async (searchTerm) => {
     if (searchTerm === '') {
-        setFilteredLivraisons(livraisons);
-        setIsSearchActive(false);
+      setFilteredLivraisons(livraisons);
+      setIsSearchActive(false);
     } else {
-        try {
-            const response = await searchLivraisons(searchTerm);
-            setFilteredLivraisons(response);
-            setIsSearchActive(true);
-        } catch (error) {
-            console.error('Error searching livraisons', error);
-        }
+      try {
+        const response = await searchLivraisons(searchTerm);
+        setFilteredLivraisons(response);
+        setIsSearchActive(true);
+      } catch (error) {
+        console.error('Error searching livraisons', error);
+      }
     }
   };
 
@@ -230,7 +230,7 @@ function Livraison() {
         >
           Ajouter une livraison
         </button>
-  
+
         {showForm && (
           <LivraisonForm
             newLivraison={newLivraison}
@@ -244,13 +244,13 @@ function Livraison() {
             markets={markets}
             products={products}
             drivers={drivers}
-            secteurs={secteurs}  // Pass secteurs as a prop
+            secteurs={secteurs} // Pass secteurs as a prop
             currentLivraison={currentLivraison}
           />
         )}
-  
+
         <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete} handleModify={handleModify} />
-  
+
         {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
       </div>
     </div>

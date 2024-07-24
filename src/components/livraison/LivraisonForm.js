@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ClientForm from '../clients/ClientForm';
 import { addClient } from "../../api/clientService";
-import { fetchMagasins } from '../../api/marketService';
 import { toast } from 'react-toastify';
 import './style.css';
 
@@ -17,7 +16,7 @@ const LivraisonForm = ({
     markets,
     products,
     drivers,
-    secteurs = [],  
+    secteurs = [],
     currentLivraison
 }) => {
     const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
@@ -34,38 +33,12 @@ const LivraisonForm = ({
     });
     const [clientCodePostal, setClientCodePostal] = useState('');
     const [marketCodePostal, setMarketCodePostal] = useState('');
-console.log(marketCodePostal);
+
     useEffect(() => {
         if (isEditMode && currentLivraison) {
             setProductList(currentLivraison.products.length > 0 ? currentLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
         }
     }, [currentLivraison, isEditMode]);
-
-    useEffect(() => {
-        const role = localStorage.getItem('role');
-        const userId = localStorage.getItem('userId');
-        if (role === 'market' && userId) {
-            setNewLivraison((prev) => ({
-                ...prev,
-                market: userId
-            }));
-
-            // Fetch the market's address
-            const fetchMarketAddress = async () => {
-                try {
-                    const response = await fetchMagasins();
-                    const market = response.find(m => m._id === userId);
-                    if (market) {
-                        setMarketCodePostal(market.codePostal);
-                    }
-                } catch (error) {
-                    console.error('Error fetching market address:', error);
-                }
-            };
-
-            fetchMarketAddress();
-        }
-    }, []);
 
     useEffect(() => {
         if (newLivraison.client) {
@@ -76,6 +49,15 @@ console.log(marketCodePostal);
         }
     }, [newLivraison.client, clients]);
 
+    useEffect(() => {
+        if (newLivraison.market) {
+            const selectedMarket = markets.find(market => market._id === newLivraison.market);
+            if (selectedMarket) {
+                setMarketCodePostal(selectedMarket.codePostal);
+            }
+        }
+    }, [newLivraison.market, markets]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date) {
@@ -83,7 +65,7 @@ console.log(marketCodePostal);
             return;
         }
 
-        // Check if the client's code_postal and the market's code_postal are in the secteurs list
+
         const isClientCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
         const isMarketCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(marketCodePostal)));
 
@@ -103,7 +85,7 @@ console.log(marketCodePostal);
         } else {
             handleAddLivraison(livraisonData);
         }
-        setShowForm(false); // Close the form on successful submission
+        setShowForm(false); 
     };
 
     const handleClientAdd = async () => {

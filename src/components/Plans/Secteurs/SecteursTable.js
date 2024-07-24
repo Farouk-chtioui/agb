@@ -8,7 +8,7 @@ const SectureTable = ({ sectures, handleDelete, handleModify }) => {
     const renderRow = (secture) => (
         <>
             <td className="py-2 px-4 border-b border-gray-200 centered-cell">{secture.name}</td>
-            <td className="py-2 px-4 border-b border-gray-200 centered-cell">
+            <td className="py-3 px-5 border-b border-gray-300 centered-cell">
                 <ul className="list-none p-0 m-0 postal-code-list">
                     {secture.codesPostaux
                         .filter(code => code !== 0)
