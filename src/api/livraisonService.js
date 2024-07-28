@@ -11,16 +11,15 @@ export async function addLivraison(livraison) {
     }
 }
 
-export async function fetchLivraisons(page) {
+export async function fetchLivraisons(page = 1) {
     try {
         const response = await axios.get(`${API_URL}/livraison?page=${page}`);
-        return response.data;
+        return response.data; 
     } catch (error) {
         console.error('Error fetching livraisons', error);
         throw error;
     }
 }
-
 export async function searchLivraisons(searchTerm) {
     try {
         const response = await axios.get(`${API_URL}/livraison/search/${searchTerm}`);

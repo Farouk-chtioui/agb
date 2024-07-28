@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { fetchClients } from '../../api/clientService';
+import { fetchAllClients } from '../../api/clientService'; // Updated import
 import { fetchDrivers } from '../../api/driverService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
@@ -18,7 +18,7 @@ function Livraison() {
   const [drivers, setDrivers] = useState([]);
   const [markets, setMarkets] = useState([]);
   const [products, setProducts] = useState([]);
-  const [secteurs, setSecteurs] = useState([]); // New state for secteurs
+  const [secteurs, setSecteurs] = useState([]);
   const [newLivraison, setNewLivraison] = useState({
     NumeroCommande: '',
     Référence: '',
@@ -34,23 +34,24 @@ function Livraison() {
   const [showForm, setShowForm] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [filteredLivraisons, setFilteredLivraisons] = useState([]);
   const [livraisons, setLivraisons] = useState([]);
   const [currentLivraison, setCurrentLivraison] = useState(null);
   const [isSearchActive, setIsSearchActive] = useState(false);
 
   useEffect(() => {
-    fetchClientsData();
+    fetchAllClientsData();
     fetchDriversData();
     fetchMarketsData();
     fetchLivraisonsData();
     fetchProductsData();
-    fetchSecteursData(); // Fetch secteurs data
+    fetchSecteursData();
   }, [currentPage]);
 
-  const fetchClientsData = async () => {
+  const fetchAllClientsData = async () => {
     try {
-      const data = await fetchClients();
+      const data = await fetchAllClients();
       setClients(data);
     } catch (error) {
       console.error('Error fetching clients', error);
@@ -86,9 +87,10 @@ function Livraison() {
 
   const fetchLivraisonsData = async () => {
     try {
-      const data = await fetchLivraisons(currentPage);
-      setLivraisons(data);
-      setFilteredLivraisons(data);
+      const { livraisons, totalPages } = await fetchLivraisons(currentPage);
+      setLivraisons(livraisons);
+      setTotalPages(totalPages);
+      setFilteredLivraisons(livraisons);
     } catch (error) {
       console.error('Error fetching livraisons', error);
     }
@@ -244,14 +246,14 @@ function Livraison() {
             markets={markets}
             products={products}
             drivers={drivers}
-            secteurs={secteurs} // Pass secteurs as a prop
+            secteurs={secteurs}
             currentLivraison={currentLivraison}
           />
         )}
 
         <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete} handleModify={handleModify} />
 
-        {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+        {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />}
       </div>
     </div>
   );

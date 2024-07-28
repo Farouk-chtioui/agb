@@ -50,3 +50,12 @@ export async function searchClients(searchTerm) {
         throw error;
     }
 }
+export async function fetchAllClients() {
+    try {
+        const response = await axios.get(`${API_URL}/client/all`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching clients', error);
+        throw error;
+    }
+}
