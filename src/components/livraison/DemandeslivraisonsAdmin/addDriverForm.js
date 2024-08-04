@@ -8,11 +8,15 @@ const AddDriverForm = ({ livraisonId, handleChange, handleModify, setShowForm })
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState({ driver: '' });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
-    const getDrivers = useCallback(async () => {
+    const getDrivers = useCallback(async (page) => {
         try {
-            const data = await fetchDrivers();
-            setDrivers(data);
+            const data = await fetchDrivers(page);
+            console.log('Fetched drivers:', data); // Log the fetched data
+            setDrivers(data.drivers); // Update drivers state with the list of drivers
+            setTotalPages(data.totalPages); // Update total pages for pagination
             setLoading(false);
         } catch (error) {
             setError(error);
@@ -21,8 +25,8 @@ const AddDriverForm = ({ livraisonId, handleChange, handleModify, setShowForm })
     }, []);
 
     useEffect(() => {
-        getDrivers();
-    }, [getDrivers]);
+        getDrivers(currentPage);
+    }, [getDrivers, currentPage]);
 
     const handleLocalChange = (e) => {
         const { name, value } = e.target;
@@ -35,7 +39,7 @@ const AddDriverForm = ({ livraisonId, handleChange, handleModify, setShowForm })
             name: 'driver',
             label: 'Driver',
             type: 'dropdown',
-            options: drivers ? drivers.map(driver => ({ value: driver._id, label: driver.first_name })) : [],
+            options: drivers.map(driver => ({ value: driver._id, label: driver.first_name })),
             placeholder: 'Select a driver',
             value: formData.driver 
         }

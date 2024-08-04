@@ -10,7 +10,7 @@ import {
   addDays,
   isSameMonth,
 } from 'date-fns';
-import '../CalendarComponent.css';
+import '../CalendarComponent.css'; 
 import CalendarCell from './CalendarCell';
 
 const ReadOnlyCalendarComponent = ({ plans }) => {

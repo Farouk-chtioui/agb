@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export async function fetchDrivers(page) {
+export async function fetchDrivers(page = 1) {
   const token = localStorage.getItem('token');
   try {
     const response = await axios.get(`${API_URL}/driver?page=${page}`, {
@@ -10,13 +10,12 @@ export async function fetchDrivers(page) {
         Authorization: `Bearer ${token}`
       }
     });
-    return response.data;
+    return response.data; 
   } catch (error) {
     console.error('Error fetching drivers', error);
     throw error;
   }
 }
-
 export async function deleteDriver(id) {
   const token = localStorage.getItem('token');
   try {
@@ -72,6 +71,20 @@ export async function searchDrivers(searchTerm) {
     return response.data;
   } catch (error) {
     console.error('Error searching drivers', error);
+    throw error;
+  }
+}
+export async function getAllDrivers() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.get(`${API_URL}/driver/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching drivers', error);
     throw error;
   }
 }

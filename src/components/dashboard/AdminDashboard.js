@@ -10,6 +10,7 @@ import { fetchLivraisons } from '../../api/livraisonService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faStore, faBox, faTruck, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+import './AdminDashboard.css'; // Import custom CSS for styles
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -156,37 +157,41 @@ const AdminDashboard = () => {
           <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Clients</h2>
-              <p className="text-2xl font-bold">{clientCount}</p>
+              <p className="text-4xl font-bold">{clientCount}</p>
+              <p className="text-green-500 text-sm">+4% (30 days)</p>
             </div>
-            <FontAwesomeIcon icon={faUsers} className="h-10 w-10 text-blue-500"/>
+            <FontAwesomeIcon icon={faUsers} className="h-16 w-16 text-blue-500"/>
           </div>
           <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Magasins</h2>
-              <p className="text-2xl font-bold">{magasinCount}</p>
+              <p className="text-4xl font-bold">{magasinCount}</p>
+              <p className="text-green-500 text-sm">+4% (30 days)</p>
             </div>
-            <FontAwesomeIcon icon={faStore} className="h-10 w-10 text-blue-500"/>
+            <FontAwesomeIcon icon={faStore} className="h-16 w-16 text-blue-500"/>
           </div>
           <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Produits</h2>
-              <p className="text-2xl font-bold">{productCount}</p>
+              <p className="text-4xl font-bold">{productCount}</p>
+              <p className="text-red-500 text-sm">-25% (30 days)</p>
             </div>
-            <FontAwesomeIcon icon={faBox} className="h-10 w-10 text-blue-500"/>
+            <FontAwesomeIcon icon={faBox} className="h-16 w-16 text-blue-500"/>
           </div>
           <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Chauffeurs</h2>
-              <p className="text-2xl font-bold">{driverCount}</p>
+              <p className="text-4xl font-bold">{driverCount}</p>
+              <p className="text-red-500 text-sm">-12% (30 days)</p>
             </div>
-            <FontAwesomeIcon icon={faTruck} className="h-10 w-10 text-blue-500"/>
+            <FontAwesomeIcon icon={faTruck} className="h-16 w-16 text-blue-500"/>
           </div>
           <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Orders</h2>
-              <p className="text-2xl font-bold">{orderCount}</p>
+              <p className="text-4xl font-bold">{orderCount}</p>
             </div>
-            <FontAwesomeIcon icon={faChartLine} className="h-10 w-10 text-blue-500"/>
+            <FontAwesomeIcon icon={faChartLine} className="h-16 w-16 text-blue-500"/>
           </div>
         </div>
       </div>
