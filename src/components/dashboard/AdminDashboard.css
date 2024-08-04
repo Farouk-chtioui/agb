@@ -1,128 +1,86 @@
-.flex {
+.dashboard-container {
     display: flex;
-  }
-  
-  .h-screen {
     height: 100vh;
-  }
-  
-  .bg-gray-100 {
     background-color: #f7fafc;
   }
   
-  .w-1/4 {
+  .sidebar {
     width: 25%;
   }
   
-  .flex-1 {
+  .main-content {
     flex: 1;
-  }
-  
-  .p-4 {
     padding: 1rem;
+    overflow-y: auto;
   }
   
-  .overflow-auto {
-    overflow: auto;
-  }
-  
-  .mb-8 {
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
   }
   
-  .text-center {
-    text-align: center;
-  }
-  
-  .text-3xl {
+  .title {
     font-size: 1.875rem;
-  }
-  
-  .font-semibold {
     font-weight: 600;
   }
   
-  .grid {
+  .calendar-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  
+  .stats-section {
     display: grid;
-  }
-  
-  .grid-cols-1 {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-  
-  .md\\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  
-  .md\\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  
-  .gap-4 {
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
+    margin-bottom: 2rem;
   }
   
-  .mt-8 {
-    margin-top: 2rem;
-  }
-  
-  .bg-white {
-    background-color: #fff;
-  }
-  
-  .p-6 {
+  .stat-card {
+    background-color: white;
     padding: 1.5rem;
-  }
-  
-  .rounded-lg {
     border-radius: 0.5rem;
-  }
-  
-  .shadow {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
-  .flex {
-    display: flex;
+  .stat-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    text-align: center;
   }
   
-  .items-center {
+  .summary-section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  
+  .summary-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
     align-items: center;
   }
   
-  .justify-between {
-    justify-content: space-between;
-  }
-  
-  .text-lg {
+  .summary-title {
     font-size: 1.125rem;
-  }
-  
-  .font-medium {
     font-weight: 500;
   }
   
-  .text-4xl {
+  .summary-count {
     font-size: 2.25rem;
-  }
-  
-  .font-bold {
     font-weight: 700;
   }
   
-  .text-green-500 {
-    color: #48bb78;
-  }
-  
-  .text-red-500 {
-    color: #f56565;
-  }
-  
-  .text-sm {
-    font-size: 0.875rem;
-  }
-  
-  .text-blue-500 {
+  .summary-icon {
+    font-size: 3rem;
     color: #4299e1;
   }
   

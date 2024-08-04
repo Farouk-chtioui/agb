@@ -8,9 +8,9 @@ import { fetchDrivers } from '../../api/driverService';
 import { fetchSectures } from '../../api/sectureService';
 import { fetchLivraisons } from '../../api/livraisonService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faStore, faBox, faTruck, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faStore, faBox, faTruck } from '@fortawesome/free-solid-svg-icons';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
-import './AdminDashboard.css'; // Import custom CSS for styles
+import './AdminDashboard.css';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -43,8 +43,6 @@ const AdminDashboard = () => {
         setSectures(secturesData || []);
         const livraisonsData = Array.isArray(orders.livraisons) ? orders.livraisons : orders;
         setLivraisons(livraisonsData || []);
-
-        console.log('Fetched Livraisons:', livraisonsData);
 
         const secteurs = calculateSecteurStats(livraisonsData || [], secturesData || []);
         setSecteurStats(secteurs);
@@ -80,7 +78,20 @@ const AdminDashboard = () => {
       name: secteur,
       value: (secteurCounts[secteur] / totalLivraisons) * 100,
     }));
-    return secteurStats;
+
+    const roundedSecteurStats = secteurStats.map(secteur => ({
+      name: secteur.name,
+      value: Math.round(secteur.value * 10) / 10 // round to 1 decimal place
+    }));
+
+    const sumOfValues = roundedSecteurStats.reduce((acc, curr) => acc + curr.value, 0);
+    const adjustment = 100 - sumOfValues;
+
+    if (adjustment !== 0) {
+      roundedSecteurStats[0].value += adjustment; // adjust the first value to ensure total is 100%
+    }
+
+    return roundedSecteurStats;
   };
 
   const calculateOrderTrends = (livraisons) => {
@@ -115,31 +126,31 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Dashboard title="Dashboard" className="w-1/4" />
-      <div className="flex-1 p-4 overflow-auto">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-semibold">Admin Dashboard</h1>
+    <div className="dashboard-container">
+      <Dashboard title="Dashboard" className="sidebar" />
+      <div className="main-content">
+        <div className="header-section">
+          <h1 className="title">Admin Dashboard</h1>
         </div>
-        <div className="mb-8 flex justify-center">
+        <div className="calendar-section">
           <ReadOnlyCalendarComponent plans={sectures} />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-medium mb-4 text-center">Secteur</h2>
+        <div className="stats-section">
+          <div className="stat-card">
+            <h2 className="stat-title">Secteur</h2>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={secteurStats} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8">
+                <Pie data={secteurStats} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}>
                   {secteurStats.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip formatter={(value) => `${value.toFixed(1)}%`} />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-medium mb-4 text-center">Order Trends</h2>
+          <div className="stat-card">
+            <h2 className="stat-title">Order Trends</h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={orderTrendData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -153,45 +164,34 @@ const AdminDashboard = () => {
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+        <div className="summary-section">
+          <div className="summary-card">
             <div>
-              <h2 className="text-lg font-medium">Clients</h2>
-              <p className="text-4xl font-bold">{clientCount}</p>
-              <p className="text-green-500 text-sm">+4% (30 days)</p>
+              <h2 className="summary-title">Clients</h2>
+              <p className="summary-count">{clientCount}</p>
             </div>
-            <FontAwesomeIcon icon={faUsers} className="h-16 w-16 text-blue-500"/>
+            <FontAwesomeIcon icon={faUsers} className="summary-icon"/>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+          <div className="summary-card">
             <div>
-              <h2 className="text-lg font-medium">Magasins</h2>
-              <p className="text-4xl font-bold">{magasinCount}</p>
-              <p className="text-green-500 text-sm">+4% (30 days)</p>
+              <h2 className="summary-title">Magasins</h2>
+              <p className="summary-count">{magasinCount}</p>
             </div>
-            <FontAwesomeIcon icon={faStore} className="h-16 w-16 text-blue-500"/>
+            <FontAwesomeIcon icon={faStore} className="summary-icon"/>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+          <div className="summary-card">
             <div>
-              <h2 className="text-lg font-medium">Produits</h2>
-              <p className="text-4xl font-bold">{productCount}</p>
-              <p className="text-red-500 text-sm">-25% (30 days)</p>
+              <h2 className="summary-title">Produits</h2>
+              <p className="summary-count">{productCount}</p>
             </div>
-            <FontAwesomeIcon icon={faBox} className="h-16 w-16 text-blue-500"/>
+            <FontAwesomeIcon icon={faBox} className="summary-icon"/>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+          <div className="summary-card">
             <div>
-              <h2 className="text-lg font-medium">Chauffeurs</h2>
-              <p className="text-4xl font-bold">{driverCount}</p>
-              <p className="text-red-500 text-sm">-12% (30 days)</p>
+              <h2 className="summary-title">Chauffeurs</h2>
+              <p className="summary-count">{driverCount}</p>
             </div>
-            <FontAwesomeIcon icon={faTruck} className="h-16 w-16 text-blue-500"/>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-medium">Orders</h2>
-              <p className="text-4xl font-bold">{orderCount}</p>
-            </div>
-            <FontAwesomeIcon icon={faChartLine} className="h-16 w-16 text-blue-500"/>
+            <FontAwesomeIcon icon={faTruck} className="summary-icon"/>
           </div>
         </div>
       </div>
