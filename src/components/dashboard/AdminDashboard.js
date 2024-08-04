@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import Dashboard from './Dashboard'; 
+import Dashboard from './Dashboard';
 import ReadOnlyCalendarComponent from '../Calendar/ReadOnly/ReadOnlyCalendarComponent';
-import { fetchClients } from '../../api/clientService'; 
-import { fetchMagasins } from '../../api/marketService'; 
+import { fetchClients } from '../../api/clientService';
+import { fetchMagasins } from '../../api/marketService';
 import { fetchProducts } from '../../api/productService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchSectures } from '../../api/sectureService';
 import { fetchLivraisons } from '../../api/livraisonService';
+import { fetchPlans } from '../../api/plansService'; // Import fetchPlans function
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faStore, faBox, faTruck } from '@fortawesome/free-solid-svg-icons';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import './AdminDashboard.css';
+import { format, parseISO } from 'date-fns';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -24,6 +26,8 @@ const AdminDashboard = () => {
   const [livraisons, setLivraisons] = useState([]);
   const [secteurStats, setSecteurStats] = useState([]);
   const [orderTrendData, setOrderTrendData] = useState([]);
+  const [plans, setPlans] = useState([]);
+  const [showAllNotes, setShowAllNotes] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +38,7 @@ const AdminDashboard = () => {
         const drivers = await fetchDrivers();
         const secturesData = await fetchSectures();
         const orders = await fetchLivraisons();
+        const plansData = await fetchPlans();
 
         setClientCount(clients.total || clients.length || 0);
         setMagasinCount(magasins.total || magasins.length || 0);
@@ -43,6 +48,7 @@ const AdminDashboard = () => {
         setSectures(secturesData || []);
         const livraisonsData = Array.isArray(orders.livraisons) ? orders.livraisons : orders;
         setLivraisons(livraisonsData || []);
+        setPlans(plansData);
 
         const secteurs = calculateSecteurStats(livraisonsData || [], secturesData || []);
         setSecteurStats(secteurs);
@@ -125,6 +131,13 @@ const AdminDashboard = () => {
     return trends;
   };
 
+  const toggleShowAllNotes = () => {
+    setShowAllNotes(!showAllNotes);
+  };
+
+  const today = format(new Date(), 'yyyy-MM-dd'); // Get today's date in 'yyyy-MM-dd' format
+  const todayNotes = plans.filter(plan => plan.Date === today && plan.notes);
+
   return (
     <div className="dashboard-container">
       <Dashboard title="Dashboard" className="sidebar" />
@@ -132,8 +145,39 @@ const AdminDashboard = () => {
         <div className="header-section">
           <h1 className="title">Admin Dashboard</h1>
         </div>
-        <div className="calendar-section">
-          <ReadOnlyCalendarComponent plans={sectures} />
+        <div className="calendar-and-notes-section">
+          <div className="calendar-container">
+            <ReadOnlyCalendarComponent plans={plans} /> {/* Pass the plans data here */}
+          </div>
+          <div className="notes-container">
+            <h2 className="notes-title">Today's Notes</h2>
+            {todayNotes.length > 0 ? (
+              todayNotes.map(note => (
+                <div key={note._id} className="sticky-note mb-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-md shadow-sm">
+                  <strong>{format(parseISO(note.Date), 'MMM dd, yyyy')}</strong>
+                  <p>{note.notes}</p>
+                </div>
+              ))
+            ) : (
+              <p>No notes for today</p>
+            )}
+            <button
+              className="w-full bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-600 transition"
+              onClick={toggleShowAllNotes}
+            >
+              {showAllNotes ? 'Hide All Notes' : 'Show All Notes'}
+            </button>
+            {showAllNotes && (
+              <div className="mt-4">
+                {plans.filter(plan => plan.notes).map(note => (
+                  <div key={note._id} className="note mb-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-md shadow-sm">
+                    <strong>{format(parseISO(note.Date), 'MMM dd, yyyy')}</strong>
+                    <p>{note.notes}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <div className="stats-section">
           <div className="stat-card">

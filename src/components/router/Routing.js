@@ -23,7 +23,7 @@ function Routing() {
     <Provider store={store}>
       <Routes>
         <Route path="/" element={<PublicRoute element={<Login />} />} />
-        <Route path="/admin/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['admin']} />} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute element={<AdminDashboard/>} requiredRoles={['admin']} />} />
         <Route path="/market/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['market']} />} />
         <Route path="/livraison/listes" element={<ProtectedRoute element={<Livraison />} requiredRoles={['admin']} />} />
         <Route path="/commands/pending" element={<ProtectedRoute element={<Demandes/>} requiredRoles={['admin']} />} />
@@ -37,7 +37,6 @@ function Routing() {
         <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
         <Route path="/commands/propositions" element={<DemandesLivraison />} />
         <Route path="/plans" element={<Plans />} />
-        <Route path="/test" element={<AdminDashboard />} />
         </Routes>
     </Provider>
   );
