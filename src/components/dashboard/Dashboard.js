@@ -59,7 +59,7 @@ function Dashboard({ title }) {
   };
 
   const sidebarItems = [
-    { title: 'Dashboard', icon: FaHome, path: `/${role}/dashboard`, roles: ['admin', 'market', 'driver', 'user'] },
+    { title: 'Dashboard', icon: FaHome, path: `/${role}/dashboard`, roles: ['admin', 'market'] },
     {
       title: 'Livraison', icon: FaTruck, roles: ['admin'], subItems: [
         { title: 'Listes des livraisons', path: '/livraison/listes' },

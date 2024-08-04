@@ -86,11 +86,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontStyle: 'italic'
   },
-  signature: {
+  signatureSection: {
     marginTop: 30,
-    fontSize: 12,
+    textAlign: 'left',
   },
- 
+  signatureLabel: {
+    fontSize: 12,
+    marginBottom: 5,
+    fontWeight: 'bold',
+  },
+  signatureLine: {
+    fontSize: 12,
+    marginTop: 10,
+    textDecoration: 'underline',
+  },
+  signatureImage: {
+    marginTop: 10,
+    width: 200,
+    height: 50,
+  }
 });
 
 const InvoiceDocument = ({ data }) => {
@@ -149,7 +163,14 @@ const InvoiceDocument = ({ data }) => {
           Par sa signature, le client reconnaît avoir reçu, contrôlé et constaté
           le bon état de la marchandise livrée et/ou installée ce jour
         </Text>
-        <Text style={styles.signature}>Signature du client: ....................................</Text>
+        <View style={styles.signatureSection}>
+          <Text style={styles.signatureLabel}>Signature du client:</Text>
+          {livraison.client?.signature ? (
+            <Image src={livraison.client.signature} style={styles.signatureImage} />
+          ) : (
+            <Text style={styles.signatureLine}>....................................</Text>
+          )}
+        </View>
       </Page>
     </Document>
   );

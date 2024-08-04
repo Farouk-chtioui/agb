@@ -17,6 +17,7 @@ import { Provider } from 'react-redux';
 import store from '../../redux/store';
 import DemandesLivraison from '../DemandesLivraison/DemandesLivraison';
 import Demandes from '../livraison/DemandeslivraisonsAdmin/Demande'
+import AdminDashboard from '../dashboard/AdminDashboard';
 function Routing() {
   return (
     <Provider store={store}>
@@ -36,7 +37,8 @@ function Routing() {
         <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
         <Route path="/commands/propositions" element={<DemandesLivraison />} />
         <Route path="/plans" element={<Plans />} />
-      </Routes>
+        <Route path="/test" element={<AdminDashboard />} />
+        </Routes>
     </Provider>
   );
 }
