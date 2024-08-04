@@ -165,8 +165,8 @@ const InvoiceDocument = ({ data }) => {
         </Text>
         <View style={styles.signatureSection}>
           <Text style={styles.signatureLabel}>Signature du client:</Text>
-          {livraison.client?.signature ? (
-            <Image src={livraison.client.signature} style={styles.signatureImage} />
+          {livraison?.signature ? (
+            <Image src={livraison.signature} style={styles.signatureImage} />
           ) : (
             <Text style={styles.signatureLine}>....................................</Text>
           )}

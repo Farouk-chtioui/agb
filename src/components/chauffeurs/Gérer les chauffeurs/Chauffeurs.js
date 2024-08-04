@@ -13,6 +13,7 @@ const Chauffeurs = () => {
   const [drivers, setDrivers] = useState([]);
   const [filteredDrivers, setFilteredDrivers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [newDriver, setNewDriver] = useState({
     first_name: '',
@@ -30,9 +31,10 @@ const Chauffeurs = () => {
 
   const fetchDriversData = async () => {
     try {
-      const data = await fetchDrivers(currentPage);
-      setDrivers(data);
-      setFilteredDrivers(data);
+      const { drivers, totalPages } = await fetchDrivers(currentPage);
+      setDrivers(drivers);
+      setFilteredDrivers(drivers);
+      setTotalPages(totalPages);
       toast.success('Chauffeurs récupérés avec succès!');
     } catch (error) {
       console.error('Error fetching drivers', error);
@@ -145,7 +147,7 @@ const Chauffeurs = () => {
 
         <DriverTable drivers={filteredDrivers} handleDelete={handleDelete} handleModify={handleModify} />
 
-        {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+        {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />}
       </div>
     </div>
   );

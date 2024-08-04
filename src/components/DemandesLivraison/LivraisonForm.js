@@ -100,7 +100,12 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
             return;
         }
     
-        const isClientCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
+        const client = clients.find(client => client._id === newLivraison.client);
+        const isClientCodePostalValid = client && (
+            secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(client.code_postal))) ||
+            secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(client.code_postal2)))
+        );
+    
         const isMarketCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(marketCodePostal)));
     
         if (!isClientCodePostalValid) {
@@ -142,7 +147,6 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
             toast.error('Erreur lors de la soumission de la livraison.');
         }
     };
-    
     
 
     const scrollToSection = (sectionId) => {

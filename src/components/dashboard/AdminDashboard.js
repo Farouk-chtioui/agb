@@ -9,7 +9,7 @@ import { fetchSectures } from '../../api/sectureService';
 import { fetchLivraisons } from '../../api/livraisonService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faStore, faBox, faTruck, faChartLine } from '@fortawesome/free-solid-svg-icons';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -21,40 +21,38 @@ const AdminDashboard = () => {
   const [orderCount, setOrderCount] = useState(0);
   const [sectures, setSectures] = useState([]);
   const [livraisons, setLivraisons] = useState([]);
-  const [orderTimeData, setOrderTimeData] = useState([]);
   const [secteurStats, setSecteurStats] = useState([]);
+  const [orderTrendData, setOrderTrendData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const clients = await fetchClients(1);
-      const magasins = await fetchMagasins(1);
-      const products = await fetchProducts(1);
-      const drivers = await fetchDrivers(1);
-      const secturesData = await fetchSectures(1);
-      const orders = await fetchLivraisons(1);
+      try {
+        const clients = await fetchClients();
+        const magasins = await fetchMagasins();
+        const products = await fetchProducts();
+        const drivers = await fetchDrivers();
+        const secturesData = await fetchSectures();
+        const orders = await fetchLivraisons();
 
-      console.log('Fetched Clients:', clients);
-      console.log('Fetched Magasins:', magasins);
-      console.log('Fetched Products:', products);
-      console.log('Fetched Drivers:', drivers);
-      console.log('Fetched Sectures:', secturesData);
-      console.log('Fetched Orders:', orders);
+        setClientCount(clients.total || clients.length || 0);
+        setMagasinCount(magasins.total || magasins.length || 0);
+        setProductCount(products.total || products.length || 0);
+        setDriverCount(drivers.total || drivers.length || 0);
+        setOrderCount(orders.total || orders.length || 0);
+        setSectures(secturesData || []);
+        const livraisonsData = Array.isArray(orders.livraisons) ? orders.livraisons : orders;
+        setLivraisons(livraisonsData || []);
 
-      setClientCount(clients.total || 0);
-      setMagasinCount(magasins.total || 0);
-      setProductCount(products.total || 0);
-      setDriverCount(drivers.total || 0);
-      setOrderCount(orders.total || 0);
-      setSectures(secturesData || []);
-      setLivraisons(orders.data || []);
+        console.log('Fetched Livraisons:', livraisonsData);
 
-      const orderTimes = calculateOrderTimes(orders.data || []);
-      console.log('Calculated Order Times:', orderTimes);
-      setOrderTimeData(orderTimes);
+        const secteurs = calculateSecteurStats(livraisonsData || [], secturesData || []);
+        setSecteurStats(secteurs);
 
-      const secteurs = calculateSecteurStats(orders.data || [], secturesData || []);
-      console.log('Calculated Secteur Stats:', secteurs);
-      setSecteurStats(secteurs);
+        const trends = calculateOrderTrends(livraisonsData || []);
+        setOrderTrendData(trends);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
 
     fetchData();
@@ -63,13 +61,15 @@ const AdminDashboard = () => {
   const calculateSecteurStats = (livraisons, sectures) => {
     const secteurCounts = {};
 
+    if (!Array.isArray(livraisons)) return [];
+
     livraisons.forEach((livraison) => {
-      const secteur = livraison.client.code_postal;
-      if (sectures.find(s => s.codesPostaux.includes(Number(secteur)))) {
-        if (secteurCounts[secteur]) {
-          secteurCounts[secteur]++;
+      const secteur = sectures.find(s => s.codesPostaux.includes(parseInt(livraison.client.code_postal)));
+      if (secteur) {
+        if (secteurCounts[secteur.name]) {
+          secteurCounts[secteur.name]++;
         } else {
-          secteurCounts[secteur] = 1;
+          secteurCounts[secteur.name] = 1;
         }
       }
     });
@@ -82,36 +82,50 @@ const AdminDashboard = () => {
     return secteurStats;
   };
 
-  const calculateOrderTimes = (livraisons) => {
-    const orderTimes = { Matin: 0, Midi: 0 };
+  const calculateOrderTrends = (livraisons) => {
+    if (!Array.isArray(livraisons)) return [];
 
-    livraisons.forEach((livraison) => {
-      if (livraison.Periode === 'Matin') {
-        orderTimes.Matin++;
-      } else if (livraison.Periode === 'Midi') {
-        orderTimes.Midi++;
-      }
-    });
+    const trends = [];
 
-    return [
-      { name: 'Morning (8AM)', value: orderTimes.Matin },
-      { name: 'Afternoon (12PM)', value: orderTimes.Midi }
-    ];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const currentYear = new Date().getFullYear();
+    const previousYear = currentYear - 1;
+
+    const ordersByMonth = livraisons.reduce((acc, livraison) => {
+      const date = new Date(livraison.Date);
+      const month = date.getMonth();
+      const year = date.getFullYear();
+
+      if (!acc[year]) acc[year] = new Array(12).fill(0);
+      acc[year][month]++;
+      return acc;
+    }, {});
+
+    for (let i = 0; i < 12; i++) {
+      trends.push({
+        name: months[i],
+        'Last Year': ordersByMonth[previousYear] ? ordersByMonth[previousYear][i] : 0,
+        'This Year': ordersByMonth[currentYear] ? ordersByMonth[currentYear][i] : 0,
+      });
+    }
+
+    return trends;
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <Dashboard title="Dashboard" />
-      <div className="content p-4 w-full">
-        <div className="dashboard-header mb-4">
-          <h1 className="text-2xl font-semibold">Dashboard</h1>
+      <Dashboard title="Dashboard" className="w-1/4" />
+      <div className="flex-1 p-4 overflow-auto">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-semibold">Admin Dashboard</h1>
         </div>
-        <div className="calendar-section mb-8">
+        <div className="mb-8 flex justify-center">
           <ReadOnlyCalendarComponent plans={sectures} />
         </div>
-        <div className="statistics-section grid grid-cols-2 gap-4 mt-4">
-          <div className="stat-item bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-medium mb-2">Secteur</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-lg font-medium mb-4 text-center">Secteur</h2>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie data={secteurStats} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8">
@@ -123,50 +137,51 @@ const AdminDashboard = () => {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="stat-item bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-medium mb-2">Order Time</h2>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-lg font-medium mb-4 text-center">Order Trends</h2>
             <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie data={orderTimeData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8">
-                  {orderTimeData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
+              <LineChart data={orderTrendData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
                 <Tooltip />
-              </PieChart>
+                <Legend />
+                <Line type="monotone" dataKey="Last Year" stroke="#8884d8" />
+                <Line type="monotone" dataKey="This Year" stroke="#82ca9d" />
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="statistics-section grid grid-cols-4 gap-4 mt-4">
-          <div className="stat-item bg-white p-6 rounded-lg shadow flex items-center justify-between">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Clients</h2>
               <p className="text-2xl font-bold">{clientCount}</p>
             </div>
             <FontAwesomeIcon icon={faUsers} className="h-10 w-10 text-blue-500"/>
           </div>
-          <div className="stat-item bg-white p-6 rounded-lg shadow flex items-center justify-between">
+          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Magasins</h2>
               <p className="text-2xl font-bold">{magasinCount}</p>
             </div>
             <FontAwesomeIcon icon={faStore} className="h-10 w-10 text-blue-500"/>
           </div>
-          <div className="stat-item bg-white p-6 rounded-lg shadow flex items-center justify-between">
+          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Produits</h2>
               <p className="text-2xl font-bold">{productCount}</p>
             </div>
             <FontAwesomeIcon icon={faBox} className="h-10 w-10 text-blue-500"/>
           </div>
-          <div className="stat-item bg-white p-6 rounded-lg shadow flex items-center justify-between">
+          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Chauffeurs</h2>
               <p className="text-2xl font-bold">{driverCount}</p>
             </div>
             <FontAwesomeIcon icon={faTruck} className="h-10 w-10 text-blue-500"/>
           </div>
-          <div className="stat-item bg-white p-6 rounded-lg shadow flex items-center justify-between">
+          <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
             <div>
               <h2 className="text-lg font-medium">Orders</h2>
               <p className="text-2xl font-bold">{orderCount}</p>
