@@ -1,6 +1,6 @@
 .calendar {
   width: 100%;
-  max-width: 1400px; 
+  max-width: 1400px;
   font-family: 'Poppins', sans-serif;
   border: 1px solid #e5e7eb;
   border-radius: 0.375rem;
@@ -18,12 +18,12 @@
   padding: 1.5rem;
   background: #3b82f6;
   color: white;
-  border-bottom: 2px solid #2563eb; 
+  border-bottom: 2px solid #2563eb;
 }
 
 .row {
   display: flex;
-  flex-wrap: nowrap; 
+  flex-wrap: nowrap;
 }
 
 .col {
@@ -57,8 +57,8 @@
   border-radius: 0.375rem;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
-  margin-left: 0.5rem; 
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-left: 0.5rem;
   font-size: 1rem;
   min-width: 150px;
 }
@@ -163,7 +163,7 @@
   font-size: 2rem;
   color: white;
   padding: 0.5rem;
-  transition: color 0.3s ease, transform 0.3s ease; 
+  transition: color 0.3s ease, transform 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -171,7 +171,7 @@
 
 .icon:hover {
   color: #dbeafe;
-  transform: scale(1.2); 
+  transform: scale(1.2);
 }
 
 .header .col {
@@ -247,8 +247,8 @@
 
   .button-container button {
     padding: 0.25rem 0.5rem;
-    font-size: 0.9rem; 
-    min-width: 120px; 
+    font-size: 0.9rem;
+    min-width: 120px;
   }
 }
 
@@ -275,7 +275,7 @@
 }
 
 .disabled {
-  color: #ccc; 
-  pointer-events: none; 
-  background-color: #ebebeb; 
+  color: #ccc;
+  pointer-events: none;
+  background-color: #ebebeb;
 }
