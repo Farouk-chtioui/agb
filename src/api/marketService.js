@@ -11,7 +11,7 @@ export const fetchMagasins = async (page) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data;
+  return response.data; // Ensure this returns an object with { markets, total, totalPages }
 };
 
 export const addMagasin = async (magasin) => {

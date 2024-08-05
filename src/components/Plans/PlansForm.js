@@ -26,6 +26,10 @@ const PlanForm = ({
     }
   }, [isEditMode, newPlan.Date, handleChange]);
 
+  useEffect(() => {
+    console.log('Markets in PlanForm:', markets); // Add this line to log markets data in PlanForm
+  }, [markets]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 

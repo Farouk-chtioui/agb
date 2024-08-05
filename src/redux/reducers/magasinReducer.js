@@ -36,16 +36,11 @@ const magasinSlice = createSlice({
   name: 'magasins',
   initialState: {
     items: [],
+    total: 0,
     loading: false,
     error: null,
-    postalCodes: {},
   },
-  reducers: {
-    setPostalCode: (state, action) => {
-      const { marketId, postalCode } = action.payload;
-      state.postalCodes[marketId] = postalCode;  // Link postal code with market ID
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchMagasins.pending, (state) => {
@@ -54,7 +49,8 @@ const magasinSlice = createSlice({
       })
       .addCase(fetchMagasins.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.items = action.payload.markets; // Ensure this matches the API response structure
+        state.total = action.payload.total;
       })
       .addCase(fetchMagasins.rejected, (state, action) => {
         state.loading = false;
@@ -62,9 +58,11 @@ const magasinSlice = createSlice({
       })
       .addCase(addMagasin.fulfilled, (state, action) => {
         state.items.push(action.payload);
+        state.total += 1;
       })
       .addCase(deleteMagasin.fulfilled, (state, action) => {
         state.items = state.items.filter((item) => item._id !== action.payload);
+        state.total -= 1;
       })
       .addCase(modifyMagasin.fulfilled, (state, action) => {
         const index = state.items.findIndex((item) => item._id === action.payload._id);
@@ -73,10 +71,10 @@ const magasinSlice = createSlice({
         }
       })
       .addCase(searchMagasins.fulfilled, (state, action) => {
-        state.items = action.payload;
+        state.items = action.payload.markets; // Ensure this matches the API response structure
+        state.total = action.payload.total;
       });
   },
 });
-export const { setPostalCode } = magasinSlice.actions;
 
 export default magasinSlice.reducer;

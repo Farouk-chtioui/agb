@@ -11,7 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Magasins = () => {
   const dispatch = useDispatch();
-  const magasins = useSelector((state) => state.magasins.items);
+  const magasins = useSelector((state) => state.magasins.items) || [];
+  const totalItems = useSelector((state) => state.magasins.total) || 0;
   const loading = useSelector((state) => state.magasins.loading);
   const error = useSelector((state) => state.magasins.error);
 
@@ -30,6 +31,9 @@ const Magasins = () => {
   const [currentMagasin, setCurrentMagasin] = useState(null);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [userRole, setUserRole] = useState('');
+
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   useEffect(() => {
     dispatch(fetchMagasins(currentPage));
@@ -133,7 +137,9 @@ const Magasins = () => {
           userRole={userRole}
         />
 
-        {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+        {!isSearchActive && (
+          <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
+        )}
       </div>
     </div>
   );

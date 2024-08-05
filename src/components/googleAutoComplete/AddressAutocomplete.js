@@ -5,8 +5,8 @@ const AddressAutocomplete = ({ value, onChange }) => {
     const inputRef = useRef(null);
     const autoCompleteRef = useRef(null);
     const initializedRef = useRef(false);
-    const [inputValue, setInputValue] = useState(value || ''); 
-    const [loaded, setLoaded] = useState(false); 
+    const [inputValue, setInputValue] = useState(value || '');
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         const initializeAutocomplete = () => {
@@ -25,7 +25,7 @@ const AddressAutocomplete = ({ value, onChange }) => {
                         component.types.includes('postal_code')
                     );
                     const postalCode = postalCodeComponent ? postalCodeComponent.long_name : '';
-                    
+
                     if (!postalCodeComponent) {
                         alert('Please select an address with a postal code.');
                     }
@@ -35,14 +35,14 @@ const AddressAutocomplete = ({ value, onChange }) => {
                             name: 'address',
                             value: place.formatted_address,
                         },
-                        postalCode: postalCode, // Include postal code in the returned data
+                        postalCode: postalCode,
                     });
 
-                    setInputValue(place.formatted_address); 
+                    setInputValue(place.formatted_address);
                 });
 
                 setLoaded(true);
-                initializedRef.current = true; // Mark as initialized
+                initializedRef.current = true;
                 console.log('Autocomplete is set up');
             }
         };
@@ -59,7 +59,7 @@ const AddressAutocomplete = ({ value, onChange }) => {
                 },
             });
         }, 500),
-        [onChange] // Recreate debounced function only if onChange changes
+        [onChange]
     );
 
     const handleInputChange = (e) => {
@@ -72,8 +72,8 @@ const AddressAutocomplete = ({ value, onChange }) => {
         <input
             ref={inputRef}
             type="text"
-            value={inputValue} 
-            onChange={handleInputChange} 
+            value={inputValue}
+            onChange={handleInputChange}
             placeholder="Address"
             className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
             disabled={!loaded}

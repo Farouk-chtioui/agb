@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addMagasin, modifyMagasin, setPostalCode } from '../../redux/reducers/magasinReducer';
+import { addMagasin, modifyMagasin } from '../../redux/reducers/magasinReducer';
 import Form from '../Form/Form';
 import AddressAutocomplete from '../googleAutoComplete/AddressAutocomplete';
 import { toast } from 'react-toastify';
@@ -63,7 +63,6 @@ const MagasinForm = ({
       const resultAction = await dispatch(addMagasin(magasinData));
       if (addMagasin.fulfilled.match(resultAction)) {
         const addedMagasin = resultAction.payload;
-        dispatch(setPostalCode({ marketId: addedMagasin._id, postalCode: addressData.codePostal }));
         toast.success('Magasin ajouté avec succès!');
       }
     }

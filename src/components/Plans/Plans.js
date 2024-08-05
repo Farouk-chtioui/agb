@@ -37,19 +37,24 @@ const Plans = () => {
   }, []);
 
   const fetchData = async () => {
-    const [plansData, marketsData, secteursData] = await Promise.all([
-      fetchPlans(),
-      fetchMagasins(),
-      fetchSectures(),
-    ]);
-    setPlans(plansData);
-    setMarkets(marketsData);
-    setSecteurs(secteursData);
-    setFilteredPlans(plansData);
+    try {
+      const [plansData, marketsData, secteursData] = await Promise.all([
+        fetchPlans(),
+        fetchMagasins(),
+        fetchSectures(),
+      ]);
+      setPlans(plansData);
+      console.log('Markets Data:', marketsData); // Add this line to log markets data
+      setMarkets(Array.isArray(marketsData.markets) ? marketsData.markets : []); // Ensure marketsData.markets is an array
+      setSecteurs(secteursData);
+      setFilteredPlans(plansData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleDayClick = (date) => {
-    const formattedDate = format(new Date(date), 'yyyy-MM-dd'); // Convert to 'yyyy-MM-dd'
+    const formattedDate = format(new Date(date), 'yyyy-MM-dd');
     const existingPlan = plans.find(plan => format(new Date(plan.Date), 'yyyy-MM-dd') === formattedDate);
 
     if (existingPlan) {
@@ -95,7 +100,7 @@ const Plans = () => {
   const handleAddPlan = async (plan) => {
     const formattedPlan = {
       ...plan,
-      Date: format(new Date(plan.Date), 'yyyy-MM-dd') // Convert to 'yyyy-MM-dd'
+      Date: format(new Date(plan.Date), 'yyyy-MM-dd')
     };
     await addPlan(formattedPlan);
     fetchData();
@@ -106,7 +111,7 @@ const Plans = () => {
     try {
       const formattedPlan = {
         ...plan,
-        Date: format(new Date(plan.Date), 'yyyy-MM-dd') // Convert to 'yyyy-MM-dd'
+        Date: format(new Date(plan.Date), 'yyyy-MM-dd')
       };
       await modifyPlan(planId, formattedPlan);
       fetchData();
@@ -127,22 +132,22 @@ const Plans = () => {
     setIsSearchActive(true);
   };
 
- const handleDrop = async (planId, newDate) => {
-  const formattedDate = format(new Date(newDate), 'yyyy-MM-dd'); // Convert to 'yyyy-MM-dd'
-  const updatedPlan = plans.find(plan => plan._id === planId);
-  if (updatedPlan) {
-    updatedPlan.Date = formattedDate;
+  const handleDrop = async (planId, newDate) => {
+    const formattedDate = format(new Date(newDate), 'yyyy-MM-dd');
+    const updatedPlan = plans.find(plan => plan._id === planId);
+    if (updatedPlan) {
+      updatedPlan.Date = formattedDate;
 
-    if (updatedPlan.market) {
-      updatedPlan.market = updatedPlan.market._id || updatedPlan.market;
-    } else {
-      updatedPlan.market = null;
+      if (updatedPlan.market) {
+        updatedPlan.market = updatedPlan.market._id || updatedPlan.market;
+      } else {
+        updatedPlan.market = null;
+      }
+
+      await modifyPlan(updatedPlan._id, updatedPlan);
+      fetchData();
     }
-
-    await modifyPlan(updatedPlan._id, updatedPlan);
-    fetchData();
-  }
-};
+  };
 
   const handleEditFormClose = () => {
     setShowForm(false);
@@ -162,12 +167,12 @@ const Plans = () => {
     setShowAllNotes(!showAllNotes);
   };
 
-  const today = format(new Date(), 'yyyy-MM-dd'); // Get today's date in 'yyyy-MM-dd' format
+  const today = format(new Date(), 'yyyy-MM-dd');
   const todayNotes = plans.filter(plan => plan.Date === today && plan.notes);
 
   return (
     <DndProvider backend={HTML5Backend}>
-       <div className="flex h-screen">
+      <div className="flex h-screen">
         <Dashboard title="Gérer les plans" />
         <div className="flex-1 container mx-auto p-6 relative flex flex-col pt-24">
           <div className="flex flex-1 overflow-hidden">
@@ -181,7 +186,7 @@ const Plans = () => {
                   handleDeletePlan={handleDeletePlan}
                   setShowForm={handleEditFormClose}
                   isEditMode={isEditMode}
-                  markets={markets}
+                  markets={markets} // No need to check if it's an array here anymore
                   secteurs={secteurs}
                 />
               )}
