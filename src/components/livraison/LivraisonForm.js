@@ -32,7 +32,7 @@ const LivraisonForm = ({
         phone: ''
     });
     const [clientCodePostal, setClientCodePostal] = useState('');
-    const [marketCodePostal, setMarketCodePostal] = useState('');
+    const [clientCodePostal2, setClientCodePostal2] = useState('');
 
     useEffect(() => {
         if (isEditMode && currentLivraison) {
@@ -45,18 +45,10 @@ const LivraisonForm = ({
             const selectedClient = clients.find(client => client._id === newLivraison.client);
             if (selectedClient) {
                 setClientCodePostal(selectedClient.code_postal);
+                setClientCodePostal2(selectedClient.code_postal2);
             }
         }
     }, [newLivraison.client, clients]);
-
-    useEffect(() => {
-        if (newLivraison.market) {
-            const selectedMarket = markets.find(market => market._id === newLivraison.market);
-            if (selectedMarket) {
-                setMarketCodePostal(selectedMarket.codePostal);
-            }
-        }
-    }, [newLivraison.market, markets]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -65,17 +57,11 @@ const LivraisonForm = ({
             return;
         }
 
-
         const isClientCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
-        const isMarketCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(marketCodePostal)));
+        const isClientCodePostal2Valid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal2)));
 
-        if (!isClientCodePostalValid) {
+        if (!isClientCodePostalValid && !isClientCodePostal2Valid) {
             toast.error('Le code postal du client ne fait pas partie des secteurs disponibles.');
-            return;
-        }
-
-        if (!isMarketCodePostalValid) {
-            toast.error('Le code postal du marché ne fait pas partie des secteurs disponibles. Veuillez contacter l\'administrateur.');
             return;
         }
 

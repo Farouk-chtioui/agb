@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { fetchAllClients } from '../../api/clientService'; // Updated import
+import { fetchAllClients } from '../../api/clientService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
@@ -61,11 +61,14 @@ function Livraison() {
   const fetchDriversData = async () => {
     try {
       const data = await fetchDrivers();
-      setDrivers(data);
+      setDrivers(Array.isArray(data.drivers) ? data.drivers : []);
     } catch (error) {
       console.error('Error fetching drivers', error);
+      setDrivers([]);
     }
   };
+  
+  
 
   const fetchProductsData = async () => {
     try {
