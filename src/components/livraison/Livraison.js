@@ -67,8 +67,6 @@ function Livraison() {
       setDrivers([]);
     }
   };
-  
-  
 
   const fetchProductsData = async () => {
     try {
@@ -82,7 +80,8 @@ function Livraison() {
   const fetchMarketsData = async () => {
     try {
       const data = await fetchMagasins();
-      setMarkets(data);
+      console.log('Markets Data:', data); // Add this line to log markets data
+      setMarkets(Array.isArray(data.markets) ? data.markets : []); // Ensure data.markets is an array
     } catch (error) {
       console.error('Error fetching markets', error);
     }
@@ -246,7 +245,7 @@ function Livraison() {
             setShowForm={setShowForm}
             isEditMode={isEditMode}
             clients={clients}
-            markets={markets}
+            markets={markets} // No need to check if it's an array here anymore
             products={products}
             drivers={drivers}
             secteurs={secteurs}

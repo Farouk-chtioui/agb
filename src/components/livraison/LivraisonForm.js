@@ -50,6 +50,10 @@ const LivraisonForm = ({
         }
     }, [newLivraison.client, clients]);
 
+    useEffect(() => {
+        console.log('Markets in LivraisonForm:', markets); // Add this line to log markets data in LivraisonForm
+    }, [markets]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date) {
