@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FaClipboardList, FaUser, FaShoppingCart, FaTruck } from 'react-icons/fa';
-import { addLivraison } from '../../api/livraisonService';
-import { fetchMagasins } from '../../api/marketService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import io from 'socket.io-client'; // Import io from socket.io-client
+import io from 'socket.io-client';
 
-const socket = io('http://localhost:3001'); // Initialize socket
+const socket = io('http://localhost:3001');
 
-const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, validateLivraison }) => {
+const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, validateLivraison, handleLivraisonSubmit }) => {
     const [newLivraison, setNewLivraison] = useState({
         NumeroCommande: '',
         Référence: '',
@@ -20,10 +18,10 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         driver: '',
         Prix: '',
         Date: '',
-        Periode: '' // Added Periode field
+        Periode: ''
     });
 
-    const [clientCodePostal, setClientCodePostal] = useState('');
+    const [clientCodePostal, setClientCodePostal] = useState(''); // Define clientCodePostal state
 
     useEffect(() => {
         const role = localStorage.getItem('role');
@@ -85,35 +83,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
             return;
         }
 
-        const isValid = validateLivraison(newLivraison, clients, plans, secteurs);
-
-        if (!isValid) {
-            return; // Block submission if validation fails
-        }
-
-        // Always set the status to "En attente"
-        newLivraison.status = 'En attente';
-
-        // Remove driver field if it's empty
-        if (!newLivraison.driver) {
-            delete newLivraison.driver;
-        }
-
-        try {
-            const response = await addLivraison(newLivraison);
-            console.log('Successfully submitted:', response);
-
-            if (response && response._id) {
-                socket.emit('addLivraison', { id: response._id });
-                toast.success('Livraison soumise avec succès!');
-            } else {
-                console.error('Unexpected response structure:', response);
-                toast.error('Erreur lors de la soumission de la livraison. Réponse inattendue.');
-            }
-        } catch (error) {
-            console.error('Error submitting data:', error.response ? error.response.data : error.message);
-            toast.error('Erreur lors de la soumission de la livraison.');
-        }
+        await handleLivraisonSubmit(newLivraison);
     };
 
     const scrollToSection = (sectionId) => {

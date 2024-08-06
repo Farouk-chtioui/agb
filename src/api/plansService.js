@@ -58,3 +58,12 @@ export async function searchPlans(searchTerm){
         throw error;
     }
 }
+export const decreasePlanTotals = async (id, period) => {
+    try {
+        const response = await axios.patch(`${API_URL}/plans/${id}/decrease/${period}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error decreasing plan totals:', error);
+        throw error;
+    }
+};

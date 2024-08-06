@@ -3,10 +3,11 @@ import LivraisonForm from './LivraisonForm';
 import ClientForm from '../clients/ClientForm';
 import { fetchAllClients, addClient } from '../../api/clientService';
 import { fetchProducts } from '../../api/productService';
-import { fetchMagasins } from '../../api/marketService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchSectures } from '../../api/sectureService';
-import { fetchPlans } from '../../api/plansService'; 
+import { fetchPlans, decreasePlanTotals } from '../../api/plansService';
+import { addLivraison } from '../../api/livraisonService';
+import { decreaseMarketTotals } from '../../api/marketService';
 import Dashboard from '../dashboard/Dashboard';
 import io from 'socket.io-client';
 import { toast } from 'react-toastify';
@@ -16,10 +17,9 @@ const socket = io('http://localhost:3001');
 const DemandesLivraison = () => {
     const [clients, setClients] = useState([]);
     const [products, setProducts] = useState([]);
-    const [markets, setMarkets] = useState([]);
     const [drivers, setDrivers] = useState([]);
     const [secteurs, setSecteurs] = useState([]);
-    const [plans, setPlans] = useState([]); 
+    const [plans, setPlans] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showClientForm, setShowClientForm] = useState(false);
     const [newClient, setNewClient] = useState({
@@ -32,20 +32,28 @@ const DemandesLivraison = () => {
         phone: ''
     });
 
+    const userId = localStorage.getItem('userId');
+
     useEffect(() => {
         const loadData = async () => {
             try {
-                const [clientsData, productsData, marketsData, driversData, secteursData, plansData] = await Promise.all([
+                const [clientsData, productsData, driversData, secteursData, plansData] = await Promise.all([
                     fetchAllClients(),
                     fetchProducts(),
-                    fetchMagasins(),
                     fetchDrivers(),
                     fetchSectures(),
-                    fetchPlans() 
+                    fetchPlans()
                 ]);
+
+                // Debugging: Log the fetched data
+                console.log('Fetched Clients Data:', clientsData);
+                console.log('Fetched Products Data:', productsData);
+                console.log('Fetched Drivers Data:', driversData);
+                console.log('Fetched Secteurs Data:', secteursData);
+                console.log('Fetched Plans Data:', plansData);
+
                 setClients(clientsData);
                 setProducts(productsData);
-                setMarkets(marketsData);
                 setDrivers(driversData);
                 setSecteurs(secteursData);
                 setPlans(plansData);
@@ -87,7 +95,7 @@ const DemandesLivraison = () => {
         }));
     };
 
-    const validateLivraison = (newLivraison, clients, plans) => {
+    const validateLivraison = (newLivraison, clients, plans, secteurs) => {
         const extractPostalCode = (address) => {
             const match = address.match(/\d{5}/);
             return match ? parseInt(match[0], 10) : null;
@@ -99,13 +107,16 @@ const DemandesLivraison = () => {
         const clientPostalCode = extractPostalCode(client?.code_postal);
         const clientPostalCode2 = extractPostalCode(client?.code_postal2);
 
-
+        console.log('Selected Date:', selectedDate);
+        console.log('Selected Period:', selectedPeriod);
+        console.log('Client Postal Code 1:', clientPostalCode);
+        console.log('Client Postal Code 2:', clientPostalCode2);
 
         let isClientCodePostalValid = false;
         let isClientCodePostal2Valid = false;
         let planExists = false;
 
-        plans.forEach(plan => {
+        for (const plan of plans) {
             if (plan.Date === selectedDate) {
                 planExists = true;
                 console.log('Matching Plan:', plan);
@@ -118,17 +129,76 @@ const DemandesLivraison = () => {
                     isClientCodePostal2Valid = plan.secteurApresMidi.some(secteur => secteur.codesPostaux.includes(clientPostalCode2));
                 }
             }
-        });
+        }
 
-     
+        console.log('Plan Exists:', planExists);
+        console.log('Is Client Code Postal 1 Valid:', isClientCodePostalValid);
+        console.log('Is Client Code Postal 2 Valid:', isClientCodePostal2Valid);
 
-        if (!planExists || (!isClientCodePostalValid && !isClientCodePostal2Valid)) {
-            toast.error('Attendez l\'administrateur.');
+        if (!planExists) {
             newLivraison.status = 'En attente';
-            return false; 
+            toast.error('Attendez l\'administrateur.');
+            return false;
+        } else if (!isClientCodePostalValid && !isClientCodePostal2Valid) {
+            toast.error('Le code postal du client ne fait pas partie des secteurs disponibles.');
+            newLivraison.status = 'En attente';
+            return false;
         } else {
             newLivraison.status = 'En attente';
-            return true; 
+        }
+
+        return true;
+    };
+
+    const handleLivraisonSubmit = async (newLivraison) => {
+        if (!validateLivraison(newLivraison, clients, plans, secteurs)) {
+            return;
+        }
+
+        // No need to fetch or compare markets
+        newLivraison.market = userId;
+
+        const selectedPlan = plans.find(plan => plan.Date === newLivraison.Date);
+        if (!selectedPlan) {
+            toast.error('Le plan sélectionné n\'est pas valide.');
+            return;
+        }
+
+        let periodFieldPlan;
+        if (newLivraison.Periode === 'Matin') {
+            periodFieldPlan = 'totalMatin';
+        } else if (newLivraison.Periode === 'Midi') {
+            periodFieldPlan = 'totalMidi';
+        }
+
+        // Debugging: Log selected plan and period field
+        console.log('Selected Plan:', selectedPlan);
+        console.log('Selected Plan Period Field:', periodFieldPlan);
+
+        if (selectedPlan[periodFieldPlan] <= 0) {
+            toast.error('Vous avez atteint la limite pour cette période, attendez 24h ou contactez l\'administrateur.');
+            return;
+        }
+
+        try {
+            const { driver, ...payload } = newLivraison;
+            const response = await addLivraison(payload);
+
+            if (response && response._id) {
+                await decreasePlanTotals(selectedPlan._id, newLivraison.Periode); // Decrease plan totals
+
+                // Debugging: Log market ID and period before decreasing
+                console.log('Decreasing Market Totals for Market ID:', newLivraison.market, 'Period:', newLivraison.Periode);
+
+                await decreaseMarketTotals(newLivraison.market, newLivraison.Periode); // Decrease market totals
+
+                socket.emit('addLivraison', { id: response._id });
+                toast.success('Livraison soumise avec succès!');
+            } else {
+                toast.error('Erreur lors de la soumission de la livraison. Réponse inattendue.');
+            }
+        } catch (error) {
+            toast.error('Erreur lors de la soumission de la livraison.');
         }
     };
 
@@ -145,9 +215,10 @@ const DemandesLivraison = () => {
                         clients={clients}
                         products={products}
                         secteurs={secteurs}
-                        plans={plans} 
+                        plans={plans}
                         setShowClientForm={setShowClientForm}
-                        validateLivraison={validateLivraison} 
+                        validateLivraison={validateLivraison}
+                        handleLivraisonSubmit={handleLivraisonSubmit}
                     />
                     {showClientForm && (
                         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">

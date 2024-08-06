@@ -33,14 +33,23 @@ export const deleteMagasin = async (id) => {
   });
 };
 
-export const modifyMagasin = async (magasin) => {
-  const token = getToken();
-  const response = await axios.patch(`${API_URL}/market/${magasin._id}`, magasin, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
+export const modifyMagasin = async (id, updatedMarket) => {
+  try {
+      const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+      const response = await axios.patch(
+          `${API_URL}/market/${id}`,
+          updatedMarket,
+          {
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
+          }
+      );
+      return response.data;
+  } catch (error) {
+      console.error('Error modifying market:', error);
+      throw error;
+  }
 };
 
 export const searchMagasins = async (searchTerm) => {
@@ -51,4 +60,13 @@ export const searchMagasins = async (searchTerm) => {
     },
   });
   return response.data;
+};
+export const decreaseMarketTotals = async (id, period) => {
+  try {
+      const response = await axios.patch(`${API_URL}/market/${id}/decrease/${period}`);
+      return response.data;
+  } catch (error) {
+      console.error('Error decreasing market totals:', error);
+      throw error;
+  }
 };
