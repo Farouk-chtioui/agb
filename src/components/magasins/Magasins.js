@@ -94,55 +94,57 @@ const Magasins = () => {
     }
   };
 
+
   return (
-    <div className="flex">
-      <Dashboard title="Gérer les magasins" />
-      <div className="flex-1 container mx-auto p-9 relative mt-20">
-        <ToastContainer />
-        <Search setData={handleSearch} title={"Tous les magasins"} />
-        <button
-          className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
-          onClick={() => {
-            setShowForm(true);
-            setIsEditMode(false);
-            setNewMagasin({
-              first_name: '',
-              last_name: '',
-              email: '',
-              password: '',
-              address: '',
-              numberMa: '',
-              numberMi: ''
-            });
-          }}
-        >
-          Ajouter un magasin
-        </button>
+    <div className="flex h-screen">
+        <Dashboard title="Gérer les magasins" />
+        <div className="flex-1 flex flex-col h-screen overflow-y-auto">
+            <div className="container mx-auto p-9 relative mt-20">
+                <ToastContainer />
+                <Search setData={handleSearch} title={"Tous les magasins"} />
+                <button
+                    className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
+                    onClick={() => {
+                        setShowForm(true);
+                        setIsEditMode(false);
+                        setNewMagasin({
+                            first_name: '',
+                            last_name: '',
+                            email: '',
+                            password: '',
+                            address: '',
+                            numberMa: '',
+                            numberMi: ''
+                        });
+                    }}
+                >
+                    Ajouter un magasin
+                </button>
 
-        {showForm && (
-          <MagasinForm
-            newMagasin={newMagasin}
-            handleChange={handleChange}
-            handleAddMagasin={handleAddMagasin}
-            handleEditMagasin={handleEditMagasin}
-            setShowForm={setShowForm}
-            isEditMode={isEditMode}
-          />
-        )}
+                {showForm && (
+                    <MagasinForm
+                        newMagasin={newMagasin}
+                        handleChange={handleChange}
+                        handleAddMagasin={handleAddMagasin}
+                        handleEditMagasin={handleEditMagasin}
+                        setShowForm={setShowForm}
+                        isEditMode={isEditMode}
+                    />
+                )}
 
-        <MagasinTable
-          magasins={magasins}
-          handleDelete={handleDelete}
-          handleModify={handleModify}
-          userRole={userRole}
-        />
+                <MagasinTable
+                    magasins={magasins}
+                    handleDelete={handleDelete}
+                    handleModify={handleModify}
+                />
 
-        {!isSearchActive && (
-          <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
-        )}
-      </div>
+                {!isSearchActive && (
+                    <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
+                )}
+            </div>
+        </div>
     </div>
-  );
-};
+);
+}
 
 export default Magasins;

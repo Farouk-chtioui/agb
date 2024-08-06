@@ -16,17 +16,18 @@ import Plans from '../Plans/Plans';
 import { Provider } from 'react-redux';
 import store from '../../redux/store';
 import DemandesLivraison from '../DemandesLivraison/DemandesLivraison';
-import Demandes from '../livraison/DemandeslivraisonsAdmin/Demande'
+import Demandes from '../livraison/DemandeslivraisonsAdmin/Demande';
 import AdminDashboard from '../dashboard/AdminDashboard';
+
 function Routing() {
   return (
     <Provider store={store}>
       <Routes>
         <Route path="/" element={<PublicRoute element={<Login />} />} />
-        <Route path="/admin/dashboard" element={<ProtectedRoute element={<AdminDashboard/>} requiredRoles={['admin']} />} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute element={<AdminDashboard />} requiredRoles={['admin']} />} />
         <Route path="/market/dashboard" element={<ProtectedRoute element={<Dashboard title="Dashboard" />} requiredRoles={['market']} />} />
         <Route path="/livraison/listes" element={<ProtectedRoute element={<Livraison />} requiredRoles={['admin']} />} />
-        <Route path="/commands/pending" element={<ProtectedRoute element={<Demandes/>} requiredRoles={['admin']} />} />
+        <Route path="/commands/pending" element={<ProtectedRoute element={<Demandes />} requiredRoles={['admin']} />} />
         <Route path="/clients" element={<ProtectedRoute element={<Clients />} requiredRoles={['admin']} />} />
         <Route path="/magasins" element={<ProtectedRoute element={<Magasins />} requiredRoles={['admin']} />} />
         <Route path="/produits" element={<ProtectedRoute element={<Produits />} requiredRoles={['admin', 'market']} />} />
@@ -37,7 +38,7 @@ function Routing() {
         <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
         <Route path="/commands/propositions" element={<DemandesLivraison />} />
         <Route path="/plans" element={<Plans />} />
-        </Routes>
+      </Routes>
     </Provider>
   );
 }

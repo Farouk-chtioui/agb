@@ -14,7 +14,7 @@ export async function addLivraison(livraison) {
 export async function fetchLivraisons(page = 1) {
     try {
         const response = await axios.get(`${API_URL}/livraison?page=${page}`);
-        return response.data; 
+        return response.data;
     } catch (error) {
         console.error('Error fetching livraisons', error);
         throw error;
@@ -68,7 +68,6 @@ export async function deleteLivraison(id) {
         console.error('Error deleting livraison', error);
         throw error;
     }
-   
 }
 
 export const updateStatus = async (id, status) => {
@@ -87,6 +86,15 @@ export async function pendingCount() {
         return response.data;
     } catch (error) {
         console.error('Error fetching pending count', error);
+        throw error;
+    }
+}
+export async function findByStatus(status) {
+    try {
+        const response = await axios.get(`${API_URL}/livraison/byStatus/${status}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching livraisons by status', error);
         throw error;
     }
 }

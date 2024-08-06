@@ -17,4 +17,3 @@ const ProtectedRoute = ({ element, requiredRoles = [] }) => {
 };
 
 export default ProtectedRoute;
-  

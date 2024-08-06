@@ -1,6 +1,7 @@
 import React from 'react';
 import Table from '../../Table/Table';
-import { FaCheck, FaRegTrashAlt } from 'react-icons/fa';
+import { FaCheck } from 'react-icons/fa';
+import { FaRegTrashCan } from 'react-icons/fa6';
 
 const DemandeTable = ({ demandes, handleDelete, handleAddDriver }) => {
     const headers = ["Référence", "Client", "Chauffeur", "Magasin", "Date de la Livraison", "Statut", "Action"];
@@ -47,7 +48,7 @@ const DemandeTable = ({ demandes, handleDelete, handleAddDriver }) => {
             handleThirdAction={handleAddDriver}
             role={role}
             ThirdIcon={FaCheck}
-            DeleteIcon={FaRegTrashAlt}
+            DeleteIcon={FaRegTrashCan}
             showModify={false}
         />
     );

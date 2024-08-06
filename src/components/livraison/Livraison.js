@@ -236,43 +236,45 @@ function Livraison() {
     };
 
     return (
-        <div className="flex">
-            <Dashboard />
-            <div className="flex-1 container mx-auto p-9 relative mt-20">
-                <ToastContainer />
-                <Search setData={handleSearch} title={'Tout les livraisons'} />
-                <button
-                    className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
-                    onClick={() => {
-                        setShowForm(true);
-                        resetForm();
-                    }}
-                >
-                    Ajouter une livraison
-                </button>
+        <div className="flex h-screen">
+            <Dashboard title="Livraison" />
+            <div className="flex-1 flex flex-col h-screen overflow-y-auto">
+                <div className="container mx-auto p-9 relative mt-20">
+                    <ToastContainer />
+                    <Search setData={handleSearch} title={"Toutes les livraisons"} />
+                    <button
+                        className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
+                        onClick={() => {
+                            setShowForm(true);
+                            resetForm();
+                        }}
+                    >
+                        Ajouter une livraison
+                    </button>
 
-                {showForm && (
-                    <LivraisonForm
-                        newLivraison={newLivraison}
-                        setNewLivraison={setNewLivraison}
-                        handleChange={handleChange}
-                        handleAddLivraison={handleAddLivraison}
-                        handleEditLivraison={handleEditLivraison}
-                        setShowForm={setShowForm}
-                        isEditMode={isEditMode}
-                        clients={clients}
-                        markets={markets}
-                        products={products}
-                        drivers={drivers}
-                        secteurs={secteurs}
-                        currentLivraison={currentLivraison}
-                        plans={plans} // Pass plans to LivraisonForm
-                    />
-                )}
+                    {showForm && (
+                        <LivraisonForm
+                            newLivraison={newLivraison}
+                            setNewLivraison={setNewLivraison}
+                            handleChange={handleChange}
+                            handleAddLivraison={handleAddLivraison}
+                            handleEditLivraison={handleEditLivraison}
+                            setShowForm={setShowForm}
+                            isEditMode={isEditMode}
+                            clients={clients}
+                            markets={markets}
+                            products={products}
+                            drivers={drivers}
+                            secteurs={secteurs}
+                            currentLivraison={currentLivraison}
+                            plans={plans} // Pass plans to LivraisonForm
+                        />
+                    )}
 
-                <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete} handleModify={handleModify} />
+                    <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete} handleModify={handleModify} />
 
-                {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />}
+                    {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />}
+                </div>
             </div>
         </div>
     );

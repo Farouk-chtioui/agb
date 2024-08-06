@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { fetchLivraisons, deleteLivraison, modifyDriver, updateStatus } from '../../../api/livraisonService';
+import { deleteLivraison, modifyDriver, updateStatus, findByStatus } from '../../../api/livraisonService';
 import DemandeTable from './DemandeTable';
 import Dashboard from '../../dashboard/Dashboard';
 import Search from '../../searchbar/Search';
@@ -24,17 +24,14 @@ function Demandes() {
 
     const loadData = useCallback(async (page) => {
         try {
-            const { livraisons, totalPages } = await fetchLivraisons(page);
-            setDemandes(livraisons);
-            setTotalPages(totalPages);
-
-            if (currentPage > totalPages) {
-                setCurrentPage(totalPages);
-            }
+            const response = await findByStatus('En attente');
+            const pendingDemandes = response.length > 0 ? response : [];
+            setDemandes(pendingDemandes);
+            setTotalPages(Math.ceil(pendingDemandes.length / 10));
         } catch (error) {
             console.error('Error loading data', error);
         }
-    }, [currentPage]);
+    }, []);
 
     useEffect(() => {
         loadData(currentPage);
@@ -103,9 +100,12 @@ function Demandes() {
         }
         const filteredData = demandes.filter((demande) => demande.reference.toLowerCase().includes(searchTerm.toLowerCase()));
         setFilteredDemandes(filteredData);
+        setTotalPages(Math.ceil(filteredData.length / 10));
     }, [searchTerm, demandes]);
 
-    const currentData = isSearchActive ? filteredDemandes : demandes;
+    const currentData = isSearchActive
+        ? filteredDemandes.slice((currentPage - 1) * 10, currentPage * 10)
+        : demandes.slice((currentPage - 1) * 10, currentPage * 10);
 
     return (
         <div className="flex h-screen">
