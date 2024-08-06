@@ -11,7 +11,7 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
             case 'En attente':
                 return { label: 'En attente', color: 'text-blue-600', bgColor: 'bg-blue-600' };
             case 'À la livraison':
-                return { label: 'A la livraison', color: 'text-yellow-600', bgColor: 'bg-yellow-600' };
+                return { label: 'À la livraison', color: 'text-yellow-600', bgColor: 'bg-yellow-600' };
             case 'Livré':
                 return { label: 'Livré', color: 'text-green-600', bgColor: 'bg-green-600' };
             case 'Annulé':
@@ -44,12 +44,10 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
         );
     };
 
-    const filteredLivraisons = livraisons.filter(livraison => livraison.status !== 'En attente');
-
     return (
         <Table
             headers={headers}
-            data={filteredLivraisons}
+            data={livraisons}
             renderRow={renderRow}
             handleDelete={handleDelete}
             handleModify={handleModify}

@@ -51,10 +51,6 @@ const LivraisonForm = ({
         }
     }, [newLivraison.client, clients]);
 
-    useEffect(() => {
-        console.log('Plans in LivraisonForm:', plans); // Log plans data in LivraisonForm
-    }, [plans]);
-
     const extractPostalCode = (address) => {
         const match = address.match(/\d{5}/);
         return match ? parseInt(match[0], 10) : null;
@@ -69,7 +65,8 @@ const LivraisonForm = ({
 
         const selectedDate = newLivraison.Date;
         const selectedPeriod = newLivraison.Periode;
-        const clientPostalCode = extractPostalCode(clientCodePostal);
+        const clientPostalCode1 = extractPostalCode(clientCodePostal);
+        const clientPostalCode2 = extractPostalCode(clientCodePostal2);
 
         let isClientCodePostalValid = false;
         let planExists = false;
@@ -78,9 +75,9 @@ const LivraisonForm = ({
             if (plan.Date === selectedDate) {
                 planExists = true;
                 if (selectedPeriod === 'Matin' && plan.secteurMatinal) {
-                    isClientCodePostalValid = plan.secteurMatinal.some(secteur => secteur.codesPostaux.includes(clientPostalCode));
+                    isClientCodePostalValid = plan.secteurMatinal.some(secteur => secteur.codesPostaux.includes(clientPostalCode1) || secteur.codesPostaux.includes(clientPostalCode2));
                 } else if (selectedPeriod === 'Midi' && plan.secteurApresMidi) {
-                    isClientCodePostalValid = plan.secteurApresMidi.some(secteur => secteur.codesPostaux.includes(clientPostalCode));
+                    isClientCodePostalValid = plan.secteurApresMidi.some(secteur => secteur.codesPostaux.includes(clientPostalCode1) || secteur.codesPostaux.includes(clientPostalCode2));
                 }
             }
         });

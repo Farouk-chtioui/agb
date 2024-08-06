@@ -18,26 +18,23 @@ function Demandes() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [filteredDemandes, setFilteredDemandes] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedDemande, setSelectedDemande] = useState(null);
     const [formData, setFormData] = useState({ driver: '' });
 
-    const loadData = async (page) => {
+    const loadData = useCallback(async (page) => {
         try {
-            const { livraisons, total, totalPages } = await fetchLivraisons(page);
+            const { livraisons, totalPages } = await fetchLivraisons(page);
             setDemandes(livraisons);
             setTotalPages(totalPages);
-            setLoading(false);
 
-            
             if (currentPage > totalPages) {
                 setCurrentPage(totalPages);
             }
         } catch (error) {
             console.error('Error loading data', error);
         }
-    };
+    }, [currentPage]);
 
     useEffect(() => {
         loadData(currentPage);
@@ -49,15 +46,14 @@ function Demandes() {
             socket.off('statusChange', () => loadData(currentPage));
             socket.off('addLivraison', () => loadData(currentPage));
         };
-    }, [currentPage]);
+    }, [currentPage, loadData]);
 
     const handleDelete = async (demandeId) => {
         try {
             await deleteLivraison(demandeId);
-            console.log('Deleted demande with ID:', demandeId);
             socket.emit('statusChange', { id: demandeId, status: 'deleted' });
             toast.success('Demande supprimée avec succès!');
-            loadData(currentPage); // Reload data after deletion
+            loadData(currentPage);
         } catch (error) {
             console.error('Error deleting demande', error);
             toast.error('Erreur lors de la suppression de la demande.');
@@ -68,7 +64,6 @@ function Demandes() {
         try {
             await modifyDriver({ id: selectedDemande._id, driver: formData.driver });
             await updateStatus(selectedDemande._id, 'À la livraison');
-            console.log('Modified demande with ID:', selectedDemande._id);
             socket.emit('statusChange', { id: selectedDemande._id, status: 'À la livraison' });
 
             setIsModalOpen(false);
@@ -80,7 +75,6 @@ function Demandes() {
     };
 
     const handleAddDriver = (demande) => {
-        console.log('handleAddDriver - Selected Demande:', demande);
         setSelectedDemande(demande);
         setIsModalOpen(true);
     };
@@ -107,9 +101,7 @@ function Demandes() {
             setIsSearchActive(false);
             return;
         }
-        const filteredData = demandes.filter((demande) => {
-            return demande.reference.toLowerCase().includes(searchTerm.toLowerCase());
-        });
+        const filteredData = demandes.filter((demande) => demande.reference.toLowerCase().includes(searchTerm.toLowerCase()));
         setFilteredDemandes(filteredData);
     }, [searchTerm, demandes]);
 
