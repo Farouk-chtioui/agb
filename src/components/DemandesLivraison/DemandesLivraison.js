@@ -6,8 +6,10 @@ import { fetchProducts } from '../../api/productService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchSectures } from '../../api/sectureService';
+import { fetchPlans } from '../../api/plansService'; 
 import Dashboard from '../dashboard/Dashboard';
 import io from 'socket.io-client';
+import { toast } from 'react-toastify';
 
 const socket = io('http://localhost:3001');
 
@@ -17,6 +19,7 @@ const DemandesLivraison = () => {
     const [markets, setMarkets] = useState([]);
     const [drivers, setDrivers] = useState([]);
     const [secteurs, setSecteurs] = useState([]);
+    const [plans, setPlans] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [showClientForm, setShowClientForm] = useState(false);
     const [newClient, setNewClient] = useState({
@@ -32,18 +35,20 @@ const DemandesLivraison = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const [clientsData, productsData, marketsData, driversData, secteursData] = await Promise.all([
+                const [clientsData, productsData, marketsData, driversData, secteursData, plansData] = await Promise.all([
                     fetchAllClients(),
                     fetchProducts(),
                     fetchMagasins(),
                     fetchDrivers(),
-                    fetchSectures()
+                    fetchSectures(),
+                    fetchPlans() 
                 ]);
                 setClients(clientsData);
                 setProducts(productsData);
                 setMarkets(marketsData);
                 setDrivers(driversData);
                 setSecteurs(secteursData);
+                setPlans(plansData);
                 setLoading(false);
             } catch (error) {
                 console.error('Error loading data', error);
@@ -82,6 +87,51 @@ const DemandesLivraison = () => {
         }));
     };
 
+    const validateLivraison = (newLivraison, clients, plans) => {
+        const extractPostalCode = (address) => {
+            const match = address.match(/\d{5}/);
+            return match ? parseInt(match[0], 10) : null;
+        };
+
+        const selectedDate = newLivraison.Date;
+        const selectedPeriod = newLivraison.Periode;
+        const client = clients.find(client => client._id === newLivraison.client);
+        const clientPostalCode = extractPostalCode(client?.code_postal);
+        const clientPostalCode2 = extractPostalCode(client?.code_postal2);
+
+
+
+        let isClientCodePostalValid = false;
+        let isClientCodePostal2Valid = false;
+        let planExists = false;
+
+        plans.forEach(plan => {
+            if (plan.Date === selectedDate) {
+                planExists = true;
+                console.log('Matching Plan:', plan);
+
+                if (selectedPeriod === 'Matin' && plan.secteurMatinal) {
+                    isClientCodePostalValid = plan.secteurMatinal.some(secteur => secteur.codesPostaux.includes(clientPostalCode));
+                    isClientCodePostal2Valid = plan.secteurMatinal.some(secteur => secteur.codesPostaux.includes(clientPostalCode2));
+                } else if (selectedPeriod === 'Midi' && plan.secteurApresMidi) {
+                    isClientCodePostalValid = plan.secteurApresMidi.some(secteur => secteur.codesPostaux.includes(clientPostalCode));
+                    isClientCodePostal2Valid = plan.secteurApresMidi.some(secteur => secteur.codesPostaux.includes(clientPostalCode2));
+                }
+            }
+        });
+
+     
+
+        if (!planExists || (!isClientCodePostalValid && !isClientCodePostal2Valid)) {
+            toast.error('Attendez l\'administrateur.');
+            newLivraison.status = 'En attente';
+            return false; 
+        } else {
+            newLivraison.status = 'En attente';
+            return true; 
+        }
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -95,7 +145,9 @@ const DemandesLivraison = () => {
                         clients={clients}
                         products={products}
                         secteurs={secteurs}
+                        plans={plans} 
                         setShowClientForm={setShowClientForm}
+                        validateLivraison={validateLivraison} 
                     />
                     {showClientForm && (
                         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">

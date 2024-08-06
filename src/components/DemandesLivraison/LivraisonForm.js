@@ -8,7 +8,7 @@ import io from 'socket.io-client'; // Import io from socket.io-client
 
 const socket = io('http://localhost:3001'); // Initialize socket
 
-const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
+const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, validateLivraison }) => {
     const [newLivraison, setNewLivraison] = useState({
         NumeroCommande: '',
         Référence: '',
@@ -19,11 +19,11 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
         market: '',
         driver: '',
         Prix: '',
-        Date: ''
+        Date: '',
+        Periode: '' // Added Periode field
     });
 
     const [clientCodePostal, setClientCodePostal] = useState('');
-    const [marketCodePostal, setMarketCodePostal] = useState('');
 
     useEffect(() => {
         const role = localStorage.getItem('role');
@@ -33,21 +33,6 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
                 ...prev,
                 market: userId
             }));
-
-            // Fetch the market's address
-            const fetchMarketAddress = async () => {
-                try {
-                    const response = await fetchMagasins();
-                    const market = response.find(m => m._id === userId);
-                    if (market) {
-                        setMarketCodePostal(market.codePostal);
-                    }
-                } catch (error) {
-                    console.error('Error fetching market address:', error);
-                }
-            };
-
-            fetchMarketAddress();
         }
     }, []);
 
@@ -95,48 +80,31 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date) {
+        if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date || !newLivraison.Periode) {
             toast.error('Veuillez remplir tous les champs obligatoires.');
             return;
         }
-    
-        const client = clients.find(client => client._id === newLivraison.client);
-        const isClientCodePostalValid = client && (
-            secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(client.code_postal))) ||
-            secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(client.code_postal2)))
-        );
-    
-        const isMarketCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(marketCodePostal)));
-    
-        if (!isClientCodePostalValid) {
-            toast.error('Le code postal du client ne fait pas partie des secteurs disponibles.');
-            return;
+
+        const isValid = validateLivraison(newLivraison, clients, plans, secteurs);
+
+        if (!isValid) {
+            return; // Block submission if validation fails
         }
-    
-        if (!isMarketCodePostalValid) {
-            toast.error('Le code postal du marché ne fait pas partie des secteurs disponibles. Veuillez contacter l\'administrateur.');
-            return;
+
+        // Always set the status to "En attente"
+        newLivraison.status = 'En attente';
+
+        // Remove driver field if it's empty
+        if (!newLivraison.driver) {
+            delete newLivraison.driver;
         }
-    
+
         try {
-            const payload = {
-                ...newLivraison,
-                client: newLivraison.client || undefined,
-                products: newLivraison.products.map(product => ({
-                    ...product,
-                    productId: product.productId || undefined
-                })),
-            };
-    
-            if (!newLivraison.driver) {
-                delete payload.driver;
-            }
-    
-            const response = await addLivraison(payload);
+            const response = await addLivraison(newLivraison);
             console.log('Successfully submitted:', response);
-    
+
             if (response && response._id) {
-                socket.emit('addLivraison', { id: response._id }); // Emit WebSocket event after adding livraison
+                socket.emit('addLivraison', { id: response._id });
                 toast.success('Livraison soumise avec succès!');
             } else {
                 console.error('Unexpected response structure:', response);
@@ -147,7 +115,6 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
             toast.error('Erreur lors de la soumission de la livraison.');
         }
     };
-    
 
     const scrollToSection = (sectionId) => {
         const section = document.getElementById(sectionId);
@@ -356,9 +323,31 @@ const LivraisonForm = ({ clients, products, secteurs, setShowClientForm }) => {
                                 onChange={handleChange}
                                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 mb-2"
                             />
-                            <p className="text-sm text-gray-500">
-                                Le secteur du client n'est pas planifié. La date peut être changée.
-                            </p>
+                            <label className="block text-gray-700">Période*</label>
+                            <div className="flex space-x-4">
+                                <label className="flex items-center">
+                                    <input
+                                        type="radio"
+                                        name="Periode"
+                                        value="Matin"
+                                        checked={newLivraison.Periode === 'Matin'}
+                                        onChange={handleChange}
+                                        className="mr-2"
+                                    />
+                                    Matin
+                                </label>
+                                <label className="flex items-center">
+                                    <input
+                                        type="radio"
+                                        name="Periode"
+                                        value="Midi"
+                                        checked={newLivraison.Periode === 'Midi'}
+                                        onChange={handleChange}
+                                        className="mr-2"
+                                    />
+                                    Midi
+                                </label>
+                            </div>
                         </div>
 
                         <button
