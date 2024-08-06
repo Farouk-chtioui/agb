@@ -17,7 +17,8 @@ const LivraisonForm = ({
     products,
     drivers,
     secteurs = [],
-    currentLivraison
+    currentLivraison,
+    plans // Pass plans as a prop
 }) => {
     const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
     const [currentStep, setCurrentStep] = useState(0);
@@ -51,8 +52,13 @@ const LivraisonForm = ({
     }, [newLivraison.client, clients]);
 
     useEffect(() => {
-        console.log('Markets in LivraisonForm:', markets); // Add this line to log markets data in LivraisonForm
-    }, [markets]);
+        console.log('Plans in LivraisonForm:', plans); // Log plans data in LivraisonForm
+    }, [plans]);
+
+    const extractPostalCode = (address) => {
+        const match = address.match(/\d{5}/);
+        return match ? parseInt(match[0], 10) : null;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -61,12 +67,31 @@ const LivraisonForm = ({
             return;
         }
 
-        const isClientCodePostalValid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal)));
-        const isClientCodePostal2Valid = secteurs.some(secteur => secteur.codesPostaux.includes(parseInt(clientCodePostal2)));
+        const selectedDate = newLivraison.Date;
+        const selectedPeriod = newLivraison.Periode;
+        const clientPostalCode = extractPostalCode(clientCodePostal);
 
-        if (!isClientCodePostalValid && !isClientCodePostal2Valid) {
+        let isClientCodePostalValid = false;
+        let planExists = false;
+
+        plans.forEach(plan => {
+            if (plan.Date === selectedDate) {
+                planExists = true;
+                if (selectedPeriod === 'Matin' && plan.secteurMatinal) {
+                    isClientCodePostalValid = plan.secteurMatinal.some(secteur => secteur.codesPostaux.includes(clientPostalCode));
+                } else if (selectedPeriod === 'Midi' && plan.secteurApresMidi) {
+                    isClientCodePostalValid = plan.secteurApresMidi.some(secteur => secteur.codesPostaux.includes(clientPostalCode));
+                }
+            }
+        });
+
+        if (!planExists) {
+            newLivraison.status = 'En attente';
+        } else if (!isClientCodePostalValid) {
             toast.error('Le code postal du client ne fait pas partie des secteurs disponibles.');
             return;
+        } else {
+            newLivraison.status = 'À la livraison';
         }
 
         const livraisonData = { ...newLivraison, products: productList };
@@ -75,7 +100,7 @@ const LivraisonForm = ({
         } else {
             handleAddLivraison(livraisonData);
         }
-        setShowForm(false); 
+        setShowForm(false);
     };
 
     const handleClientAdd = async () => {

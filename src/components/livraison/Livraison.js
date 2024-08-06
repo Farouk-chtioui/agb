@@ -5,6 +5,7 @@ import { fetchMagasins } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
 import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison } from '../../api/livraisonService';
 import { fetchSectures } from '../../api/sectureService';
+import { fetchPlans } from '../../api/plansService';
 import LivraisonForm from './LivraisonForm';
 import LivraisonTable from './LivraisonTable';
 import Search from '../searchbar/Search';
@@ -19,6 +20,7 @@ function Livraison() {
   const [markets, setMarkets] = useState([]);
   const [products, setProducts] = useState([]);
   const [secteurs, setSecteurs] = useState([]);
+  const [plans, setPlans] = useState([]);
   const [newLivraison, setNewLivraison] = useState({
     NumeroCommande: '',
     Référence: '',
@@ -47,6 +49,7 @@ function Livraison() {
     fetchLivraisonsData();
     fetchProductsData();
     fetchSecteursData();
+    fetchPlansData();
   }, [currentPage]);
 
   const fetchAllClientsData = async () => {
@@ -80,8 +83,8 @@ function Livraison() {
   const fetchMarketsData = async () => {
     try {
       const data = await fetchMagasins();
-      console.log('Markets Data:', data); // Add this line to log markets data
-      setMarkets(Array.isArray(data.markets) ? data.markets : []); // Ensure data.markets is an array
+      console.log('Markets Data:', data);
+      setMarkets(Array.isArray(data.markets) ? data.markets : []);
     } catch (error) {
       console.error('Error fetching markets', error);
     }
@@ -107,9 +110,18 @@ function Livraison() {
     }
   };
 
+  const fetchPlansData = async () => {
+    try {
+      const data = await fetchPlans();
+      console.log('Fetched Plans:', data);
+      setPlans(data);
+    } catch (error) {
+      console.error('Error fetching plans', error);
+    }
+  };
+
   const handleAddLivraison = async (livraisonData) => {
     try {
-      livraisonData.status = 'À la livraison';
       await addLivraison(livraisonData);
       fetchLivraisonsData();
       setShowForm(false);
@@ -245,11 +257,12 @@ function Livraison() {
             setShowForm={setShowForm}
             isEditMode={isEditMode}
             clients={clients}
-            markets={markets} // No need to check if it's an array here anymore
+            markets={markets}
             products={products}
             drivers={drivers}
             secteurs={secteurs}
             currentLivraison={currentLivraison}
+            plans={plans} // Pass plans to LivraisonForm
           />
         )}
 
