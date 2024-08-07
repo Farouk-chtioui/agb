@@ -7,7 +7,7 @@ import { fetchProducts } from '../../api/productService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchSectures } from '../../api/sectureService';
 import { fetchLivraisons } from '../../api/livraisonService';
-import { fetchPlans } from '../../api/plansService'; // Import fetchPlans function
+import { fetchPlans } from '../../api/plansService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faStore, faBox, faTruck } from '@fortawesome/free-solid-svg-icons';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
@@ -15,6 +15,7 @@ import './AdminDashboard.css';
 import { format, parseISO } from 'date-fns';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const PERIOD_COLORS = ['#0088FE', '#00C49F'];
 
 const AdminDashboard = () => {
   const [clientCount, setClientCount] = useState(0);
@@ -25,6 +26,7 @@ const AdminDashboard = () => {
   const [sectures, setSectures] = useState([]);
   const [livraisons, setLivraisons] = useState([]);
   const [secteurStats, setSecteurStats] = useState([]);
+  const [periodStats, setPeriodStats] = useState([]);
   const [orderTrendData, setOrderTrendData] = useState([]);
   const [plans, setPlans] = useState([]);
   const [showAllNotes, setShowAllNotes] = useState(false);
@@ -52,6 +54,9 @@ const AdminDashboard = () => {
 
         const secteurs = calculateSecteurStats(livraisonsData || [], secturesData || []);
         setSecteurStats(secteurs);
+
+        const periods = calculatePeriodStats(livraisonsData || []);
+        setPeriodStats(periods);
 
         const trends = calculateOrderTrends(livraisonsData || []);
         setOrderTrendData(trends);
@@ -100,13 +105,36 @@ const AdminDashboard = () => {
     return roundedSecteurStats;
   };
 
+  const calculatePeriodStats = (livraisons) => {
+    const periodCounts = {
+      Matin: 0,
+      Midi: 0,
+    };
+
+    if (!Array.isArray(livraisons)) return [];
+
+    livraisons.forEach((livraison) => {
+      const period = livraison.Periode;
+      if (periodCounts[period] !== undefined) {
+        periodCounts[period]++;
+      }
+    });
+
+    const totalLivraisons = livraisons.length;
+    const periodStats = Object.keys(periodCounts).map((period) => ({
+      name: period,
+      value: (periodCounts[period] / totalLivraisons) * 100,
+      count: periodCounts[period],
+    }));
+
+    return periodStats;
+  };
+
   const calculateOrderTrends = (livraisons) => {
     if (!Array.isArray(livraisons)) return [];
 
     const trends = [];
-
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
     const currentYear = new Date().getFullYear();
     const previousYear = currentYear - 1;
 
@@ -129,6 +157,18 @@ const AdminDashboard = () => {
     }
 
     return trends;
+  };
+
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + (outerRadius + 10) * Math.cos(-midAngle * RADIAN);
+    const y = cy + (outerRadius + 10) * Math.sin(-midAngle * RADIAN);
+    return (
+      <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+        {`${(percent * 100).toFixed(1)}%`} {/* Adjusted to one decimal place */}
+      </text>
+    );
   };
 
   const toggleShowAllNotes = () => {
@@ -181,10 +221,47 @@ const AdminDashboard = () => {
         </div>
         <div className="stats-section">
           <div className="stat-card">
+            <h2 className="stat-title">Order Period</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={periodStats}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  fill="#82ca9d"
+                  labelLine={true}
+                  label={renderCustomizedLabel}
+                >
+                  {periodStats.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={PERIOD_COLORS[index % PERIOD_COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value, name, props) => [
+                    `${props.payload.count} orders`,
+                    name
+                  ]}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="order-period-legend">
+              {periodStats.map((entry, index) => (
+                <div key={`legend-${index}`} className="legend-item">
+                  <div className="legend-color-box" style={{ backgroundColor: PERIOD_COLORS[index % PERIOD_COLORS.length] }}></div>
+                  <span className="legend-text">{entry.name} ({entry.count} orders)</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="stat-card">
             <h2 className="stat-title">Secteur</h2>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={secteurStats} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}>
+                <Pie data={secteurStats} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}>
                   {secteurStats.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}

@@ -29,17 +29,22 @@ function Dashboard({ title }) {
     fetchPendingDeliveries();
 
     socket.on('updatePendingCount', (data) => {
+      console.log('Received updatePendingCount event:', data);
       setPendingDeliveriesCount(data.count);
     });
 
-    socket.on('statusChange', () => {
-      console.log('Received statusChange event in Dashboard');
-      fetchPendingDeliveries(); // Reload the pending deliveries count
+    socket.on('statusChange', (data) => {
+      fetchPendingDeliveries(); 
+    });
+
+    socket.on('addLivraison', (data) => {
+      fetchPendingDeliveries();
     });
 
     return () => {
       socket.off('updatePendingCount');
       socket.off('statusChange');
+      socket.off('addLivraison');
     };
   }, []);
 
@@ -53,7 +58,7 @@ function Dashboard({ title }) {
   const toggleDropdown = (index) => {
     setOpenIndexes((prevState) => {
       const newOpenIndexes = { ...prevState, [index]: !prevState[index] };
-      localStorage.setItem('openIndexes', JSON.stringify(newOpenIndexes)); // Save the state to local storage
+      localStorage.setItem('openIndexes', JSON.stringify(newOpenIndexes));
       return newOpenIndexes;
     });
   };

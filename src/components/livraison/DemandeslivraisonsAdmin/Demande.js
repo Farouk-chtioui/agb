@@ -63,7 +63,7 @@ function Demandes() {
             await modifyDriver({ id: selectedDemande._id, driver: formData.driver });
             await updateStatus(selectedDemande._id, 'À la livraison');
             socket.emit('statusChange', { id: selectedDemande._id, status: 'À la livraison' });
-
+    
             setIsModalOpen(false);
             toast.success('Driver assigned successfully!', { toastId: 'modify1' });
         } catch (error) {
@@ -71,6 +71,7 @@ function Demandes() {
             toast.error('Error assigning driver.');
         }
     };
+    
 
     const handleAddDriver = (demande) => {
         setSelectedDemande(demande);

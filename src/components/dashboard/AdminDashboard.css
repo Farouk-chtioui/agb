@@ -88,6 +88,27 @@
   margin-bottom: 10px;
 }
 
+.order-period-legend, .secteur-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+}
+
+.legend-color-box {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+}
+
+.legend-text {
+  font-size: 0.9rem;
+}
+
 .summary-section {
   display: flex;
   justify-content: space-between;
