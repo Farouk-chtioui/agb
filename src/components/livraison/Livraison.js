@@ -32,6 +32,7 @@ function Livraison() {
         products: [],
         market: '',
         driver: '',
+        price: ''
     });
     const [showForm, setShowForm] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -128,7 +129,6 @@ function Livraison() {
         try {
             await addLivraison(livraisonData);
             fetchLivraisonsData();
-            setShowForm(false);
             resetForm();
             toast.success('Livraison ajoutée avec succès!');
         } catch (error) {
@@ -140,7 +140,6 @@ function Livraison() {
     const handleEditLivraison = async (livraisonData) => {
         try {
             fetchLivraisonsData();
-            setShowForm(false);
             resetForm();
             toast.success('Livraison modifiée avec succès!');
         } catch (error) {
@@ -230,6 +229,7 @@ function Livraison() {
             products: [],
             market: '',
             driver: '',
+            price: ''
         });
         setIsEditMode(false);
         setCurrentLivraison(null);

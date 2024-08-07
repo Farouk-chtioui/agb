@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import io from 'socket.io-client';
 import { fetchMarketById } from '../../api/marketService';
 import { fetchClientById } from '../../api/clientService';
-import { getCoordinates } from '../../api/geocodingService'; // Import the updated geocoding service
+import { calculatePrice } from '../PriceCalculator/PriceCalculator'; // Import the price calculation utility function
 
 const socket = io('http://localhost:3001');
 
@@ -24,8 +24,8 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         Periode: ''
     });
 
-    const [marketAddress, setMarketAddress] = useState({});
-    const [clientAddress, setClientAddress] = useState({});
+    const [marketAddress, setMarketAddress] = useState('');
+    const [clientAddress, setClientAddress] = useState('');
 
     useEffect(() => {
         const role = localStorage.getItem('role');
@@ -35,7 +35,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
                 ...prev,
                 market: userId
             }));
-            fetchMarketById(userId).then(setMarketAddress);
+            fetchMarketById(userId).then(market => setMarketAddress(market.address));
         }
     }, []);
 
@@ -43,7 +43,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         if (newLivraison.client) {
             const selectedClient = clients.find(client => client._id === newLivraison.client);
             if (selectedClient) {
-                setClientAddress(selectedClient);
+                setClientAddress(selectedClient.address1);
             }
         }
     }, [newLivraison.client, clients]);
@@ -81,61 +81,21 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         }));
     };
 
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-        const R = 6371; // Radius of the Earth in km
-        const dLat = (lat2 - lat1) * (Math.PI / 180);
-        const dLon = (lon2 - lon1) * (Math.PI / 180);
-        const a = 
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const distance = R * c; // Distance in km
-        return distance;
-    };
-
-    const calculatePrice = async () => {
-        console.log('Client Address:', clientAddress);
-        console.log('Market Address:', marketAddress);
-
+    const handleCalculatePrice = async () => {
         try {
-            const marketCoords = await getCoordinates(marketAddress.address);
-            const clientCoords = await getCoordinates(clientAddress.address1);
-
-            console.log('Market Coordinates:', marketCoords);
-            console.log('Client Coordinates:', clientCoords);
-
-            const distance = calculateDistance(
-                parseFloat(marketCoords.latitude),
-                parseFloat(marketCoords.longitude),
-                parseFloat(clientCoords.latitude),
-                parseFloat(clientCoords.longitude)
-            );
-
-            let priceAdjustment = 0;
-            if (distance > 300) {
-                priceAdjustment = (distance - 300) * 2; // 2 euros per km over 300 km
-            }
-
-            // Calculate the total product price
-            let productTotalPrice = 0;
-            newLivraison.products.forEach(product => {
+            const finalPrice = await calculatePrice(marketAddress, clientAddress, newLivraison.products.map(product => {
                 const selectedProduct = products.find(p => p._id === product.productId);
-                if (selectedProduct) {
-                    productTotalPrice += selectedProduct.price * product.quantity;
-                }
-            });
-
-            const deliveryFee = priceAdjustment;
-            const finalPrice = productTotalPrice + deliveryFee;
-
+                return {
+                    ...product,
+                    price: selectedProduct ? selectedProduct.price : 0
+                };
+            }));
             setNewLivraison((prev) => ({
                 ...prev,
-                price: finalPrice.toFixed(2) // Ensure the price is correctly named and set
+                price: finalPrice
             }));
-
         } catch (error) {
-            toast.error('Error calculating distance: ' + error.message);
+            toast.error(error.message);
         }
     };
 
@@ -146,7 +106,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
             return;
         }
 
-        await calculatePrice();
+        await handleCalculatePrice();
 
         // Ensure the price calculation is complete before submitting
         setTimeout(async () => {
@@ -346,13 +306,6 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
                                 readOnly
                                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 mb-2"
                             />
-                            <button
-                                type="button"
-                                onClick={calculatePrice}
-                                className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-200 mb-4"
-                            >
-                                Calculez le prix
-                            </button>
                             <label className="block text-gray-700">Date de la livraison*</label>
                             <input
                                 type="date"

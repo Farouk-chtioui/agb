@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ClientForm from '../clients/ClientForm';
 import { addClient } from "../../api/clientService";
 import { toast } from 'react-toastify';
+import { calculatePrice } from '../PriceCalculator/PriceCalculator';
 import './style.css';
 
 const LivraisonForm = ({
@@ -34,6 +35,7 @@ const LivraisonForm = ({
     });
     const [clientCodePostal, setClientCodePostal] = useState('');
     const [clientCodePostal2, setClientCodePostal2] = useState('');
+    const [calculatedPrice, setCalculatedPrice] = useState('');
 
     useEffect(() => {
         if (isEditMode && currentLivraison) {
@@ -56,7 +58,7 @@ const LivraisonForm = ({
         return match ? parseInt(match[0], 10) : null;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date) {
             toast.error('Veuillez remplir tous les champs obligatoires.');
@@ -91,13 +93,32 @@ const LivraisonForm = ({
             newLivraison.status = 'À la livraison';
         }
 
+        // Calculate the price before submitting
+        try {
+            const marketAddress = markets.find(market => market._id === newLivraison.market).address;
+            const clientAddress = clients.find(client => client._id === newLivraison.client).address1;
+
+            const finalPrice = await calculatePrice(marketAddress, clientAddress, productList.map(product => {
+                const selectedProduct = products.find(p => p._id === product.productId);
+                return {
+                    ...product,
+                    price: selectedProduct ? selectedProduct.price : 0
+                };
+            }));
+            newLivraison.price = finalPrice;
+            setCalculatedPrice(finalPrice); // Set the calculated price to state for display
+        } catch (error) {
+            toast.error('Error calculating price: ' + error.message);
+            return;
+        }
+
         const livraisonData = { ...newLivraison, products: productList };
         if (isEditMode) {
             handleEditLivraison(livraisonData);
         } else {
             handleAddLivraison(livraisonData);
         }
-        setShowForm(false);
+        // Don't close the form automatically
     };
 
     const handleClientAdd = async () => {
@@ -379,6 +400,17 @@ const LivraisonForm = ({
                                             </option>
                                         ))}
                                     </select>
+                                </div>
+                                <div className="form-group">
+                                    <label className="block text-blue-700 mb-2" htmlFor="price">Prix de la Livraison</label>
+                                    <input
+                                        type="text"
+                                        placeholder="le prix est calculé automatiquement"
+                                        name="price"
+                                        value={calculatedPrice}
+                                        readOnly
+                                        className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                    />
                                 </div>
                             </>
                         )}
