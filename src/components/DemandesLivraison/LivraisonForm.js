@@ -3,6 +3,9 @@ import { FaClipboardList, FaUser, FaShoppingCart, FaTruck } from 'react-icons/fa
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import io from 'socket.io-client';
+import { fetchMarketById } from '../../api/marketService';
+import { fetchClientById } from '../../api/clientService';
+import { getCoordinates } from '../../api/geocodingService'; // Import the updated geocoding service
 
 const socket = io('http://localhost:3001');
 
@@ -16,12 +19,13 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         products: [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }],
         market: '',
         driver: '',
-        Prix: '',
+        price: '',
         Date: '',
         Periode: ''
     });
 
-    const [clientCodePostal, setClientCodePostal] = useState('');
+    const [marketAddress, setMarketAddress] = useState({});
+    const [clientAddress, setClientAddress] = useState({});
 
     useEffect(() => {
         const role = localStorage.getItem('role');
@@ -31,6 +35,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
                 ...prev,
                 market: userId
             }));
+            fetchMarketById(userId).then(setMarketAddress);
         }
     }, []);
 
@@ -38,7 +43,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         if (newLivraison.client) {
             const selectedClient = clients.find(client => client._id === newLivraison.client);
             if (selectedClient) {
-                setClientCodePostal(selectedClient.code_postal);
+                setClientAddress(selectedClient);
             }
         }
     }, [newLivraison.client, clients]);
@@ -76,6 +81,64 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         }));
     };
 
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371; // Radius of the Earth in km
+        const dLat = (lat2 - lat1) * (Math.PI / 180);
+        const dLon = (lon2 - lon1) * (Math.PI / 180);
+        const a = 
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c; // Distance in km
+        return distance;
+    };
+
+    const calculatePrice = async () => {
+        console.log('Client Address:', clientAddress);
+        console.log('Market Address:', marketAddress);
+
+        try {
+            const marketCoords = await getCoordinates(marketAddress.address);
+            const clientCoords = await getCoordinates(clientAddress.address1);
+
+            console.log('Market Coordinates:', marketCoords);
+            console.log('Client Coordinates:', clientCoords);
+
+            const distance = calculateDistance(
+                parseFloat(marketCoords.latitude),
+                parseFloat(marketCoords.longitude),
+                parseFloat(clientCoords.latitude),
+                parseFloat(clientCoords.longitude)
+            );
+
+            let priceAdjustment = 0;
+            if (distance > 300) {
+                priceAdjustment = (distance - 300) * 2; // 2 euros per km over 300 km
+            }
+
+            // Calculate the total product price
+            let productTotalPrice = 0;
+            newLivraison.products.forEach(product => {
+                const selectedProduct = products.find(p => p._id === product.productId);
+                if (selectedProduct) {
+                    productTotalPrice += selectedProduct.price * product.quantity;
+                }
+            });
+
+            const deliveryFee = priceAdjustment;
+            const finalPrice = productTotalPrice + deliveryFee;
+
+            setNewLivraison((prev) => ({
+                ...prev,
+                price: finalPrice.toFixed(2) // Ensure the price is correctly named and set
+            }));
+
+        } catch (error) {
+            toast.error('Error calculating distance: ' + error.message);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date || !newLivraison.Periode) {
@@ -83,7 +146,12 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
             return;
         }
 
-        await handleLivraisonSubmit(newLivraison);
+        await calculatePrice();
+
+        // Ensure the price calculation is complete before submitting
+        setTimeout(async () => {
+            await handleLivraisonSubmit(newLivraison);
+        }, 1000); // Adjust the timeout duration if necessary
     };
 
     const scrollToSection = (sectionId) => {
@@ -273,14 +341,14 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
                             <label className="block text-gray-700">Prix de la livraison (Le prix est calculé automatiquement)</label>
                             <input
                                 type="text"
-                                name="Prix"
-                                value={newLivraison.Prix}
+                                name="price"
+                                value={newLivraison.price}
                                 readOnly
                                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 mb-2"
                             />
                             <button
                                 type="button"
-                                onClick={() => console.log('Calculating price...')}
+                                onClick={calculatePrice}
                                 className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-200 mb-4"
                             >
                                 Calculez le prix

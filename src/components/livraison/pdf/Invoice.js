@@ -155,7 +155,7 @@ const InvoiceDocument = ({ data }) => {
         <Text style={styles.observation}>Observations : {livraison.Observations}</Text>
 
         {livraison.products && livraison.products.length > 0 && (
-          <Text style={styles.text}>Total à payer : {livraison.products.reduce((total, product) => total + (product.productId.price * product.quantity), 0)}€</Text>
+          <Text style={styles.text}>Total à payer : {livraison.price}€</Text>
         )}
         <Text style={styles.text}>Solde Magasin : 0€</Text>  {/* to be adjusted for later use */}
 

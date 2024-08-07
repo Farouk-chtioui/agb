@@ -70,3 +70,12 @@ export const decreaseMarketTotals = async (id, period) => {
       throw error;
   }
 };
+export const fetchMarketById = async (id) => {
+  const token = getToken();
+  const response = await axios.get(`${API_URL}/market/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}

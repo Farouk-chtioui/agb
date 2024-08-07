@@ -156,34 +156,34 @@ const DemandesLivraison = () => {
     const handleLivraisonSubmit = async (newLivraison) => {
         try {
             const fetchedPlans = await fetchPlans();
-    
+        
             if (!validateLivraison(newLivraison, clients, fetchedPlans, secteurs)) {
                 return;
             }
-    
+        
             newLivraison.market = userId;
-    
+        
             const selectedPlan = fetchedPlans.find(plan => plan.Date === newLivraison.Date);
             if (!selectedPlan) {
                 toast.error('Le plan sélectionné n\'est pas valide.');
                 return;
             }
-    
+        
             let periodFieldPlan;
             if (newLivraison.Periode === 'Matin') {
                 periodFieldPlan = 'totalMatin';
             } else if (newLivraison.Periode === 'Midi') {
                 periodFieldPlan = 'totalMidi';
             }
-    
+        
             try {
                 const { driver, ...payload } = newLivraison;
                 const response = await addLivraison(payload);
-    
+        
                 if (response && response._id) {
                     await decreasePlanTotals(selectedPlan._id, newLivraison.Periode);
                     await decreaseMarketTotals(newLivraison.market, newLivraison.Periode);
-    
+        
                     socket.emit('addLivraison', { id: response._id });
                     toast.success('Livraison soumise avec succès!');
                 } else {
@@ -196,6 +196,7 @@ const DemandesLivraison = () => {
             toast.error('Erreur lors de la récupération des plans.');
         }
     };
+    
     
     
     
