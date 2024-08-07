@@ -49,7 +49,7 @@ function Demandes() {
         try {
             await deleteLivraison(demandeId);
             socket.emit('statusChange', { id: demandeId, status: 'deleted' });
-            toast.success('Demande supprimée avec succès!');
+            toast.success('Demande supprimée avec succès!', { toastId: 'delete1' });
             loadData(currentPage);
         } catch (error) {
             console.error('Error deleting demande', error);
@@ -59,12 +59,13 @@ function Demandes() {
 
     const handleModify = async () => {
         try {
+            console.log('handleModify called');
             await modifyDriver({ id: selectedDemande._id, driver: formData.driver });
             await updateStatus(selectedDemande._id, 'À la livraison');
             socket.emit('statusChange', { id: selectedDemande._id, status: 'À la livraison' });
 
             setIsModalOpen(false);
-            toast.success('Driver assigned successfully!');
+            toast.success('Driver assigned successfully!', { toastId: 'modify1' });
         } catch (error) {
             console.error('Error updating livraison:', error);
             toast.error('Error assigning driver.');
@@ -128,7 +129,7 @@ function Demandes() {
                         <AddDriverForm
                             livraisonId={selectedDemande ? selectedDemande._id : ''}
                             handleChange={handleChange}
-                            handleModify={handleModify}
+                            handleSubmit={handleModify}
                             setShowForm={setIsModalOpen}
                         />
                     )}

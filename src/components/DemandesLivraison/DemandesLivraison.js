@@ -100,27 +100,31 @@ const DemandesLivraison = () => {
             const match = address.match(/\d{5}/);
             return match ? parseInt(match[0], 10) : null;
         };
-
+    
         const selectedDate = newLivraison.Date;
         const selectedPeriod = newLivraison.Periode;
         const client = clients.find(client => client._id === newLivraison.client);
         const clientPostalCode = extractPostalCode(client?.code_postal);
         const clientPostalCode2 = extractPostalCode(client?.code_postal2);
-
-        console.log('Selected Date:', selectedDate);
-        console.log('Selected Period:', selectedPeriod);
-        console.log('Client Postal Code 1:', clientPostalCode);
-        console.log('Client Postal Code 2:', clientPostalCode2);
-
+    
         let isClientCodePostalValid = false;
         let isClientCodePostal2Valid = false;
         let planExists = false;
-
+    
         for (const plan of plans) {
             if (plan.Date === selectedDate) {
                 planExists = true;
-                console.log('Matching Plan:', plan);
-
+    
+                // Check if totalMatin or totalMidi is zero
+                if (plan.totalMatin <= 0 && selectedPeriod === 'Matin') {
+                    toast.error('Livraison matinale non disponible, attendez 24 heures ou contactez l\'administrateur.');
+                    return false;
+                }
+                if (plan.totalMidi <= 0 && selectedPeriod === 'Midi') {
+                    toast.error('Livraison de l\'après-midi non disponible, attendez 24 heures ou contactez l\'administrateur.');
+                    return false;
+                }
+    
                 if (selectedPeriod === 'Matin' && plan.secteurMatinal) {
                     isClientCodePostalValid = plan.secteurMatinal.some(secteur => secteur.codesPostaux.includes(clientPostalCode));
                     isClientCodePostal2Valid = plan.secteurMatinal.some(secteur => secteur.codesPostaux.includes(clientPostalCode2));
@@ -130,11 +134,7 @@ const DemandesLivraison = () => {
                 }
             }
         }
-
-        console.log('Plan Exists:', planExists);
-        console.log('Is Client Code Postal 1 Valid:', isClientCodePostalValid);
-        console.log('Is Client Code Postal 2 Valid:', isClientCodePostal2Valid);
-
+    
         if (!planExists) {
             newLivraison.status = 'En attente';
             toast.error('Attendez l\'administrateur.');
@@ -146,61 +146,59 @@ const DemandesLivraison = () => {
         } else {
             newLivraison.status = 'En attente';
         }
-
+    
         return true;
     };
+    
+    
+    
 
     const handleLivraisonSubmit = async (newLivraison) => {
-        if (!validateLivraison(newLivraison, clients, plans, secteurs)) {
-            return;
-        }
-
-        // No need to fetch or compare markets
-        newLivraison.market = userId;
-
-        const selectedPlan = plans.find(plan => plan.Date === newLivraison.Date);
-        if (!selectedPlan) {
-            toast.error('Le plan sélectionné n\'est pas valide.');
-            return;
-        }
-
-        let periodFieldPlan;
-        if (newLivraison.Periode === 'Matin') {
-            periodFieldPlan = 'totalMatin';
-        } else if (newLivraison.Periode === 'Midi') {
-            periodFieldPlan = 'totalMidi';
-        }
-
-        // Debugging: Log selected plan and period field
-        console.log('Selected Plan:', selectedPlan);
-        console.log('Selected Plan Period Field:', periodFieldPlan);
-
-        if (selectedPlan[periodFieldPlan] <= 0) {
-            toast.error('Vous avez atteint la limite pour cette période, attendez 24h ou contactez l\'administrateur.');
-            return;
-        }
-
         try {
-            const { driver, ...payload } = newLivraison;
-            const response = await addLivraison(payload);
-
-            if (response && response._id) {
-                await decreasePlanTotals(selectedPlan._id, newLivraison.Periode); // Decrease plan totals
-
-                // Debugging: Log market ID and period before decreasing
-                console.log('Decreasing Market Totals for Market ID:', newLivraison.market, 'Period:', newLivraison.Periode);
-
-                await decreaseMarketTotals(newLivraison.market, newLivraison.Periode); // Decrease market totals
-
-                socket.emit('addLivraison', { id: response._id });
-                toast.success('Livraison soumise avec succès!');
-            } else {
-                toast.error('Erreur lors de la soumission de la livraison. Réponse inattendue.');
+            const fetchedPlans = await fetchPlans();
+    
+            if (!validateLivraison(newLivraison, clients, fetchedPlans, secteurs)) {
+                return;
+            }
+    
+            newLivraison.market = userId;
+    
+            const selectedPlan = fetchedPlans.find(plan => plan.Date === newLivraison.Date);
+            if (!selectedPlan) {
+                toast.error('Le plan sélectionné n\'est pas valide.');
+                return;
+            }
+    
+            let periodFieldPlan;
+            if (newLivraison.Periode === 'Matin') {
+                periodFieldPlan = 'totalMatin';
+            } else if (newLivraison.Periode === 'Midi') {
+                periodFieldPlan = 'totalMidi';
+            }
+    
+            try {
+                const { driver, ...payload } = newLivraison;
+                const response = await addLivraison(payload);
+    
+                if (response && response._id) {
+                    await decreasePlanTotals(selectedPlan._id, newLivraison.Periode);
+                    await decreaseMarketTotals(newLivraison.market, newLivraison.Periode);
+    
+                    socket.emit('addLivraison', { id: response._id });
+                    toast.success('Livraison soumise avec succès!');
+                } else {
+                    toast.error('Erreur lors de la soumission de la livraison. Réponse inattendue.');
+                }
+            } catch (error) {
+                toast.error('Erreur lors de la soumission de la livraison.');
             }
         } catch (error) {
-            toast.error('Erreur lors de la soumission de la livraison.');
+            toast.error('Erreur lors de la récupération des plans.');
         }
     };
+    
+    
+    
 
     if (loading) {
         return <div>Loading...</div>;

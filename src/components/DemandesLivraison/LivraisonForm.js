@@ -21,7 +21,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         Periode: ''
     });
 
-    const [clientCodePostal, setClientCodePostal] = useState(''); // Define clientCodePostal state
+    const [clientCodePostal, setClientCodePostal] = useState('');
 
     useEffect(() => {
         const role = localStorage.getItem('role');
@@ -327,6 +327,11 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
                             Valider
                         </button>
                     </form>
+                    {newLivraison.warning && (
+                        <div className="bg-yellow-200 p-4 rounded-lg mt-4 text-yellow-700">
+                            Attendez 24 heures ou contactez l'administrateur.
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

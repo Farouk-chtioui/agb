@@ -92,7 +92,6 @@ function Dashboard({ title }) {
         { title: 'Secture', path: '/plans/secteurs' }
       ]
     },
-    { title: 'Settings', icon: FaCog, path: '/settings', roles: ['admin'] },
     { title: 'Logout', icon: FaSignOutAlt, onClick: handleLogout, roles: ['admin', 'market', 'driver', 'user'] },
   ];
 
