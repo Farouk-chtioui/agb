@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { fetchAllClients, addClient } from '../../api/clientService';
 import { fetchDrivers } from '../../api/driverService';
-import { fetchMagasins } from '../../api/marketService';
+import { fetchMagasins, decreaseMarketTotals } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
 import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison } from '../../api/livraisonService';
 import { fetchSectures } from '../../api/sectureService';
-import { fetchPlans } from '../../api/plansService';
+import { fetchPlans, decreasePlanTotals } from '../../api/plansService';
 import LivraisonForm from './LivraisonForm';
 import LivraisonTable from './LivraisonTable';
 import Search from '../searchbar/Search';
@@ -131,6 +131,13 @@ function Livraison() {
             fetchLivraisonsData();
             resetForm();
             toast.success('Livraison ajoutée avec succès!');
+
+            // Decrease totals for the selected market and plans
+            const selectedPlan = plans.find(plan => plan.Date === livraisonData.Date);
+            if (selectedPlan) {
+                await decreasePlanTotals(selectedPlan._id, livraisonData.Periode);
+                await decreaseMarketTotals(livraisonData.market, livraisonData.Periode);
+            }
         } catch (error) {
             console.error('Error adding livraison', error);
             toast.error('Erreur lors de l\'ajout de la livraison.');
@@ -239,19 +246,28 @@ function Livraison() {
         <div className="flex h-screen">
             <Dashboard title="Livraison" />
             <div className="flex-1 flex flex-col h-screen overflow-y-auto">
-                <div className="container mx-auto p-9 relative mt-20">
+                <div className="container mx-auto px-4 py-8">
+                    <div className="flex justify-between mb-4">
+                        <h2 className="text-2xl font-semibold text-gray-700">Livraisons</h2>
+                        <button
+                            onClick={() => setShowForm(true)}
+                            className="bg-blue-500 text-white px-4 py-2 rounded shadow"
+                        >
+                            Ajouter une livraison
+                        </button>
+                    </div>
+                    <Search onSearch={handleSearch} />
                     <ToastContainer />
-                    <Search setData={handleSearch} title={"Toutes les livraisons"} />
-                    <button
-                        className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
-                        onClick={() => {
-                            setShowForm(true);
-                            resetForm();
-                        }}
-                    >
-                        Ajouter une livraison
-                    </button>
-
+                    <LivraisonTable
+                        livraisons={isSearchActive ? filteredLivraisons : livraisons}
+                        handleModify={handleModify}
+                        handleDelete={handleDelete}
+                    />
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={(page) => setCurrentPage(page)}
+                    />
                     {showForm && (
                         <LivraisonForm
                             newLivraison={newLivraison}
@@ -267,13 +283,9 @@ function Livraison() {
                             drivers={drivers}
                             secteurs={secteurs}
                             currentLivraison={currentLivraison}
-                            plans={plans} // Pass plans to LivraisonForm
+                            plans={plans}
                         />
                     )}
-
-                    <LivraisonTable livraisons={filteredLivraisons} handleDelete={handleDelete} handleModify={handleModify} />
-
-                    {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />}
                 </div>
             </div>
         </div>
