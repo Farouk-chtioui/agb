@@ -87,7 +87,7 @@ function Dashboard({ title }) {
     {
       title: 'Chauffeurs', icon: FaTruck, roles: ['admin', 'driver'], subItems: [
         { title: 'Gérer les chauffeurs', path: '/chauffeurs/Gérer' },
-        { title: 'Fiche de route', path: '/chauffeurs/sub4' }
+        { title: 'Fiche de route', path: '/route' }
       ]
     },
     { title: 'Utilisateurs', icon: FaUsers, path: '/utilisateurs', roles: ['admin'] },

@@ -3,6 +3,8 @@ import ClientForm from '../clients/ClientForm';
 import { addClient } from "../../api/clientService";
 import { toast } from 'react-toastify';
 import { calculatePrice } from '../PriceCalculator/PriceCalculator';
+import { decreaseMarketTotals } from "../../api/marketService";
+import { decreasePlanTotals } from "../../api/plansService";
 import './style.css';
 
 const LivraisonForm = ({
@@ -118,6 +120,19 @@ const LivraisonForm = ({
         } else {
             handleAddLivraison(livraisonData);
         }
+
+        // Decrease totals for the selected market and plans
+        try {
+            const selectedPlan = plans.find(plan => plan.Date === newLivraison.Date);
+            if (selectedPlan) {
+                await decreasePlanTotals(selectedPlan._id, newLivraison.Periode);
+                await decreaseMarketTotals(newLivraison.market, newLivraison.Periode);
+            }
+        } catch (error) {
+            toast.error('Erreur lors de la mise à jour des totaux.');
+            return;
+        }
+
         // Don't close the form automatically
     };
 
