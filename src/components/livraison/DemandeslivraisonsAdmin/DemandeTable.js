@@ -3,7 +3,7 @@ import Table from '../../Table/Table';
 import { FaCheck } from 'react-icons/fa';
 import { FaRegTrashCan } from 'react-icons/fa6';
 
-const DemandeTable = ({ demandes, handleDelete, handleAddDriver }) => {
+const DemandeTable = ({ demandes, handleDelete, handleAcceptOrder }) => {
     const headers = ["Référence", "Client", "Chauffeur", "Magasin", "Date de la Livraison", "Statut", "Action"];
     const role = localStorage.getItem('role');
 
@@ -45,7 +45,7 @@ const DemandeTable = ({ demandes, handleDelete, handleAddDriver }) => {
             data={filteredDemandes}
             renderRow={renderRow}
             handleDelete={handleDelete}
-            handleThirdAction={handleAddDriver}
+            handleThirdAction={handleAcceptOrder}
             role={role}
             ThirdIcon={FaCheck}
             DeleteIcon={FaRegTrashCan}

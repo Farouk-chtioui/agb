@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { deleteLivraison, modifyDriver, updateStatus, findByStatus } from '../../../api/livraisonService';
+import { deleteLivraison, updateStatus, findByStatus } from '../../../api/livraisonService';
 import DemandeTable from './DemandeTable';
 import Dashboard from '../../dashboard/Dashboard';
 import Search from '../../searchbar/Search';
 import Pagination from '../../Pagination/Pagination';
-import AddDriverForm from './addDriverForm';
 import io from 'socket.io-client';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,9 +17,6 @@ function Demandes() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [filteredDemandes, setFilteredDemandes] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedDemande, setSelectedDemande] = useState(null);
-    const [formData, setFormData] = useState({ driver: '' });
 
     const loadData = useCallback(async (page) => {
         try {
@@ -57,32 +53,19 @@ function Demandes() {
         }
     };
 
-    const handleModify = async () => {
-        try {
-            console.log('handleModify called');
-            await modifyDriver({ id: selectedDemande._id, driver: formData.driver });
-            await updateStatus(selectedDemande._id, 'À la livraison');
-            socket.emit('statusChange', { id: selectedDemande._id, status: 'À la livraison' });
-    
-            setIsModalOpen(false);
-            toast.success('Driver assigned successfully!', { toastId: 'modify1' });
-        } catch (error) {
-            console.error('Error updating livraison:', error);
-            toast.error('Error assigning driver.');
+    const handleAcceptOrder = async (demande) => {
+        const confirmed = window.confirm("Voulez-vous accepter cette commande ?");
+        if (confirmed) {
+            try {
+                await updateStatus(demande._id, 'À la livraison');
+                socket.emit('statusChange', { id: demande._id, status: 'À la livraison' });
+                toast.success('Commande acceptée avec succès!', { toastId: 'accept1' });
+                loadData(currentPage);
+            } catch (error) {
+                console.error('Error updating livraison:', error);
+                toast.error('Erreur lors de l\'acceptation de la commande.');
+            }
         }
-    };
-    
-
-    const handleAddDriver = (demande) => {
-        setSelectedDemande(demande);
-        setIsModalOpen(true);
-    };
-
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
     };
 
     const handleSearch = useCallback((searchTerm) => {
@@ -119,21 +102,13 @@ function Demandes() {
                     <DemandeTable
                         demandes={currentData}
                         handleDelete={handleDelete}
-                        handleAddDriver={handleAddDriver}
+                        handleAcceptOrder={handleAcceptOrder}
                     />
                     <Pagination
                         currentPage={currentPage}
                         setCurrentPage={handlePaginationChange}
                         totalPages={totalPages}
                     />
-                    {isModalOpen && (
-                        <AddDriverForm
-                            livraisonId={selectedDemande ? selectedDemande._id : ''}
-                            handleChange={handleChange}
-                            handleSubmit={handleModify}
-                            setShowForm={setIsModalOpen}
-                        />
-                    )}
                 </div>
             </div>
         </div>

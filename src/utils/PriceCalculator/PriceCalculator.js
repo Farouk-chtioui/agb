@@ -1,5 +1,3 @@
-// PriceCalculator.js
-
 export const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Radius of the Earth in km
     const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -32,7 +30,7 @@ export const calculatePrice = async (market, client, products) => {
 
         let priceAdjustment = 0;
         if (distance > 300) {
-            priceAdjustment = (distance - 300) * 2; // 2 euros per km over 300 km
+            priceAdjustment = (distance - 300) * 2;
         }
 
         let productTotalPrice = 0;
