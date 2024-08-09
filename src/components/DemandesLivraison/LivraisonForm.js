@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import io from 'socket.io-client';
 import { fetchMarketById } from '../../api/marketService';
 import { fetchClientById } from '../../api/clientService';
-import { calculatePrice } from '../PriceCalculator/PriceCalculator'; // Import the price calculation utility function
+import { calculatePrice } from '../../utils/PriceCalculator/PriceCalculator';
 
 const socket = io('http://localhost:3001');
 
@@ -24,8 +24,8 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         Periode: ''
     });
 
-    const [marketAddress, setMarketAddress] = useState('');
-    const [clientAddress, setClientAddress] = useState('');
+    const [market, setMarket] = useState({});
+    const [client, setClient] = useState({});
 
     useEffect(() => {
         const role = localStorage.getItem('role');
@@ -35,7 +35,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
                 ...prev,
                 market: userId
             }));
-            fetchMarketById(userId).then(market => setMarketAddress(market.address));
+            fetchMarketById(userId).then(marketData => setMarket(marketData));
         }
     }, []);
 
@@ -43,7 +43,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
         if (newLivraison.client) {
             const selectedClient = clients.find(client => client._id === newLivraison.client);
             if (selectedClient) {
-                setClientAddress(selectedClient.address1);
+                setClient(selectedClient);
             }
         }
     }, [newLivraison.client, clients]);
@@ -80,39 +80,51 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
             products: [...prev.products, { productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]
         }));
     };
-
     const handleCalculatePrice = async () => {
         try {
-            const finalPrice = await calculatePrice(marketAddress, clientAddress, newLivraison.products.map(product => {
+            const finalPrice = await calculatePrice(market, client, newLivraison.products.map(product => {
                 const selectedProduct = products.find(p => p._id === product.productId);
                 return {
                     ...product,
                     price: selectedProduct ? selectedProduct.price : 0
                 };
             }));
-            setNewLivraison((prev) => ({
-                ...prev,
-                price: finalPrice
-            }));
+            return finalPrice;
         } catch (error) {
             toast.error(error.message);
+            return null;
         }
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
         if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date || !newLivraison.Periode) {
             toast.error('Veuillez remplir tous les champs obligatoires.');
             return;
         }
-
-        await handleCalculatePrice();
-
-        // Ensure the price calculation is complete before submitting
+    
+        const finalPrice = await handleCalculatePrice();
+    
+        if (finalPrice === null) {
+            toast.error('Erreur lors du calcul du prix.');
+            return;
+        }
+    
+        setNewLivraison((prev) => ({
+            ...prev,
+            price: finalPrice
+        }));
+    
         setTimeout(async () => {
-            await handleLivraisonSubmit(newLivraison);
-        }, 1000); // Adjust the timeout duration if necessary
+            await handleLivraisonSubmit({
+                ...newLivraison,
+                price: finalPrice
+            });
+        }, 1000);
     };
+    
 
     const scrollToSection = (sectionId) => {
         const section = document.getElementById(sectionId);

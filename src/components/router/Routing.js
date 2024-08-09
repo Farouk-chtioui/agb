@@ -18,6 +18,7 @@ import store from '../../redux/store';
 import DemandesLivraison from '../DemandesLivraison/DemandesLivraison';
 import Demandes from '../livraison/DemandeslivraisonsAdmin/Demande';
 import AdminDashboard from '../dashboard/AdminDashboard';
+import FicheDeRoute from '../FicheDeRoute/FicheDeRoute';
 
 function Routing() {
   return (
@@ -38,6 +39,7 @@ function Routing() {
         <Route path="/invoice/:NumeroCommande" element={<InvoicePDF />} />
         <Route path="/commands/propositions" element={<DemandesLivraison />} />
         <Route path="/plans" element={<Plans />} />
+        <Route path="/route" element={<ProtectedRoute element={<FicheDeRoute />} requiredRoles={['admin']} />} />
       </Routes>
     </Provider>
   );

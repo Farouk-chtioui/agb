@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ClientForm from '../clients/ClientForm';
 import { addClient } from "../../api/clientService";
 import { toast } from 'react-toastify';
-import { calculatePrice } from '../PriceCalculator/PriceCalculator';
+import { calculateDistance } from '../../utils/PriceCalculator/PriceCalculator';
 import { decreaseMarketTotals } from "../../api/marketService";
 import { decreasePlanTotals } from "../../api/plansService";
 import './style.css';
@@ -97,18 +97,38 @@ const LivraisonForm = ({
 
         // Calculate the price before submitting
         try {
-            const marketAddress = markets.find(market => market._id === newLivraison.market).address;
-            const clientAddress = clients.find(client => client._id === newLivraison.client).address1;
+            const market = markets.find(market => market._id === newLivraison.market);
+            const client = clients.find(client => client._id === newLivraison.client);
 
-            const finalPrice = await calculatePrice(marketAddress, clientAddress, productList.map(product => {
+            if (!market || !client) {
+                throw new Error('Invalid market or client selected');
+            }
+
+            const distance = calculateDistance(
+                parseFloat(market.latitude),
+                parseFloat(market.longitude),
+                parseFloat(client.latitude),
+                parseFloat(client.longitude)
+            );
+
+            let priceAdjustment = 0;
+            if (distance > 300) {
+                priceAdjustment = (distance - 300) * 2; // 2 euros per km over 300 km
+            }
+
+            let productTotalPrice = 0;
+            productList.forEach(product => {
                 const selectedProduct = products.find(p => p._id === product.productId);
-                return {
-                    ...product,
-                    price: selectedProduct ? selectedProduct.price : 0
-                };
-            }));
-            newLivraison.price = finalPrice;
-            setCalculatedPrice(finalPrice); // Set the calculated price to state for display
+                if (selectedProduct && selectedProduct.price) {
+                    productTotalPrice += selectedProduct.price * product.quantity;
+                }
+            });
+
+            const deliveryFee = priceAdjustment;
+            const finalPrice = productTotalPrice + deliveryFee;
+
+            newLivraison.price = finalPrice.toFixed(2);
+            setCalculatedPrice(finalPrice.toFixed(2)); // Set the calculated price to state for display
         } catch (error) {
             toast.error('Error calculating price: ' + error.message);
             return;
@@ -395,7 +415,7 @@ const LivraisonForm = ({
                                         <option value="">Select a market</option>
                                         {markets.map(market => (
                                             <option key={market._id} value={market._id}>
-                                                {market.first_name}
+                                                {market.first_name} {market.last_name}
                                             </option>
                                         ))}
                                     </select>

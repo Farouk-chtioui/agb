@@ -2,7 +2,13 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const getToken = () => localStorage.getItem('token');
+const getToken = () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('No token found, please log in');
+  }
+  return token;
+};
 
 export const fetchMagasins = async (page) => {
   const token = getToken();
@@ -11,7 +17,7 @@ export const fetchMagasins = async (page) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data; // Ensure this returns an object with { markets, total, totalPages }
+  return response.data;
 };
 
 export const addMagasin = async (magasin) => {
@@ -35,20 +41,20 @@ export const deleteMagasin = async (id) => {
 
 export const modifyMagasin = async (id, updatedMarket) => {
   try {
-      const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
-      const response = await axios.patch(
-          `${API_URL}/market/${id}`,
-          updatedMarket,
-          {
-              headers: {
-                  Authorization: `Bearer ${token}`
-              }
-          }
-      );
-      return response.data;
+    const token = getToken();
+    const response = await axios.patch(
+      `${API_URL}/market/${id}`,
+      updatedMarket,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
   } catch (error) {
-      console.error('Error modifying market:', error);
-      throw error;
+    console.error('Error modifying market:', error);
+    throw error;
   }
 };
 
@@ -61,15 +67,26 @@ export const searchMagasins = async (searchTerm) => {
   });
   return response.data;
 };
+
 export const decreaseMarketTotals = async (id, period) => {
   try {
-      const response = await axios.patch(`${API_URL}/market/${id}/decrease/${period}`);
-      return response.data;
+    const token = getToken();
+    const response = await axios.patch(
+      `${API_URL}/market/${id}/decrease/${period}`,
+      null, // Pass null or an empty object since we're not sending a body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
   } catch (error) {
-      console.error('Error decreasing market totals:', error);
-      throw error;
+    console.error('Error decreasing market totals:', error);
+    throw error;
   }
 };
+
 export const fetchMarketById = async (id) => {
   const token = getToken();
   const response = await axios.get(`${API_URL}/market/${id}`, {
@@ -78,4 +95,4 @@ export const fetchMarketById = async (id) => {
     },
   });
   return response.data;
-}
+};

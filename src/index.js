@@ -3,22 +3,23 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter as Router } from 'react-router-dom'; 
+import { BrowserRouter as Router } from 'react-router-dom';
+import loadGoogleMapsScript from './utils/loadGoogleMaps/loadGoogleMaps'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-root.render(
+const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+
+loadGoogleMapsScript(apiKey).then(() => {
+  root.render(
     <Router>
-    <App />
+      <App />
     </Router>
-);
-document.addEventListener('DOMContentLoaded', function() {
-    var script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-  });
+  );
+}).catch((error) => {
+  console.error('Failed to load Google Maps script:', error);
+});
+
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

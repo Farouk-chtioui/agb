@@ -195,7 +195,7 @@ function Livraison() {
             }));
         }
     }, []);
-
+    
     const handleSearch = async (searchTerm) => {
         if (searchTerm === '') {
             setFilteredLivraisons(livraisons);
@@ -241,7 +241,7 @@ function Livraison() {
         setIsEditMode(false);
         setCurrentLivraison(null);
     };
-
+ 
     return (
         <div className="flex h-screen">
             <Dashboard title="Livraison" />
@@ -265,8 +265,8 @@ function Livraison() {
                     />
                     <Pagination
                         currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}  // Ensure this prop is passed correctly
                         totalPages={totalPages}
-                        onPageChange={(page) => setCurrentPage(page)}
                     />
                     {showForm && (
                         <LivraisonForm
