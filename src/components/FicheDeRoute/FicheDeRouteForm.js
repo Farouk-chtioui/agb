@@ -146,16 +146,18 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
           </div>
         </form>
         <div className="mt-6 mb-6 text-lg">
-          <div className="flex items-center mb-2 text-blue-600">
-            <FaMapMarkerAlt className="mr-2 text-xl" />
-            <span className="font-semibold">Market: </span> {selectedLivraison ? selectedLivraison.market.first_name : ''}
-          </div>
-          <div className="flex items-center mb-2 text-blue-600">
-            <MdDirections className="mr-2 text-xl" />
-            <span className="font-semibold">Client: </span> {selectedLivraison ? selectedLivraison.client.first_name : ''}
-          </div>
-          <div className="flex items-center text-blue-600">
-            <span className="font-semibold">Price: </span> {selectedLivraison ? `${selectedLivraison.price} €` : 'Not available'}
+          <div className="p-4 border rounded-lg shadow-sm">
+            <div className="flex items-center mb-2 text-blue-600">
+              <FaMapMarkerAlt className="mr-2 text-xl" />
+              <span className="font-semibold">Market: </span> {selectedLivraison ? selectedLivraison.market.first_name : ''}
+            </div>
+            <div className="flex items-center mb-2 text-blue-600">
+              <MdDirections className="mr-2 text-xl" />
+              <span className="font-semibold">Client: </span> {selectedLivraison ? selectedLivraison.client.first_name : ''}
+            </div>
+            <div className="flex items-center text-blue-600">
+              <span className="font-semibold">Price: </span> {selectedLivraison ? `${selectedLivraison.price} €` : 'Not available'}
+            </div>
           </div>
         </div>
         <div
