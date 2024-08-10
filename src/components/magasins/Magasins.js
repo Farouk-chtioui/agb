@@ -48,10 +48,11 @@ const Magasins = () => {
 
   const handleModify = (magasin) => {
     setCurrentMagasin(magasin);
-    setNewMagasin(magasin);
+    setNewMagasin({ ...magasin });
     setIsEditMode(true);
     setShowForm(true);
-  };
+};
+
 
   const handleEditMagasin = (e) => {
     e.preventDefault();

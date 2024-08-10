@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addMagasin, modifyMagasin } from '../../redux/reducers/magasinReducer';
 import Form from '../Form/Form';
@@ -14,7 +14,20 @@ const MagasinForm = ({
   isEditMode,
 }) => {
   const dispatch = useDispatch();
-  const [addressData, setAddressData] = useState({ address: newMagasin.address || '', codePostal: '' });
+  const [addressData, setAddressData] = useState({
+    address: newMagasin.address || '',
+    codePostal: newMagasin.codePostal || ''
+  });
+
+  useEffect(() => {
+    // Initialize addressData with the current values when editing
+    if (isEditMode && newMagasin.address && newMagasin.codePostal) {
+      setAddressData({
+        address: newMagasin.address,
+        codePostal: newMagasin.codePostal
+      });
+    }
+  }, [isEditMode, newMagasin]);
 
   const fields = [
     { name: 'first_name', label: 'Nom', type: 'text', placeholder: 'Nom', colSpan: 1 },
@@ -47,17 +60,14 @@ const MagasinForm = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!addressData.codePostal) {
-      toast.error('Please provide an address with a postal code.');
-      return;
-    }
     const magasinData = {
       ...newMagasin,
       address: addressData.address,
       codePostal: addressData.codePostal
     };
+
     if (isEditMode) {
-      await dispatch(modifyMagasin(magasinData));
+      await dispatch(modifyMagasin({ id: newMagasin._id, data: magasinData }));
       toast.success('Magasin modifié avec succès!');
     } else {
       const resultAction = await dispatch(addMagasin(magasinData));

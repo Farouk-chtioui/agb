@@ -29,8 +29,8 @@ export const calculatePrice = async (market, client, products) => {
         );
 
         let priceAdjustment = 0;
-        if (distance > 300) {
-            priceAdjustment = (distance - 300) * 2;
+        if (distance > 30) {
+            priceAdjustment = (distance - 30) * 2;
         }
 
         let productTotalPrice = 0;

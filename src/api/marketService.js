@@ -41,22 +41,23 @@ export const deleteMagasin = async (id) => {
 
 export const modifyMagasin = async (id, updatedMarket) => {
   try {
-    const token = getToken();
-    const response = await axios.patch(
-      `${API_URL}/market/${id}`,
-      updatedMarket,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
+      const token = getToken();
+      console.log('Using token:', token);
+      console.log('Modifying market with ID:', id); // Debugging the ID
+
+      const response = await axios.patch(`${API_URL}/market/${id}`, updatedMarket, {
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      });
+      return response.data;
   } catch (error) {
-    console.error('Error modifying market:', error);
-    throw error;
+      console.error('Error modifying market:', error.response?.data || error.message);
+      throw error;
   }
 };
+
+
 
 export const searchMagasins = async (searchTerm) => {
   const token = getToken();
