@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { MdDirections } from 'react-icons/md';
-import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css'; 
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -14,30 +15,21 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
     if (mapContainerRef.current && selectedLivraison) {
       const marketCoords = [
         parseFloat(selectedLivraison.market.longitude),
-        parseFloat(selectedLivraison.market.latitude),
+        parseFloat(selectedLivraison.market.latitude)
       ];
       const clientCoords = [
         parseFloat(selectedLivraison.client.longitude),
-        parseFloat(selectedLivraison.client.latitude),
+        parseFloat(selectedLivraison.client.latitude)
       ];
 
-      // Validate coordinates
-      if (
-        isNaN(marketCoords[0]) ||
-        isNaN(marketCoords[1]) ||
-        isNaN(clientCoords[0]) ||
-        isNaN(clientCoords[1])
-      ) {
-        console.error('Invalid coordinates:', {
-          marketCoords,
-          clientCoords,
-        });
+
+      if (isNaN(marketCoords[0]) || isNaN(marketCoords[1]) || isNaN(clientCoords[0]) || isNaN(clientCoords[1])) {
+        console.error('Invalid coordinates:', { marketCoords, clientCoords });
         return;
       }
 
-      // Initialize the map or update it if it already exists
       if (mapRef.current) {
-        mapRef.current.remove(); // Remove the existing map instance
+        mapRef.current.remove();
       }
 
       mapRef.current = new mapboxgl.Map({
@@ -47,17 +39,27 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
         zoom: 10,
       });
 
-      // Fetch and display the route
-      const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${marketCoords.join(
-        ','
-      )};${clientCoords.join(',')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+      const coordinates = `${marketCoords.join(',')};${clientCoords.join(',')}`;
+      const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
       fetch(directionsUrl)
-        .then((response) => response.json())
-        .then((data) => {
+        .then(response => response.json())
+        .then(data => {
           if (data.routes && data.routes[0]) {
             const route = data.routes[0].geometry.coordinates;
+            const marketPopup = new mapboxgl.Popup({ offset: 25 }).setText('Market');
+            new mapboxgl.Marker({ color: 'green' })
+              .setLngLat(route[0])
+              .setPopup(marketPopup) 
+              .addTo(mapRef.current);
 
+            const clientPopup = new mapboxgl.Popup({ offset: 25 }).setText('Client');
+            new mapboxgl.Marker({ color: 'red' })
+              .setLngLat(route[route.length - 1])
+              .setPopup(clientPopup) 
+              .addTo(mapRef.current);
+
+            // Add the route to the map
             mapRef.current.addSource('route', {
               type: 'geojson',
               data: {
@@ -78,23 +80,22 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
                 'line-cap': 'round',
               },
               paint: {
-                'line-color': '#007bff', // Blue color for the route line
+                'line-color': '#007bff',
                 'line-width': 5,
               },
             });
 
-            // Adjust the map to fit both popups and the route
+            // Fit the map to the route
             const bounds = new mapboxgl.LngLatBounds();
-            bounds.extend(marketCoords);
-            bounds.extend(clientCoords);
+            route.forEach(coord => bounds.extend(coord));
             mapRef.current.fitBounds(bounds, {
               padding: 50,
             });
           } else {
-            throw new Error('No routes found');
+            console.error('No routes found');
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.error('Error fetching directions:', error);
         });
     }
