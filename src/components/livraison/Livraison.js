@@ -132,6 +132,7 @@ function Livraison() {
             resetForm();
             toast.success('Livraison ajoutée avec succès!');
 
+            // Decrease totals for the selected market and plans
             const selectedPlan = plans.find(plan => plan.Date === livraisonData.Date);
             if (selectedPlan) {
                 await decreasePlanTotals(selectedPlan._id, livraisonData.Periode);
@@ -242,9 +243,9 @@ function Livraison() {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row">
+        <div className="flex">
             <Dashboard />
-            <div className="flex-1 container mx-auto p-4 lg:p-9 relative mt-20">
+            <div className="flex-1 container mx-auto p-9 relative mt-20">
                 <ToastContainer />
                 <Search setData={handleSearch} title={"Toutes les livraisons"} />
                 <button
