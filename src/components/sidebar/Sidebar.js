@@ -3,19 +3,14 @@ import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import logo from '../../images/logo1.png';
 
-const Sidebar = ({ items, openIndexes, toggleDropdown }) => {
-
-  const handleClick = (item, index) => {
-    if (item.onClick) {
-      item.onClick();
-    } else {
-      toggleDropdown(index);
-    }
-  };
-
+const Sidebar = ({ items, openIndexes, toggleDropdown, isOpen, onMouseEnter, onMouseLeave }) => {
   return (
-    <div className="w-64 h-screen bg-gray-100 p-4 shadow-lg flex flex-col">
-      <div className="flex items-center justify-center mb-6">
+    <div 
+      className={`flex flex-col bg-gray-100 p-4 shadow-lg transition-all duration-300 ${isOpen ? 'w-64' : 'w-16'} h-screen fixed sm:relative z-10`}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <div className={`flex items-center justify-center mb-6 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
         <img src={logo} alt="Logo" className="h-20 w-30" />
       </div>
       <nav className="flex-1 overflow-y-auto">
@@ -25,13 +20,13 @@ const Sidebar = ({ items, openIndexes, toggleDropdown }) => {
               {item.path ? (
                 <Link to={item.path} className="block">
                   <div
-                    className="flex items-center justify-between cursor-pointer p-2 rounded hover:bg-blue-200 transition-colors duration-200"
+                    className={`flex items-center justify-between cursor-pointer p-2 rounded ${!isOpen && 'justify-center'}`}
                   >
-                    <div className="flex items-center w-full">
+                    <div className="flex items-center">
                       {item.icon && <item.icon className="mr-3 h-5 w-5 text-blue-500" />}
-                      <span className="text-gray-700 hover:text-blue-500">{item.title}</span>
+                      {isOpen && <span className="text-gray-700">{item.title}</span>}
                     </div>
-                    {item.subItems && (
+                    {item.subItems && isOpen && (
                       <div className="ml-3">
                         {openIndexes[index] ? (
                           <FaChevronDown className="h-4 w-4 text-gray-500" />
@@ -44,37 +39,34 @@ const Sidebar = ({ items, openIndexes, toggleDropdown }) => {
                 </Link>
               ) : (
                 <div
-                  className="flex items-center justify-between cursor-pointer p-2 rounded hover:bg-blue-200 transition-colors duration-200"
-                  onClick={() => handleClick(item, index)}
+                  className={`flex items-center justify-between cursor-pointer p-2 rounded ${!isOpen && 'justify-center'}`}
+                  onClick={() => toggleDropdown(index)}
                 >
-                  <div className="flex items-center w-full">
+                  <div className="flex items-center">
                     {item.icon && <item.icon className="mr-3 h-5 w-5 text-blue-500" />}
-                    <span className="text-gray-700 hover:text-blue-500">{item.title}</span>
+                    {isOpen && <span className="text-gray-700">{item.title}</span>}
                   </div>
-                  {item.subItems && (
+                  {item.subItems && isOpen && (
                     <div className="ml-3">
                       {openIndexes[index] ? (
                         <FaChevronDown className="h-4 w-4 text-gray-500" />
                       ) : (
-                        <FaChevronRight className="h-4 w-4 text-gray-500" />
+                          <FaChevronRight className="h-4 w-4 text-gray-500" />
                       )}
                     </div>
                   )}
                 </div>
               )}
-              {item.subItems && openIndexes[index] && (
-                <ul className={`ml-6 mt-2 transition-all duration-300 ${openIndexes[index] ? 'block' : 'hidden'}`}>
+              {item.subItems && openIndexes[index] && isOpen && (
+                <ul className="ml-6 mt-2">
                   {item.subItems.map((subItem, subIndex) => (
-                    <li key={subIndex} className="mb-2 flex justify-between items-center">
-                      <Link to={subItem.path} className="flex items-center p-2 rounded hover:bg-blue-200 transition-colors duration-200 w-full">
-                        {subItem.icon && <subItem.icon className="mr-3 h-4 w-4 text-blue-400" />}
-                        <span className="text-gray-500 hover:text-blue-500">{subItem.title}</span>
+                    <li key={subIndex} className="mb-2">
+                      <Link to={subItem.path} className="block">
+                        <div className="flex items-center p-2 rounded">
+                          {subItem.icon && <subItem.icon className="mr-3 h-4 w-4 text-blue-400" />}
+                          <span className="text-gray-500">{subItem.title}</span>
+                        </div>
                       </Link>
-                      {subItem.counter !== undefined && (
-                        <span className="bg-red-500 text-white rounded-full px-2 py-1 text-xs">
-                          {subItem.counter}
-                        </span>
-                      )}
                     </li>
                   ))}
                 </ul>

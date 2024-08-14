@@ -132,7 +132,6 @@ function Livraison() {
             resetForm();
             toast.success('Livraison ajoutée avec succès!');
 
-            // Decrease totals for the selected market and plans
             const selectedPlan = plans.find(plan => plan.Date === livraisonData.Date);
             if (selectedPlan) {
                 await decreasePlanTotals(selectedPlan._id, livraisonData.Periode);
@@ -241,52 +240,53 @@ function Livraison() {
         setIsEditMode(false);
         setCurrentLivraison(null);
     };
- 
+
     return (
-        <div className="flex h-screen">
-            <Dashboard title="Livraison" />
-            <div className="flex-1 flex flex-col h-screen overflow-y-auto">
-                <div className="container mx-auto px-4 py-8">
-                    <div className="flex justify-between mb-4">
-                        <h2 className="text-2xl font-semibold text-gray-700">Livraisons</h2>
-                        <button
-                            onClick={() => setShowForm(true)}
-                            className="bg-blue-500 text-white px-4 py-2 rounded shadow"
-                        >
-                            Ajouter une livraison
-                        </button>
-                    </div>
-                    <Search onSearch={handleSearch} />
-                    <ToastContainer />
-                    <LivraisonTable
-                        livraisons={isSearchActive ? filteredLivraisons : livraisons}
-                        handleModify={handleModify}
-                        handleDelete={handleDelete}
+        <div className="flex flex-col lg:flex-row">
+            <Dashboard />
+            <div className="flex-1 container mx-auto p-4 lg:p-9 relative mt-20">
+                <ToastContainer />
+                <Search setData={handleSearch} title={"Toutes les livraisons"} />
+                <button
+                    className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
+                    onClick={() => {
+                        setShowForm(true);
+                        setIsEditMode(false);
+                        resetForm();
+                    }}
+                >
+                    Ajouter une livraison
+                </button>
+                {showForm && (
+                    <LivraisonForm
+                        newLivraison={newLivraison}
+                        setNewLivraison={setNewLivraison}
+                        handleChange={handleChange}
+                        handleAddLivraison={handleAddLivraison}
+                        handleEditLivraison={handleEditLivraison}
+                        setShowForm={setShowForm}
+                        isEditMode={isEditMode}
+                        clients={clients}
+                        markets={markets}
+                        products={products}
+                        drivers={drivers}
+                        secteurs={secteurs}
+                        currentLivraison={currentLivraison}
+                        plans={plans}
                     />
+                )}
+                <LivraisonTable
+                    livraisons={isSearchActive ? filteredLivraisons : livraisons}
+                    handleModify={handleModify}
+                    handleDelete={handleDelete}
+                />
+                {!isSearchActive && (
                     <Pagination
                         currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}  // Ensure this prop is passed correctly
+                        setCurrentPage={setCurrentPage}
                         totalPages={totalPages}
                     />
-                    {showForm && (
-                        <LivraisonForm
-                            newLivraison={newLivraison}
-                            setNewLivraison={setNewLivraison}
-                            handleChange={handleChange}
-                            handleAddLivraison={handleAddLivraison}
-                            handleEditLivraison={handleEditLivraison}
-                            setShowForm={setShowForm}
-                            isEditMode={isEditMode}
-                            clients={clients}
-                            markets={markets}
-                            products={products}
-                            drivers={drivers}
-                            secteurs={secteurs}
-                            currentLivraison={currentLivraison}
-                            plans={plans}
-                        />
-                    )}
-                </div>
+                )}
             </div>
         </div>
     );

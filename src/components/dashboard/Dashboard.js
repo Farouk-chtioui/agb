@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../sidebar/Sidebar';
-import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import Header from '../Header/Header';
+import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { pendingCount } from '../../api/livraisonService';
 import io from 'socket.io-client';
@@ -15,6 +16,14 @@ function Dashboard({ title }) {
     const savedOpenIndexes = localStorage.getItem('openIndexes');
     return savedOpenIndexes ? JSON.parse(savedOpenIndexes) : {};
   });
+
+  // Retrieve sidebar state from localStorage
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    const savedSidebarState = localStorage.getItem('sidebarOpen');
+    return savedSidebarState === 'true';
+  });
+
+  const [isHovering, setIsHovering] = useState(false);
 
   const fetchPendingDeliveries = async () => {
     try {
@@ -102,9 +111,33 @@ function Dashboard({ title }) {
 
   const filteredItems = sidebarItems.filter(item => item.roles.includes(role));
 
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
+
+  const toggleSidebar = () => {
+    const newState = !sidebarOpen;
+    setSidebarOpen(newState);
+    localStorage.setItem('sidebarOpen', newState);
+  };
+
   return (
-    <div className="flex h-screen">
-      <Sidebar items={filteredItems} openIndexes={openIndexes} toggleDropdown={toggleDropdown} />
+    <div>
+      <Sidebar 
+        items={filteredItems} 
+        openIndexes={openIndexes} 
+        toggleDropdown={toggleDropdown} 
+        isOpen={sidebarOpen || isHovering}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      />
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen || isHovering ? 'ml-64' : 'ml-16'} sm:ml-0`}>
+        <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen || isHovering} />
+      </div>
     </div>
   );
 }
