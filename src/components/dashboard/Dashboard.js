@@ -16,8 +16,6 @@ function Dashboard({ title }) {
     const savedOpenIndexes = localStorage.getItem('openIndexes');
     return savedOpenIndexes ? JSON.parse(savedOpenIndexes) : {};
   });
-
-  // Retrieve sidebar state from localStorage
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     const savedSidebarState = localStorage.getItem('sidebarOpen');
     return savedSidebarState === 'true';
@@ -58,10 +56,16 @@ function Dashboard({ title }) {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('openIndexes');
+    console.log('handleLogout function called');
     navigate('/');
+    console.log('Navigating to home page');
+    console.log('Logging out...');
+    localStorage.removeItem('token');
+    console.log('Token removed');
+    localStorage.removeItem('role');
+    console.log('Role removed');
+    localStorage.removeItem('openIndexes');
+    console.log('Open indexes removed');
   };
 
   const toggleDropdown = (index) => {
@@ -71,6 +75,7 @@ function Dashboard({ title }) {
       return newOpenIndexes;
     });
   };
+  
 
   const sidebarItems = [
     { title: 'Dashboard', icon: FaHome, path: `/${role}/dashboard`, roles: ['admin', 'market'] },

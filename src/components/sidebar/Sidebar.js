@@ -24,7 +24,16 @@ const Sidebar = ({ items, openIndexes, toggleDropdown, isOpen, onMouseEnter, onM
                   >
                     <div className="flex items-center">
                       {item.icon && <item.icon className="mr-3 h-5 w-5 text-blue-500" />}
-                      {isOpen && <span className="text-gray-700">{item.title}</span>}
+                      {isOpen && (
+                        <span className="text-gray-700 flex items-center">
+                          {item.title}
+                          {item.counter !== undefined && (
+                            <span className="ml-2 text-sm bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                              {item.counter}
+                            </span>
+                          )}
+                        </span>
+                      )}
                     </div>
                     {item.subItems && isOpen && (
                       <div className="ml-3">
@@ -44,7 +53,16 @@ const Sidebar = ({ items, openIndexes, toggleDropdown, isOpen, onMouseEnter, onM
                 >
                   <div className="flex items-center">
                     {item.icon && <item.icon className="mr-3 h-5 w-5 text-blue-500" />}
-                    {isOpen && <span className="text-gray-700">{item.title}</span>}
+                    {isOpen && (
+                      <span className="text-gray-700 flex items-center">
+                        {item.title}
+                        {item.counter !== undefined && (
+                          <span className="ml-2 text-sm bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                            {item.counter}
+                          </span>
+                        )}
+                      </span>
+                    )}
                   </div>
                   {item.subItems && isOpen && (
                     <div className="ml-3">
@@ -60,13 +78,18 @@ const Sidebar = ({ items, openIndexes, toggleDropdown, isOpen, onMouseEnter, onM
               {item.subItems && openIndexes[index] && isOpen && (
                 <ul className="ml-6 mt-2">
                   {item.subItems.map((subItem, subIndex) => (
-                    <li key={subIndex} className="mb-2">
+                    <li key={subIndex} className="mb-2 flex items-center justify-between">
                       <Link to={subItem.path} className="block">
                         <div className="flex items-center p-2 rounded">
                           {subItem.icon && <subItem.icon className="mr-3 h-4 w-4 text-blue-400" />}
                           <span className="text-gray-500">{subItem.title}</span>
                         </div>
                       </Link>
+                      {subItem.counter !== undefined && (
+                        <span className="text-xs bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                          {subItem.counter}
+                        </span>
+                      )}
                     </li>
                   ))}
                 </ul>

@@ -4,7 +4,6 @@ import { FaBars } from 'react-icons/fa';
 const Header = ({ toggleSidebar, sidebarOpen, profileImage }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const defaultProfileImage = 'path/to/default/profile/image.jpg'; // Replace with the path to your default image
-  const headerWidth = sidebarOpen ? 'calc(100% - 256px)' : 'calc(100% - 64px)';
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -12,8 +11,12 @@ const Header = ({ toggleSidebar, sidebarOpen, profileImage }) => {
 
   return (
     <div 
-      className="flex items-center justify-between p-4 bg-gray-100 fixed top-0 left-0 z-10 transition-all duration-300"
-      style={{ width: headerWidth, marginLeft: sidebarOpen ? '256px' : '64px', height: '60px' }}
+      className={`flex items-center justify-between p-4 bg-gray-100 fixed top-0 left-0 z-10 transition-all duration-300`}
+      style={{ 
+        marginLeft: sidebarOpen ? '256px' : '64px', 
+        width: sidebarOpen ? 'calc(100% - 256px)' : 'calc(100% - 64px)', 
+        height: '60px' 
+      }}
     >
       <div className="flex items-center space-x-4">
         <FaBars className="text-gray-500 cursor-pointer" onClick={toggleSidebar} />
