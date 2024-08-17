@@ -36,7 +36,7 @@ const Utilisateurs = () => {
     email: '',
     password: '',
     address: '',
-    codePostal: '',  // Ensure codePostal is initialized here
+    codePostal: '',
     numberMa: '',
     numberMi: ''
   });
@@ -81,30 +81,38 @@ const Utilisateurs = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?')) {
-      try {
-        switch (newUtilisateur.role) {
-          case 'Admin':
-            // Implement deleteAdmin if necessary
-            break;
-          case 'Driver':
-            await deleteDriver(id);
-            break;
-          case 'Market':
-            await deleteMagasin(id);
-            break;
-          default:
-            throw new Error('Invalid role');
-        }
-        fetchUtilisateursData();
-        toast.success('Utilisateur supprimé avec succès!');
-      } catch (error) {
-        console.error('Error deleting utilisateur', error);
-        toast.error('Erreur lors de la suppression de l\'utilisateur.');
-      }
+  const handleDelete = async (utilisateur) => {
+    if (!utilisateur || !utilisateur._id || !utilisateur.role) {
+        console.error("Utilisateur object is undefined or missing _id/role:", utilisateur);
+        toast.error('Erreur: utilisateur introuvable.');
+        return;
     }
-  };
+
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?')) {
+        try {
+            switch (utilisateur.role) {  // Use the role of the utilisateur being deleted
+                case 'Admin':
+                    // Implement deleteAdmin if necessary
+                    break;
+                case 'Driver':
+                    await deleteDriver(utilisateur._id);  // Pass the correct ID
+                    break;
+                case 'Market':
+                    await deleteMagasin(utilisateur._id);  // Pass the correct ID
+                    break;
+                default:
+                    throw new Error('Invalid role');
+            }
+            fetchUtilisateursData();
+            toast.success('Utilisateur supprimé avec succès!');
+        } catch (error) {
+            console.error('Error deleting utilisateur', error);
+            toast.error('Erreur lors de la suppression de l\'utilisateur.');
+        }
+    }
+};
+
+
 
   const handleModify = (utilisateur) => {
     setNewUtilisateur(utilisateur);
@@ -140,9 +148,10 @@ const Utilisateurs = () => {
     if (searchTerm) {
       setIsSearchActive(true);
       setFilteredUtilisateurs(utilisateurs.filter(u => 
-        u.first_name.includes(searchTerm) || 
-        u.last_name.includes(searchTerm) ||
-        u.email.includes(searchTerm)
+        (u.first_name || '').includes(searchTerm) || 
+        (u.last_name || '').includes(searchTerm) ||
+        (u.email || '').includes(searchTerm)||
+        (u.name || '').includes(searchTerm)
       ));
     } else {
       setIsSearchActive(false);
@@ -176,7 +185,7 @@ const Utilisateurs = () => {
                     email: newUtilisateur.email,
                     password: newUtilisateur.password,
                     address: newUtilisateur.address,
-                    codePostal: newUtilisateur.codePostal,  // Ensure codePostal is included
+                    codePostal: newUtilisateur.codePostal,
                     numberMa: newUtilisateur.numberMa,
                     numberMi: newUtilisateur.numberMi
                 });
@@ -200,7 +209,7 @@ const Utilisateurs = () => {
     const { name, value } = e.target;
     setNewUtilisateur(prevState => ({
       ...prevState,
-      [name]: value
+      [name]: value || ''  // Ensure value is always a string
     }));
   }, []);
 
@@ -222,7 +231,7 @@ const Utilisateurs = () => {
               email: '',
               password: '',
               address: '',
-              codePostal: '',  // Ensure this is reset when adding new Market
+              codePostal: '',
               numberMa: '',
               numberMi: ''
             });

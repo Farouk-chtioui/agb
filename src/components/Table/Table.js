@@ -15,7 +15,8 @@ const Table = ({
   DeleteIcon = FaRegTrashCan,
   ThirdIcon,
   showModify = true,
-  showDelete = true
+  showDelete = true,
+  showThirdAction = false,
 }) => {
   return (
     <div className="overflow-x-auto">
@@ -36,7 +37,7 @@ const Table = ({
               <td className="py-2 px-4 border-b border-gray-200">
                 {role === 'admin' && (
                   <>
-                    {ThirdIcon && handleThirdAction && (
+                    {showThirdAction && ThirdIcon && handleThirdAction && (
                       <button
                         className="text-blue-500 hover:text-green-700 transition mx-1"
                         onClick={() => handleThirdAction(item)}
@@ -55,7 +56,7 @@ const Table = ({
                     {showDelete && (
                       <button
                         className="text-blue-500 hover:text-red-700 transition mx-1"
-                        onClick={() => handleDelete(item._id)}
+                        onClick={() => handleDelete(item)}  // Pass the full item (utilisateur) to handleDelete
                       >
                         <DeleteIcon size={20} />
                       </button>
