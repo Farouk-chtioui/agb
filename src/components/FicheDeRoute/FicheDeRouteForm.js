@@ -22,7 +22,6 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
         parseFloat(selectedLivraison.client.latitude)
       ];
 
-
       if (isNaN(marketCoords[0]) || isNaN(marketCoords[1]) || isNaN(clientCoords[0]) || isNaN(clientCoords[1])) {
         console.error('Invalid coordinates:', { marketCoords, clientCoords });
         return;
@@ -59,7 +58,6 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
               .setPopup(clientPopup) 
               .addTo(mapRef.current);
 
-            // Add the route to the map
             mapRef.current.addSource('route', {
               type: 'geojson',
               data: {
@@ -85,7 +83,6 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
               },
             });
 
-            // Fit the map to the route
             const bounds = new mapboxgl.LngLatBounds();
             route.forEach(coord => bounds.extend(coord));
             mapRef.current.fitBounds(bounds, {

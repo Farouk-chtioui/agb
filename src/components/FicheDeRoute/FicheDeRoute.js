@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fetchLivraisons, modifyDriver } from '../../api/livraisonService';
 import { fetchDrivers } from '../../api/driverService';
-import Livraison1Form from './FicheDeRouteForm';
-import Livraison1Table from './FicheDeRouteTable';
+import FicheDeRouteForm from './FicheDeRouteForm';
+import FicheDeRouteTable from './FicheDeRouteTable';  // Correctly importing the table component
 import Dashboard from '../dashboard/Dashboard';
 import { ToastContainer, toast } from 'react-toastify';
 import Search from '../searchbar/Search';
@@ -88,14 +88,14 @@ const FicheDeRoute = () => {
         <ToastContainer />
         <Search setData={handleSearch} title={"Tous les livraisons"} />
         {showForm && selectedLivraison && (
-          <Livraison1Form
+          <FicheDeRouteForm
             selectedLivraison={selectedLivraison}
             drivers={drivers}
             handleDriverSubmit={handleDriverSubmit}
             setShowForm={setShowForm}
           />
         )}
-        <Livraison1Table
+        <FicheDeRouteTable
           livraisons={isSearchActive ? filteredLivraisons : livraisons}
           handleAssignDriver={handleAssignDriver}
         />

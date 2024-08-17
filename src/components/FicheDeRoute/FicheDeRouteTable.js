@@ -4,6 +4,7 @@ import { FaUserPlus } from 'react-icons/fa';
 
 const FicheDeRouteTable = ({ livraisons, handleAssignDriver }) => {
   const headers = ['Numero Commande', 'Référence', 'Client', 'Market', 'Driver', 'Action'];
+  const role = localStorage.getItem('role');
 
   const renderRow = (livraison) => (
     <>
@@ -14,6 +15,11 @@ const FicheDeRouteTable = ({ livraisons, handleAssignDriver }) => {
       <td className="py-2 px-4 border-b border-gray-200">
         {livraison.driver ? livraison.driver.first_name : 'No driver assigned'}
       </td>
+      <td className="py-2 px-4 border-b border-gray-200 text-center">
+        <button onClick={() => handleAssignDriver(livraison)}>
+          <FaUserPlus className="text-blue-500 hover:text-blue-700" />
+        </button>
+      </td>
     </>
   );
 
@@ -23,7 +29,7 @@ const FicheDeRouteTable = ({ livraisons, handleAssignDriver }) => {
       data={livraisons}
       renderRow={renderRow}
       handleThirdAction={handleAssignDriver}
-      role="admin"
+      role={role}
       ThirdIcon={FaUserPlus}
       showModify={false}
       showDelete={false}
