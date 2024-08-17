@@ -148,10 +148,12 @@ const Utilisateurs = () => {
     if (searchTerm) {
       setIsSearchActive(true);
       setFilteredUtilisateurs(utilisateurs.filter(u => 
-        (u.first_name || '').includes(searchTerm) || 
-        (u.last_name || '').includes(searchTerm) ||
-        (u.email || '').includes(searchTerm)||
-        (u.name || '').includes(searchTerm)
+        (u.first_name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+        (u.last_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (u.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (u.name || '').toLowerCase().includes(searchTerm.toLowerCase())||
+        (u.role || '').toLowerCase().includes(searchTerm.toLowerCase())
+        
       ));
     } else {
       setIsSearchActive(false);
