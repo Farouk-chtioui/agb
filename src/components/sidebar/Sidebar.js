@@ -3,7 +3,7 @@ import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import logo from '../../images/logo1.png';
 
-const Sidebar = ({ items, openIndexes, toggleDropdown, isOpen, onMouseEnter, onMouseLeave }) => {
+const Sidebar = React.memo(({ items, openIndexes, toggleDropdown, isOpen, onMouseEnter, onMouseLeave, onLogout }) => {
   return (
     <div 
       className={`flex flex-col bg-gray-100 p-4 shadow-lg transition-all duration-300 ${isOpen ? 'w-64' : 'w-16'} h-screen fixed sm:relative z-10`}
@@ -49,7 +49,7 @@ const Sidebar = ({ items, openIndexes, toggleDropdown, isOpen, onMouseEnter, onM
               ) : (
                 <div
                   className={`flex items-center justify-between cursor-pointer p-2 rounded ${!isOpen && 'justify-center'}`}
-                  onClick={() => toggleDropdown(index)}
+                  onClick={item.onClick ? item.onClick : () => toggleDropdown(index)}  // Update to use onClick if present
                 >
                   <div className="flex items-center">
                     {item.icon && <item.icon className="mr-3 h-5 w-5 text-blue-500" />}
@@ -69,7 +69,7 @@ const Sidebar = ({ items, openIndexes, toggleDropdown, isOpen, onMouseEnter, onM
                       {openIndexes[index] ? (
                         <FaChevronDown className="h-4 w-4 text-gray-500" />
                       ) : (
-                          <FaChevronRight className="h-4 w-4 text-gray-500" />
+                        <FaChevronRight className="h-4 w-4 text-gray-500" />
                       )}
                     </div>
                   )}
@@ -100,6 +100,6 @@ const Sidebar = ({ items, openIndexes, toggleDropdown, isOpen, onMouseEnter, onM
       </nav>
     </div>
   );
-};
+});
 
 export default Sidebar;

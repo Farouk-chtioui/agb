@@ -1,75 +1,49 @@
-import React from 'react';
-import Form from '../Form/Form';
-import 'react-toastify/dist/ReactToastify.css';
-import { toast } from 'react-toastify';
+import React, { useMemo } from 'react';
+import Table from '../Table/Table';
+import { FaRegEdit } from 'react-icons/fa';
+import { FaRegTrashCan } from 'react-icons/fa6';
 
-const UtilisateursForm = ({
-  newUtilisateur,
-  handleChange,
-  handleAddUtilisateur,
-  handleEditUtilisateur,
-  setShowForm,
-  isEditMode,
+const Utilisateurstable = React.memo(({
+  utilisateurs,
+  handleDelete,
+  handleModify,
 }) => {
-  const fields = [
-    { name: 'first_name', label: 'Nom', type: 'text', placeholder: 'Nom', colSpan: 1 },
-    { name: 'last_name', label: 'Prenom', type: 'text', placeholder: 'Prenom', colSpan: 1 },
-    { name: 'address', label: 'Adresse', type: 'text', placeholder: 'Adresse', colSpan: 2 },
-    { name: 'role', label: 'Rôle', type: 'select', options: ['Admin', 'Market', 'Driver'], colSpan: 1 },
-  ];
+  const headers = ['First Name', 'Last Name', 'Email', 'Role', 'Actions'];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isEditMode) {
-      handleEditUtilisateur(e);
-    } else {
-      handleAddUtilisateur(e);
-    }
+  // Normalize data only once and memoize it
+  const normalizedUtilisateurs = useMemo(() => {
+    return utilisateurs.map(utilisateur => ({
+      first_name: utilisateur.first_name || utilisateur.name || 'N/A',
+      last_name: utilisateur.last_name || 'N/A',
+      email: utilisateur.email || 'N/A',
+      role: utilisateur.role || 'N/A',
+    }));
+  }, [utilisateurs]);
+
+  const renderRow = (utilisateur) => {
+    return (
+      <>
+        <td className="py-2 px-4 border-b border-gray-200">{utilisateur.first_name}</td>
+        <td className="py-2 px-4 border-b border-gray-200">{utilisateur.last_name}</td>
+        <td className="py-2 px-4 border-b border-gray-200">{utilisateur.email}</td>
+        <td className="py-2 px-4 border-b border-gray-200">{utilisateur.role}</td>
+      </>
+    );
   };
 
   return (
-    <Form
-      formData={newUtilisateur}
-      handleChange={handleChange}
-      handleSubmit={handleSubmit}
-      setShowForm={setShowForm}
-      fields={fields}
-      title={isEditMode ? 'Modifier l\'Utilisateur' : 'Ajouter un Utilisateur'}
-      renderField={(field, index) => {
-        if (field.type === 'select') {
-          return (
-            <div className={`form-group col-span-${field.colSpan}`} key={index}>
-              <label htmlFor={field.name} className="block text-blue-700 mb-2">{field.label}</label>
-              <select
-                name={field.name}
-                value={newUtilisateur[field.name]}
-                onChange={handleChange}
-                className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-              >
-                <option value="">Sélectionner un rôle</option>
-                {field.options.map((option, idx) => (
-                  <option key={idx} value={option}>{option}</option>
-                ))}
-              </select>
-            </div>
-          );
-        }
-        return (
-          <div className={`form-group col-span-${field.colSpan}`} key={index}>
-            <label htmlFor={field.name} className="block text-blue-700 mb-2">{field.label}</label>
-            <input
-              type={field.type}
-              name={field.name}
-              value={newUtilisateur[field.name]}
-              onChange={handleChange}
-              placeholder={field.placeholder}
-              className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-            />
-          </div>
-        );
-      }}
+    <Table
+      headers={headers}
+      data={normalizedUtilisateurs}
+      renderRow={renderRow}
+      handleDelete={handleDelete}
+      handleModify={handleModify}
+      ModifyIcon={FaRegEdit}
+      DeleteIcon={FaRegTrashCan}
+      showModify={true}
+      showDelete={true}
     />
   );
-};
+});
 
-export default UtilisateursForm;
+export default Utilisateurstable;

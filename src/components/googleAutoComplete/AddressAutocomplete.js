@@ -24,7 +24,12 @@ const AddressAutocomplete = ({ value, onChange }) => {
 
           autoComplete.addListener('place_changed', () => {
             const place = autoComplete.getPlace();
-            console.log('Place:', place);
+            console.log('Place:', place); // Check if this logs correct place data
+
+            if (!place || !place.address_components) {
+              console.error('Place details not found');
+              return;
+            }
 
             const postalCodeComponent = place.address_components.find(component => 
               component.types.includes('postal_code')
@@ -35,15 +40,14 @@ const AddressAutocomplete = ({ value, onChange }) => {
               alert('Please select an address with a postal code.');
             }
 
+            const formattedAddress = place.formatted_address || '';
+
             onChange({
-              target: {
-                name: 'address',
-                value: place.formatted_address,
-              },
-              postalCode: postalCode,
+              address: formattedAddress,
+              codePostal: postalCode,
             });
 
-            setInputValue(place.formatted_address);
+            setInputValue(formattedAddress);
           });
 
           setLoaded(true);
@@ -58,22 +62,9 @@ const AddressAutocomplete = ({ value, onChange }) => {
     initializeAutocomplete();
   }, [onChange]);
 
-  const debouncedChangeHandler = useCallback(
-    debounce((e) => {
-      onChange({
-        target: {
-          name: 'address',
-          value: e.target.value,
-        },
-      });
-    }, 500),
-    [onChange]
-  );
-
   const handleInputChange = (e) => {
     const { value } = e.target;
     setInputValue(value);
-    debouncedChangeHandler(e);
   };
 
   return (

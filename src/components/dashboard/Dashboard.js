@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Sidebar from '../sidebar/Sidebar';
 import Header from '../Header/Header';
 import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaSignOutAlt } from 'react-icons/fa';
@@ -23,14 +23,14 @@ function Dashboard({ title }) {
 
   const [isHovering, setIsHovering] = useState(false);
 
-  const fetchPendingDeliveries = async () => {
+  const fetchPendingDeliveries = useCallback(async () => {
     try {
       const data = await pendingCount();
       setPendingDeliveriesCount(data.count);
     } catch (error) {
       console.error('Error fetching pending deliveries count', error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPendingDeliveries();
@@ -40,11 +40,11 @@ function Dashboard({ title }) {
       setPendingDeliveriesCount(data.count);
     });
 
-    socket.on('statusChange', (data) => {
+    socket.on('statusChange', () => {
       fetchPendingDeliveries(); 
     });
 
-    socket.on('addLivraison', (data) => {
+    socket.on('addLivraison', () => {
       fetchPendingDeliveries();
     });
 
@@ -53,29 +53,23 @@ function Dashboard({ title }) {
       socket.off('statusChange');
       socket.off('addLivraison');
     };
-  }, []);
+  }, [fetchPendingDeliveries]);
 
   const handleLogout = () => {
     console.log('handleLogout function called');
-    navigate('/');
-    console.log('Navigating to home page');
-    console.log('Logging out...');
     localStorage.removeItem('token');
-    console.log('Token removed');
     localStorage.removeItem('role');
-    console.log('Role removed');
     localStorage.removeItem('openIndexes');
-    console.log('Open indexes removed');
+    navigate('/');
   };
 
-  const toggleDropdown = (index) => {
+  const toggleDropdown = useCallback((index) => {
     setOpenIndexes((prevState) => {
       const newOpenIndexes = { ...prevState, [index]: !prevState[index] };
       localStorage.setItem('openIndexes', JSON.stringify(newOpenIndexes));
       return newOpenIndexes;
     });
-  };
-  
+  }, []);
 
   const sidebarItems = [
     { title: 'Dashboard', icon: FaHome, path: `/${role}/dashboard`, roles: ['admin', 'market'] },
@@ -139,6 +133,7 @@ function Dashboard({ title }) {
         isOpen={sidebarOpen || isHovering}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onLogout={handleLogout} 
       />
       <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen || isHovering ? 'ml-64' : 'ml-16'} sm:ml-0`}>
         <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen || isHovering} />
