@@ -12,6 +12,7 @@ const Produits = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1); // Track the total number of pages
   const [showForm, setShowForm] = useState(false);
   const [newProduct, setNewProduct] = useState({
     image: '',
@@ -24,15 +25,19 @@ const Produits = () => {
   const [currentProduct, setCurrentProduct] = useState(null);
   const [isSearchActive, setIsSearchActive] = useState(false);
 
+  // Get the role from localStorage
+  const role = localStorage.getItem('role');
+
   useEffect(() => {
     fetchProductsData();
   }, [currentPage]);
 
   const fetchProductsData = async () => {
     try {
-      const data = await fetchProducts(currentPage);
-      setProducts(data);
-      setFilteredProducts(data);
+      const { products, totalPages } = await fetchProducts(currentPage);
+      setProducts(products);
+      setFilteredProducts(products);
+      setTotalPages(totalPages); // Set the total number of pages
     } catch (error) {
       console.error('Error fetching products', error);
       toast.error('Erreur lors de la récupération des produits.');
@@ -120,21 +125,23 @@ const Produits = () => {
         <div className="container mx-auto p-9 relative mt-20">
           <ToastContainer />
           <Search setData={handleSearch} title={"Tout les Produits"} />
-          <button
-            className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
-            onClick={() => {
-              setShowForm(true);
-              setIsEditMode(false);
-              setNewProduct({
-                image: '',
-                name: '',
-                price: '',
-                description: ''
-              });
-            }}
-          >
-            Ajouter un Produit
-          </button>
+          {role !== 'market' && ( // Conditionally render the button
+            <button
+              className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
+              onClick={() => {
+                setShowForm(true);
+                setIsEditMode(false);
+                setNewProduct({
+                  image: '',
+                  name: '',
+                  price: '',
+                  description: ''
+                });
+              }}
+            >
+              Ajouter un Produit
+            </button>
+          )}
           {showForm && (
             <ProductForm
               newProduit={newProduct}
@@ -146,7 +153,11 @@ const Produits = () => {
             />
           )}
           <ProductTable produits={filteredProducts} handleDelete={handleDelete} handleModify={handleModify} />
-          <Pagination currentPage={currentPage} setCurrentPage={handlePageChange} />
+          <Pagination 
+            currentPage={currentPage} 
+            setCurrentPage={handlePageChange} 
+            totalPages={totalPages} 
+          />
         </div>
       </div>
     </div>

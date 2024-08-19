@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LivraisonForm from './LivraisonForm';
 import ClientForm from '../clients/ClientForm';
 import { fetchAllClients, addClient } from '../../api/clientService';
-import { fetchProducts } from '../../api/productService';
+import { fetchProductsNoPage } from '../../api/productService';
 import { fetchDrivers } from '../../api/driverService';
 import { fetchSectures } from '../../api/sectureService';
 import { fetchPlans, decreasePlanTotals } from '../../api/plansService';
@@ -39,27 +39,21 @@ const DemandesLivraison = () => {
             try {
                 const [clientsData, productsData, driversData, secteursData, plansData] = await Promise.all([
                     fetchAllClients(),
-                    fetchProducts(),
+                    fetchProductsNoPage(),
                     fetchDrivers(),
                     fetchSectures(),
                     fetchPlans()
                 ]);
 
-                // Debugging: Log the fetched data
-                console.log('Fetched Clients Data:', clientsData);
-                console.log('Fetched Products Data:', productsData);
-                console.log('Fetched Drivers Data:', driversData);
-                console.log('Fetched Secteurs Data:', secteursData);
-                console.log('Fetched Plans Data:', plansData);
-
                 setClients(clientsData);
-                setProducts(productsData);
+                setProducts(productsData); 
                 setDrivers(driversData);
                 setSecteurs(secteursData);
                 setPlans(plansData);
                 setLoading(false);
             } catch (error) {
                 console.error('Error loading data', error);
+                toast.error('Erreur lors du chargement des données.');
             }
         };
 
@@ -84,6 +78,7 @@ const DemandesLivraison = () => {
             socket.emit('statusChange', { id: addedClient._id, status: 'added' });
         } catch (error) {
             console.error('Error adding client', error);
+            toast.error('Erreur lors de l\'ajout du client.');
         }
     };
 
@@ -115,7 +110,6 @@ const DemandesLivraison = () => {
             if (plan.Date === selectedDate) {
                 planExists = true;
     
-                // Check if totalMatin or totalMidi is zero
                 if (plan.totalMatin <= 0 && selectedPeriod === 'Matin') {
                     toast.error('Livraison matinale non disponible, attendez 24 heures ou contactez l\'administrateur.');
                     return false;
@@ -150,9 +144,6 @@ const DemandesLivraison = () => {
         return true;
     };
     
-    
-    
-
     const handleLivraisonSubmit = async (newLivraison) => {
         try {
             const fetchedPlans = await fetchPlans();
@@ -196,10 +187,6 @@ const DemandesLivraison = () => {
             toast.error('Erreur lors de la récupération des plans.');
         }
     };
-    
-    
-    
-    
 
     if (loading) {
         return <div>Loading...</div>;

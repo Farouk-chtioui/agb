@@ -2,15 +2,16 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export async function fetchProducts(page) {
+export async function fetchProducts(page, limit = 6) {
   try {
-    const response = await axios.get(`${API_URL}/product?page=${page}`);
-    return response.data;
+    const response = await axios.get(`${API_URL}/product?page=${page}&limit=${limit}`);
+    return response.data; // { products, total, totalPages }
   } catch (error) {
     console.error('Error fetching products', error);
     throw error;
   }
 }
+
 export async function fetchProductsNoPage(){
   try {
     const response = await axios.get(`${API_URL}/product/all`);
@@ -19,7 +20,6 @@ export async function fetchProductsNoPage(){
     console.error('Error fetching products', error);
     throw error;
   }
-
 }
 
 export async function deleteProduct(id) {

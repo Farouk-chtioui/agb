@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { FaBars } from 'react-icons/fa';
+import { FaBars, FaUserCircle } from 'react-icons/fa'; // Import the user circle icon
 
 const Header = ({ toggleSidebar, sidebarOpen, profileImage }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const defaultProfileImage = 'path/to/default/profile/image.jpg'; // Replace with the path to your default image
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -22,12 +21,16 @@ const Header = ({ toggleSidebar, sidebarOpen, profileImage }) => {
         <FaBars className="text-gray-500 cursor-pointer" onClick={toggleSidebar} />
       </div>
       <div className="relative flex items-center space-x-2">
-        <img
-          src={profileImage || defaultProfileImage}
-          alt="Profile"
-          className="w-10 h-10 rounded-full object-cover cursor-pointer"
-          onClick={toggleDropdown}
-        />
+        {profileImage ? (
+          <img
+            src={profileImage}
+            alt="Profile"
+            className="w-10 h-10 rounded-full object-cover cursor-pointer"
+            onClick={toggleDropdown}
+          />
+        ) : (
+          <FaUserCircle className="text-gray-500 cursor-pointer text-3xl" onClick={toggleDropdown} />
+        )}
         <span className="text-gray-500 cursor-pointer" onClick={toggleDropdown}>&#9660;</span>
 
         {isDropdownOpen && (

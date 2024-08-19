@@ -2,15 +2,19 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Sidebar from '../sidebar/Sidebar';
 import Header from '../Header/Header';
 import { FaHome, FaUserAlt, FaStore, FaBox, FaTruck, FaUsers, FaRegChartBar, FaSignOutAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { pendingCount } from '../../api/livraisonService';
+import { getById as getAdminById } from '../../api/adminService';
+import { fetchMarketById } from '../../api/marketService';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:3001');
 
 function Dashboard({ title }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const role = localStorage.getItem('role');
+  const userId = localStorage.getItem('userId');
   const [pendingDeliveriesCount, setPendingDeliveriesCount] = useState(0);
   const [openIndexes, setOpenIndexes] = useState(() => {
     const savedOpenIndexes = localStorage.getItem('openIndexes');
@@ -20,8 +24,8 @@ function Dashboard({ title }) {
     const savedSidebarState = localStorage.getItem('sidebarOpen');
     return savedSidebarState === 'true';
   });
-
   const [isHovering, setIsHovering] = useState(false);
+  const [profileImage, setProfileImage] = useState('');
 
   const fetchPendingDeliveries = useCallback(async () => {
     try {
@@ -32,8 +36,26 @@ function Dashboard({ title }) {
     }
   }, []);
 
+  const fetchUserProfile = useCallback(async () => {
+    try {
+      let data;
+      if (role === 'admin') {
+        data = await getAdminById(userId);
+      } else if (role === 'market') {
+        data = await fetchMarketById(userId);
+      }
+
+      if (data && data.image) {
+        setProfileImage(`data:image/jpeg;base64,${data.image}`);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile', error);
+    }
+  }, [role, userId]);
+
   useEffect(() => {
     fetchPendingDeliveries();
+    fetchUserProfile();
 
     socket.on('updatePendingCount', (data) => {
       console.log('Received updatePendingCount event:', data);
@@ -53,7 +75,7 @@ function Dashboard({ title }) {
       socket.off('statusChange');
       socket.off('addLivraison');
     };
-  }, [fetchPendingDeliveries]);
+  }, [fetchPendingDeliveries, fetchUserProfile]);
 
   const handleLogout = () => {
     console.log('handleLogout function called');
@@ -124,6 +146,8 @@ function Dashboard({ title }) {
     localStorage.setItem('sidebarOpen', newState);
   };
 
+  const shouldShowHeader = location.pathname !== '/profile';
+
   return (
     <div>
       <Sidebar 
@@ -136,7 +160,7 @@ function Dashboard({ title }) {
         onLogout={handleLogout} 
       />
       <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen || isHovering ? 'ml-64' : 'ml-16'} sm:ml-0`}>
-        <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen || isHovering} />
+        {shouldShowHeader && <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen || isHovering} profileImage={profileImage} />}
       </div>
     </div>
   );

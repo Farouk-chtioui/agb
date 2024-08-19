@@ -19,6 +19,8 @@ import DemandesLivraison from '../DemandesLivraison/DemandesLivraison';
 import Demandes from '../livraison/DemandeslivraisonsAdmin/Demande';
 import AdminDashboard from '../dashboard/AdminDashboard';
 import FicheDeRoute from '../FicheDeRoute/FicheDeRoute';
+import Profile from '../Profile/Profile';
+import MarketDashboard from '../dashboard/MarketDashboard';
 
 function Routing() {
   return (
@@ -40,6 +42,8 @@ function Routing() {
         <Route path="/commands/propositions" element={<DemandesLivraison />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/route" element={<ProtectedRoute element={<FicheDeRoute />} requiredRoles={['admin']} />} />
+        <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+        <Route path="/market/dashboard" element={<ProtectedRoute element={<MarketDashboard/>} requiredRoles={["market"]} />} />
       </Routes>
     </Provider>
   );
