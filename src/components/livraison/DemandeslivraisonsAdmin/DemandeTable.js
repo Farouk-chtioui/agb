@@ -4,7 +4,7 @@ import { FaCheck } from 'react-icons/fa';
 import { FaRegTrashCan } from 'react-icons/fa6';
 
 const DemandeTable = ({ demandes, handleDelete, handleAcceptOrder }) => {
-    const headers = ["Référence", "Client", "Chauffeur", "Magasin", "Date de la Livraison", "Statut", "Action"];
+    const headers = ["Référence", "Client", "Chauffeur", "Magasin", "Date de la Livraison", "Statut", "Actions"];
     const role = localStorage.getItem('role');
 
     const getStatusLabel = (status) => {
@@ -33,6 +33,24 @@ const DemandeTable = ({ demandes, handleDelete, handleAcceptOrder }) => {
                         {statusInfo.label}
                     </span>
                 </td>
+                <td className="py-6 px-4 border-b border-gray-200 flex items-center justify-center space-x-2">
+                    {role === 'admin' && (
+                        <>
+                            <button
+                                className="text-green-600 hover:text-green-800 transition"
+                                onClick={() => handleAcceptOrder(demande)}
+                            >
+                                <FaCheck size={20} />
+                            </button>
+                            <button
+                                className="text-red-600 hover:text-red-800 transition"
+                                onClick={() => handleDelete(demande)}
+                            >
+                                <FaRegTrashCan size={20} />
+                            </button>
+                        </>
+                    )}
+                </td>
             </>
         );
     };
@@ -44,11 +62,7 @@ const DemandeTable = ({ demandes, handleDelete, handleAcceptOrder }) => {
             headers={headers}
             data={filteredDemandes}
             renderRow={renderRow}
-            handleDelete={handleDelete}
-            handleThirdAction={handleAcceptOrder}
             role={role}
-            ThirdIcon={FaCheck}
-            DeleteIcon={FaRegTrashCan}
             showModify={false}
         />
     );

@@ -41,10 +41,11 @@ function Demandes() {
         };
     }, [currentPage, loadData]);
 
-    const handleDelete = async (demandeId) => {
+    const handleDelete = async (demande) => {
         try {
-            await deleteLivraison(demandeId);
-            socket.emit('statusChange', { id: demandeId, status: 'deleted' });
+            console.log('Deleting livraison with ID:', demande._id);  // This should log the correct ID
+            await deleteLivraison(demande._id);  // Pass only the _id, not the whole object
+            socket.emit('statusChange', { id: demande._id, status: 'deleted' });
             toast.success('Demande supprimée avec succès!', { toastId: 'delete1' });
             loadData(currentPage);
         } catch (error) {
@@ -52,6 +53,7 @@ function Demandes() {
             toast.error('Erreur lors de la suppression de la demande.');
         }
     };
+    
 
     const handleAcceptOrder = async (demande) => {
         const confirmed = window.confirm("Voulez-vous accepter cette commande ?");

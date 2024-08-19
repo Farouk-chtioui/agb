@@ -35,8 +35,10 @@ const Table = ({
             <tr key={item._id} className="text-center">
               {renderRow(item)}
               <td className="py-2 px-4 border-b border-gray-200">
+                {/* Admin Role Actions */}
                 {role === 'admin' && (
                   <>
+                    {/* Third Action Button */}
                     {showThirdAction && ThirdIcon && handleThirdAction && (
                       <button
                         className="text-blue-500 hover:text-green-700 transition mx-1"
@@ -45,7 +47,8 @@ const Table = ({
                         <ThirdIcon size={20} />
                       </button>
                     )}
-                    {showModify && (
+                    {/* Modify Button */}
+                    {showModify && handleModify && (
                       <button
                         className="text-blue-500 hover:text-blue-700 transition mx-1"
                         onClick={() => handleModify(item)}
@@ -53,17 +56,19 @@ const Table = ({
                         <ModifyIcon size={20} />
                       </button>
                     )}
-                    {showDelete && (
+                    {/* Delete Button */}
+                    {showDelete && handleDelete && (
                       <button
                         className="text-blue-500 hover:text-red-700 transition mx-1"
-                        onClick={() => handleDelete(item)}  // Pass the full item (utilisateur) to handleDelete
+                        onClick={() => handleDelete(item)}
                       >
                         <DeleteIcon size={20} />
                       </button>
                     )}
                   </>
                 )}
-                {role === 'market' && showModify && (
+                {/* Market Role Modify Button */}
+                {role === 'market' && showModify && handleModify && (
                   <button
                     className="text-blue-500 hover:text-blue-700 transition mx-1"
                     onClick={() => handleModify(item)}
