@@ -66,7 +66,7 @@ export const modifyDriver = async ({ id, driver }) => {
 
 export async function deleteLivraison(id) {
     try {
-        console.log('Deleting livraison with ID:', id); // Log the ID for debugging
+        console.log('Deleting livraison with ID:', id); 
         const response = await axios.delete(`${API_URL}/livraison/${id}`);
         return response.data;
     } catch (error) {

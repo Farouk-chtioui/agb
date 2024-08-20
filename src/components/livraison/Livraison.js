@@ -210,11 +210,10 @@ function Livraison() {
             }
         }
     };
-
-    const handleDelete = async (id) => {
+    const handleDelete = async (livraisonId) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer cette livraison?')) {
             try {
-                await deleteLivraison(id);
+                await deleteLivraison(livraisonId);
                 fetchLivraisonsData();
                 toast.success('Livraison supprimée avec succès!');
             } catch (error) {
@@ -223,6 +222,7 @@ function Livraison() {
             }
         }
     };
+    
 
     const resetForm = () => {
         setNewLivraison({

@@ -64,3 +64,17 @@ export async function updateAdmin(id, data){
     throw error;
   }
 }
+export async function deleteAdmin(id){
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.delete(`${API_URL}/admin/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response;
+  }catch(error){
+    console.error('Error deleting admin', error);
+    throw error;
+  }
+}
