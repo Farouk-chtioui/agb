@@ -23,7 +23,7 @@ function Livraison() {
     const [plans, setPlans] = useState([]);
     const [newLivraison, setNewLivraison] = useState({
         NumeroCommande: '',
-        Référence: '',
+        reference: '',
         part_du_magasin: '',
         Observations: '',
         Date: '',
@@ -227,7 +227,7 @@ function Livraison() {
     const resetForm = () => {
         setNewLivraison({
             NumeroCommande: '',
-            Référence: '',
+            reference: '',
             part_du_magasin: '',
             Observations: '',
             Date: '',

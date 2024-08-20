@@ -62,7 +62,7 @@ const LivraisonForm = ({
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date) {
+        if (!newLivraison.NumeroCommande || !newLivraison.reference || !newLivraison.client || !newLivraison.Date) {
             toast.error('Veuillez remplir tous les champs obligatoires.');
             return;
         }
@@ -253,12 +253,12 @@ const LivraisonForm = ({
                                         />
                                     </div>
                                     <div className="form-group flex-1">
-                                        <label className="block text-blue-700 mb-2" htmlFor="Référence">Référence</label>
+                                        <label className="block text-blue-700 mb-2" htmlFor="reference">Référence</label>
                                         <input
                                             className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
                                             type="text"
-                                            name="Référence"
-                                            value={newLivraison.Référence || ''}
+                                            name="reference"
+                                            value={newLivraison.reference || ''}
                                             onChange={handleChange}
                                             placeholder="0000000000"
                                         />

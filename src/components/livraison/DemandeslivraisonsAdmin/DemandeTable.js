@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import Table from '../../Table/Table';
 import { FaCheck } from 'react-icons/fa';
 import { FaRegTrashCan } from 'react-icons/fa6';
@@ -22,7 +23,12 @@ const DemandeTable = ({ demandes, handleDelete, handleAcceptOrder }) => {
         const statusInfo = getStatusLabel(demande.status);
         return (
             <>
-                <td className="py-6 px-4 border-b border-gray-200">{demande.Référence}</td>
+                <td className="py-6 px-4 border-b border-gray-200">
+                    <Link to={`/route/${demande.reference}`}>
+                        {demande.reference}
+                    </Link>
+
+                </td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.client?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.driver?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.market?.first_name ?? 'N/A'}</td>
