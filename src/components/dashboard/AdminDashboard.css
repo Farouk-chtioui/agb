@@ -81,6 +81,7 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-width: 550px; 
 }
 
 .stat-title {
@@ -90,13 +91,15 @@
 
 .order-period-legend, .secteur-legend {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap; 
   margin-top: 10px;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
+  margin-right: 15px; 
+  max-width: 150px; 
 }
 
 .legend-color-box {
@@ -107,6 +110,9 @@
 
 .legend-text {
   font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .summary-section {
@@ -125,6 +131,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-width: 380px; 
 }
 
 .summary-title {

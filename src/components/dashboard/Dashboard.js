@@ -15,7 +15,9 @@ function Dashboard({ title }) {
   const location = useLocation();
   const role = localStorage.getItem('role');
   const userId = localStorage.getItem('userId');
-  const [pendingDeliveriesCount, setPendingDeliveriesCount] = useState(0);
+  const [pendingDeliveriesCount, setPendingDeliveriesCount] = useState(() => {
+    return localStorage.getItem('pendingDeliveriesCount') || 0;
+  });
   const [openIndexes, setOpenIndexes] = useState(() => {
     const savedOpenIndexes = localStorage.getItem('openIndexes');
     return savedOpenIndexes ? JSON.parse(savedOpenIndexes) : {};
@@ -25,12 +27,15 @@ function Dashboard({ title }) {
     return savedSidebarState === 'true';
   });
   const [isHovering, setIsHovering] = useState(false);
-  const [profileImage, setProfileImage] = useState('');
+  const [profileImage, setProfileImage] = useState(() => {
+    return localStorage.getItem('profileImage') || '';
+  });
 
   const fetchPendingDeliveries = useCallback(async () => {
     try {
       const data = await pendingCount();
       setPendingDeliveriesCount(data.count);
+      localStorage.setItem('pendingDeliveriesCount', data.count);  // Save to localStorage
     } catch (error) {
       console.error('Error fetching pending deliveries count', error);
     }
@@ -46,7 +51,9 @@ function Dashboard({ title }) {
       }
 
       if (data && data.image) {
-        setProfileImage(`data:image/jpeg;base64,${data.image}`);
+        const imageSrc = `data:image/jpeg;base64,${data.image}`;
+        setProfileImage(imageSrc);
+        localStorage.setItem('profileImage', imageSrc);  // Save to localStorage
       }
     } catch (error) {
       console.error('Error fetching user profile', error);
@@ -54,12 +61,19 @@ function Dashboard({ title }) {
   }, [role, userId]);
 
   useEffect(() => {
-    fetchPendingDeliveries();
-    fetchUserProfile();
+    // Only fetch if data is not already available in state/localStorage
+    if (!pendingDeliveriesCount) {
+      fetchPendingDeliveries();
+    }
+
+    if (!profileImage) {
+      fetchUserProfile();
+    }
 
     socket.on('updatePendingCount', (data) => {
       console.log('Received updatePendingCount event:', data);
       setPendingDeliveriesCount(data.count);
+      localStorage.setItem('pendingDeliveriesCount', data.count);
     });
 
     socket.on('statusChange', () => {
@@ -75,13 +89,15 @@ function Dashboard({ title }) {
       socket.off('statusChange');
       socket.off('addLivraison');
     };
-  }, [fetchPendingDeliveries, fetchUserProfile]);
+  }, [fetchPendingDeliveries, fetchUserProfile, pendingDeliveriesCount, profileImage]);
 
   const handleLogout = () => {
     console.log('handleLogout function called');
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('openIndexes');
+    localStorage.removeItem('pendingDeliveriesCount');
+    localStorage.removeItem('profileImage');
     navigate('/');
   };
 

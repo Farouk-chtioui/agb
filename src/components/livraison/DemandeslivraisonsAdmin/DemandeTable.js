@@ -27,28 +27,28 @@ const DemandeTable = ({ demandes, handleDelete, handleAcceptOrder }) => {
                 <td className="py-6 px-4 border-b border-gray-200">{demande.driver?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.market?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.Date}</td>
-                <td className={`py-6 px-4 border-b border-gray-200 flex items-center justify-center gap-2 ${statusInfo.color}`}>
+                <td className={`py-6 px-4 border-b border-gray-200 ${statusInfo.color}`}>
                     <span className={`w-2 h-2 rounded-full inline-block ${statusInfo.color}`}></span>
                     <span className="font-poppins font-normal text-base leading-6">
                         {statusInfo.label}
                     </span>
                 </td>
-                <td className="py-6 px-4 border-b border-gray-200 flex items-center justify-center space-x-2">
+                <td className="py-6 px-4 border-b border-gray-200">
                     {role === 'admin' && (
-                        <>
+                        <div className="flex justify-center space-x-4">
                             <button
-                                className="text-green-600 hover:text-green-800 transition"
+                                className="text-blue-500 hover:text-blue-700 transition duration-300"
                                 onClick={() => handleAcceptOrder(demande)}
                             >
                                 <FaCheck size={20} />
                             </button>
                             <button
-                                className="text-red-600 hover:text-red-800 transition"
+                                className="text-red-500 hover:text-red-700 transition duration-300"
                                 onClick={() => handleDelete(demande)}
                             >
                                 <FaRegTrashCan size={20} />
                             </button>
-                        </>
+                        </div>
                     )}
                 </td>
             </>

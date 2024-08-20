@@ -42,17 +42,21 @@ function Demandes() {
     }, [currentPage, loadData]);
 
     const handleDelete = async (demande) => {
-        try {
-            console.log('Deleting livraison with ID:', demande._id);  // This should log the correct ID
-            await deleteLivraison(demande._id);  // Pass only the _id, not the whole object
-            socket.emit('statusChange', { id: demande._id, status: 'deleted' });
-            toast.success('Demande supprimée avec succès!', { toastId: 'delete1' });
-            loadData(currentPage);
-        } catch (error) {
-            console.error('Error deleting demande', error);
-            toast.error('Erreur lors de la suppression de la demande.');
+        const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer cette demande ?");
+        if (confirmed) {
+            try {
+                console.log('Deleting livraison with ID:', demande._id);  // This should log the correct ID
+                await deleteLivraison(demande._id);  // Pass only the _id, not the whole object
+                socket.emit('statusChange', { id: demande._id, status: 'deleted' });
+                toast.success('Demande supprimée avec succès!', { toastId: 'delete1' });
+                loadData(currentPage);
+            } catch (error) {
+                console.error('Error deleting demande', error);
+                toast.error('Erreur lors de la suppression de la demande.');
+            }
         }
     };
+    
     
 
     const handleAcceptOrder = async (demande) => {

@@ -107,28 +107,29 @@ const AdminDashboard = () => {
 
   const calculatePeriodStats = (livraisons) => {
     const periodCounts = {
-      Matin: 0,
-      Midi: 0,
+        Matin: 0,
+        Midi: 0,
     };
 
     if (!Array.isArray(livraisons)) return [];
 
     livraisons.forEach((livraison) => {
-      const period = livraison.Periode;
-      if (periodCounts[period] !== undefined) {
-        periodCounts[period]++;
-      }
+        const period = livraison.Periode; // Assuming 'Periode' is the correct field name in your data
+        if (periodCounts[period] !== undefined) {
+            periodCounts[period]++;
+        }
     });
 
     const totalLivraisons = livraisons.length;
     const periodStats = Object.keys(periodCounts).map((period) => ({
-      name: period,
-      value: (periodCounts[period] / totalLivraisons) * 100,
-      count: periodCounts[period],
+        name: period,
+        value: (periodCounts[period] / totalLivraisons) * 100,
+        count: periodCounts[period],
     }));
 
     return periodStats;
-  };
+};
+
 
   const calculateOrderTrends = (livraisons) => {
     if (!Array.isArray(livraisons)) return [];
@@ -161,15 +162,36 @@ const AdminDashboard = () => {
 
   const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
     const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + (outerRadius + 10) * Math.cos(-midAngle * RADIAN);
-    const y = cy + (outerRadius + 10) * Math.sin(-midAngle * RADIAN);
+    const radius = outerRadius + 10; // Move the label a bit outside the pie chart
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    // Calculate text anchor and adjust position if necessary
+    const textAnchor = x > cx ? 'start' : 'end';
+
+    // Access the period name from the periodStats data
+    const periodName = periodStats[index]?.name || ''; 
+
     return (
-      <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-        {`${(percent * 100).toFixed(1)}%`} {/* Adjusted to one decimal place */}
-      </text>
+        <text
+            x={x}
+            y={y}
+            fill={PERIOD_COLORS[index % PERIOD_COLORS.length]}  // Use the corresponding color
+            textAnchor={textAnchor}
+            dominantBaseline="central"
+            style={{
+                fontSize: '0.9rem', 
+                whiteSpace: 'nowrap',
+                maxWidth: '10px', 
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+            }}
+        >
+            {`${percent ? `${periodName}: ${(percent * 100).toFixed(1)}%` : ''}`} 
+        </text>
     );
-  };
+};
+
 
   const toggleShowAllNotes = () => {
     setShowAllNotes(!showAllNotes);
@@ -183,14 +205,14 @@ const AdminDashboard = () => {
       <Dashboard title="Dashboard" className="sidebar" />
       <div className="main-content">
         <div className="header-section">
-          <h1 className="title">Admin Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Admin Dashboard</h1>
         </div>
-        <div className="calendar-and-notes-section">
-          <div className="calendar-container">
+        <div className="calendar-and-notes-section flex flex-col md:flex-row">
+          <div className="calendar-container w-full md:w-1/2 p-2">
             <ReadOnlyCalendarComponent plans={plans} /> {/* Pass the plans data here */}
           </div>
-          <div className="notes-container">
-            <h2 className="notes-title">Today's Notes</h2>
+          <div className="notes-container w-full md:w-1/2 p-2">
+            <h2 className="text-xl font-semibold mb-2">Today's Notes</h2>
             {todayNotes.length > 0 ? (
               todayNotes.map(note => (
                 <div key={note._id} className="sticky-note mb-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-md shadow-sm">
@@ -252,7 +274,7 @@ const AdminDashboard = () => {
               {periodStats.map((entry, index) => (
                 <div key={`legend-${index}`} className="legend-item">
                   <div className="legend-color-box" style={{ backgroundColor: PERIOD_COLORS[index % PERIOD_COLORS.length] }}></div>
-                  <span className="legend-text">{entry.name} ({entry.count} orders)</span>
+                  <span className="legend-text text-xs sm:text-sm md:text-base lg:text-lg">{entry.name} ({entry.count} orders)</span>
                 </div>
               ))}
             </div>
@@ -261,7 +283,7 @@ const AdminDashboard = () => {
             <h2 className="stat-title">Secteur</h2>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={secteurStats} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}>
+                <Pie data={secteurStats} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({ name, value }) => `${name}: ${value.toFixed(1)}%`} className="text-xs sm:text-sm md:text-base lg:text-lg">
                   {secteurStats.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}

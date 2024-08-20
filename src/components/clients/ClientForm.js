@@ -28,12 +28,16 @@ const ClientForm = ({
     handleChange({ target: { name: 'phone', value } });
   };
 
-  const handleAddressChange = (name, value, postalCode) => {
-    handleChange({ target: { name, value } });
-    if (name === 'address1') {
-      handleChange({ target: { name: 'code_postal', value: postalCode } });
-    } else if (name === 'address2') {
-      handleChange({ target: { name: 'code_postal2', value: postalCode } });
+  const handleAddressChange = (name, addressData) => {
+    if (addressData && addressData.address && addressData.codePostal) {
+      handleChange({ target: { name, value: addressData.address } });
+      if (name === 'address1') {
+        handleChange({ target: { name: 'code_postal', value: addressData.codePostal } });
+      } else if (name === 'address2') {
+        handleChange({ target: { name: 'code_postal2', value: addressData.codePostal } });
+      }
+    } else {
+      console.error("Invalid address data:", addressData);
     }
   };
 
@@ -80,7 +84,7 @@ const ClientForm = ({
               <label htmlFor={field.name} className="block text-blue-700 mb-2">{field.label}</label>
               <AddressAutocomplete
                 value={newClient[field.name]}
-                onChange={(e) => handleAddressChange(field.name, e.target.value, e.postalCode)}
+                onChange={(addressData) => handleAddressChange(field.name, addressData)}
               />
             </div>
           );

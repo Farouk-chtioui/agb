@@ -39,22 +39,20 @@ const MagasinForm = ({
     { name: 'numberMi', label: 'Nombre des commandes du midi', type: 'number', placeholder: 'Nombre des commandes du midi', colSpan: 2 },
   ].filter(Boolean);
 
-  const handleAddressChange = (e) => {
-    handleChange({
-      target: {
-        name: e.target.name,
-        value: e.target.value,
-      }
-    });
-    if (e.postalCode) {
-      setAddressData((prev) => ({
-        ...prev,
-        address: e.target.value,
-        codePostal: e.postalCode
-      }));
-      console.log('Postal Code:', e.postalCode);
+  const handleAddressChange = (addressData) => {
+    if (addressData && addressData.address && addressData.codePostal) {
+      setAddressData({
+        address: addressData.address,
+        codePostal: addressData.codePostal
+      });
+      handleChange({
+        target: {
+          name: 'address',
+          value: addressData.address,
+        }
+      });
     } else {
-      setAddressData((prev) => ({ ...prev, address: e.target.value }));
+      toast.error('Please select an address with a postal code.');
     }
   };
 
@@ -72,7 +70,6 @@ const MagasinForm = ({
     } else {
       const resultAction = await dispatch(addMagasin(magasinData));
       if (addMagasin.fulfilled.match(resultAction)) {
-        const addedMagasin = resultAction.payload;
         toast.success('Magasin ajouté avec succès!');
       }
     }
@@ -105,7 +102,7 @@ const MagasinForm = ({
             <input
               type={field.type}
               name={field.name}
-              value={newMagasin[field.name]}
+              value={newMagasin[field.name] || ''}
               onChange={handleChange}
               placeholder={field.placeholder}
               autoComplete='off'
