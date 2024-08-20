@@ -53,16 +53,17 @@ export async function modifyLivraison(livraison) {
     }
 }
 
-export const modifyDriver = async ({ id, driver }) => {
+export const modifyDriver = async ({ id, driver, distance }) => {
     try {
         console.log('Modifying driver for livraison with ID:', id); // Log the ID for debugging
-        const response = await axios.patch(`${API_URL}/livraison/${id}/driver`, { driver });
+        const response = await axios.patch(`${API_URL}/livraison/${id}/driver`, { driver, distance });
         return response.data;
     } catch (error) {
         console.error('Error modifying driver:', error);
         throw error;
     }
 };
+
 
 export async function deleteLivraison(id) {
     try {

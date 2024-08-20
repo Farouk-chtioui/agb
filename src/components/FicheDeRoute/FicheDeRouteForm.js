@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { MdDirections } from 'react-icons/md';
-import 'mapbox-gl/dist/mapbox-gl.css'; 
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setShowForm }) => {
   const [selectedDriver, setSelectedDriver] = useState('');
+  const [distance, setDistance] = useState(null);
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
 
@@ -49,13 +50,13 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
             const marketPopup = new mapboxgl.Popup({ offset: 25 }).setText('Market');
             new mapboxgl.Marker({ color: 'green' })
               .setLngLat(route[0])
-              .setPopup(marketPopup) 
+              .setPopup(marketPopup)
               .addTo(mapRef.current);
 
             const clientPopup = new mapboxgl.Popup({ offset: 25 }).setText('Client');
             new mapboxgl.Marker({ color: 'red' })
               .setLngLat(route[route.length - 1])
-              .setPopup(clientPopup) 
+              .setPopup(clientPopup)
               .addTo(mapRef.current);
 
             mapRef.current.addSource('route', {
@@ -88,6 +89,9 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
             mapRef.current.fitBounds(bounds, {
               padding: 50,
             });
+
+            // Set the distance in kilometers
+            setDistance(data.routes[0].distance / 1000);
           } else {
             console.error('No routes found');
           }
@@ -100,7 +104,12 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleDriverSubmit(selectedDriver);
+    if (!selectedDriver || !distance) {
+      console.error('Driver or distance not set');
+      return;
+    }
+
+    handleDriverSubmit(selectedDriver, distance);
   };
 
   return (
@@ -154,7 +163,7 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
               <span className="font-semibold">Client: </span> {selectedLivraison ? selectedLivraison.client.first_name : ''}
             </div>
             <div className="flex items-center text-blue-600">
-              <span className="font-semibold">Price: </span> {selectedLivraison ? `${selectedLivraison.price} €` : 'Not available'}
+              <span className="font-semibold">Distance: </span> {distance ? `${distance.toFixed(2)} km` : 'Calculating...'}
             </div>
           </div>
         </div>

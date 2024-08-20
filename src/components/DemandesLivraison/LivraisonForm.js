@@ -12,7 +12,7 @@ const socket = io('http://localhost:3001');
 const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, validateLivraison, handleLivraisonSubmit }) => {
     const [newLivraison, setNewLivraison] = useState({
         NumeroCommande: '',
-        Référence: '',
+        reference: '',
         part_du_magasin: '',
         Observations: '',
         client: '',
@@ -100,7 +100,7 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        if (!newLivraison.NumeroCommande || !newLivraison.Référence || !newLivraison.client || !newLivraison.Date || !newLivraison.Periode) {
+        if (!newLivraison.NumeroCommande || !newLivraison.reference || !newLivraison.client || !newLivraison.Date || !newLivraison.Periode) {
             toast.error('Veuillez remplir tous les champs obligatoires.');
             return;
         }
@@ -187,8 +187,8 @@ const LivraisonForm = ({ clients, products, secteurs, plans, setShowClientForm, 
                                     <label className="block text-gray-700">Référence*</label>
                                     <input
                                         type="text"
-                                        name="Référence"
-                                        value={newLivraison.Référence}
+                                        name="reference"
+                                        value={newLivraison.reference}
                                         onChange={handleChange}
                                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
                                     />

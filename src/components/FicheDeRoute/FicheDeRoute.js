@@ -23,7 +23,7 @@ const FicheDeRoute = () => {
     try {
       const data = await fetchLivraisons(currentPage);
       setLivraisons(data.livraisons.filter(l => !l.driver));
-      setTotalPages(Math.ceil(data.total / 10)); // Assuming 10 items per page
+      setTotalPages(Math.ceil(data.total / 10)); 
     } catch (error) {
       toast.error('Error fetching livraisons');
     }
@@ -64,14 +64,14 @@ const FicheDeRoute = () => {
     setShowForm(true);
   };
 
-  const handleDriverSubmit = async (driverId) => {
+  const handleDriverSubmit = async (driverId, distance) => {
     if (!selectedLivraison) {
       toast.error('No livraison selected');
       return;
     }
-
+  
     try {
-      await modifyDriver({ id: selectedLivraison._id, driver: driverId });
+      await modifyDriver({ id: selectedLivraison._id, driver: driverId, distance });
       setShowForm(false);
       setSelectedLivraison(null);
       getLivraisons();
@@ -80,6 +80,7 @@ const FicheDeRoute = () => {
       toast.error('Error assigning driver');
     }
   };
+  
 
   return (
     <div className="flex">
