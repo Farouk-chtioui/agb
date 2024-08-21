@@ -6,6 +6,7 @@ import Utilisateurstable from "./Utilisateurstable";
 import {
   fetchAdminData,
   createAdmin,
+  deleteAdmin,
 } from "../../api/adminService";
 import {
   fetchDrivers,
@@ -90,20 +91,20 @@ const Utilisateurs = () => {
 
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?')) {
         try {
-            switch (utilisateur.role) {  // Use the role of the utilisateur being deleted
+            switch (utilisateur.role) { 
                 case 'Admin':
-                    // Implement deleteAdmin if necessary
+                    await deleteAdmin(utilisateur._id);  // Await the API call to ensure it's processed
                     break;
                 case 'Driver':
-                    await deleteDriver(utilisateur._id);  // Pass the correct ID
+                    await deleteDriver(utilisateur._id); 
                     break;
                 case 'Market':
-                    await deleteMagasin(utilisateur._id);  // Pass the correct ID
+                    await deleteMagasin(utilisateur._id);  
                     break;
                 default:
                     throw new Error('Invalid role');
             }
-            fetchUtilisateursData();
+            fetchUtilisateursData();  // Refresh the data after deletion
             toast.success('Utilisateur supprimé avec succès!');
         } catch (error) {
             console.error('Error deleting utilisateur', error);
@@ -111,6 +112,7 @@ const Utilisateurs = () => {
         }
     }
 };
+
 
 
 
@@ -124,7 +126,6 @@ const Utilisateurs = () => {
     try {
       switch (updatedUtilisateur.role) {
         case 'Admin':
-          // Implement modifyAdmin if necessary
           break;
         case 'Driver':
           await modifyDriver(updatedUtilisateur);

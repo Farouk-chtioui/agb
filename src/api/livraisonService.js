@@ -130,3 +130,17 @@ export const fetchByDriverAndDate = async (driverId, date) => {
     }
 };
 
+export async function fetchByMarketId(marketId, page = 1, searchTerm = '') {
+    try {
+        const response = await axios.get(`${API_URL}/livraison/market/${marketId}`, {
+            params: {
+                page,
+                searchTerm,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching livraisons by market ID:', error);
+        throw error;
+    }
+}

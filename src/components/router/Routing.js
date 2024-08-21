@@ -22,6 +22,7 @@ import FicheDeRoute from '../FicheDeRoute/FicheDeRoute';
 import Profile from '../Profile/Profile';
 import MarketDashboard from '../dashboard/MarketDashboard';
 import RouteSheetPDF from '../livraison/pdf/RouteSheetPDF';
+import MarketList from '../ListeLivraisonMarket/MarketList';
 
 function Routing() {
   return (
@@ -44,8 +45,10 @@ function Routing() {
         <Route path="/commands/propositions" element={<DemandesLivraison />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/route" element={<ProtectedRoute element={<FicheDeRoute />} requiredRoles={['admin']} />} />
-        <Route path="/profile" element={<ProtectedRoute element={<Profile />} requiredRoles={['admin']} />} />
+        <Route path="/profile" element={<ProtectedRoute element={<Profile />} requiredRoles={['admin','market']} />} />
         <Route path="/route-sheet/driver/:driverId/date/:date" element={<ProtectedRoute element={<RouteSheetPDF />} requiredRoles={['admin', 'market']} />} />
+        <Route path="/livraison/demandes" element={<ProtectedRoute element={<MarketList />} requiredRoles={['admin', 'market']} />} />
+
       </Routes>
     </Provider>
   );

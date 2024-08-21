@@ -11,10 +11,9 @@ const Utilisateurstable = React.memo(({
   const headers = ['First Name', 'Last Name', 'Email', 'Role', 'Actions'];
   const role = localStorage.getItem('role');
 
-  // Normalize data only once and memoize it
   const normalizedUtilisateurs = useMemo(() => {
     return utilisateurs.map(utilisateur => ({
-      _id: utilisateur._id,  // Include _id for handleDelete and handleModify
+      _id: utilisateur._id,  
       first_name: utilisateur.first_name || utilisateur.name || 'N/A',
       last_name: utilisateur.last_name || 'N/A',
       email: utilisateur.email || 'N/A',
