@@ -84,7 +84,7 @@ const Utilisateurs = () => {
 
   const handleDelete = async (utilisateur) => {
     if (!utilisateur || !utilisateur._id || !utilisateur.role) {
-        console.error("Utilisateur object is undefined or missing _id/role:", utilisateur);
+        console.error("Utilisateur _id or role is undefined:", utilisateur);
         toast.error('Erreur: utilisateur introuvable.');
         return;
     }
@@ -93,7 +93,7 @@ const Utilisateurs = () => {
         try {
             switch (utilisateur.role) { 
                 case 'Admin':
-                    await deleteAdmin(utilisateur._id);  // Await the API call to ensure it's processed
+                    await deleteAdmin(utilisateur._id);
                     break;
                 case 'Driver':
                     await deleteDriver(utilisateur._id); 
@@ -112,6 +112,8 @@ const Utilisateurs = () => {
         }
     }
 };
+
+
 
 
 

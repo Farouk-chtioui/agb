@@ -28,6 +28,20 @@ const Utilisateurstable = React.memo(({
         <td className="py-2 px-4 border-b border-gray-200">{utilisateur.last_name}</td>
         <td className="py-2 px-4 border-b border-gray-200">{utilisateur.email}</td>
         <td className="py-2 px-4 border-b border-gray-200">{utilisateur.role}</td>
+        <td className="py-2 px-4 border-b border-gray-200">
+          <button
+            className="text-blue-500 hover:text-blue-700 transition mx-1"
+            onClick={() => handleModify(utilisateur)}
+          >
+            <FaRegEdit size={20} />
+          </button>
+          <button
+            className="text-blue-500 hover:text-red-700 transition mx-1"
+            onClick={() => handleDelete(utilisateur)}
+          >
+            <FaRegTrashCan size={20} />
+          </button>
+        </td>
       </>
     );
   };
@@ -35,14 +49,10 @@ const Utilisateurstable = React.memo(({
   return (
     <Table
       headers={headers}
-      data={normalizedUtilisateurs}  // Pass the normalized data with _id
+      data={normalizedUtilisateurs}
       renderRow={renderRow}
-      handleDelete={handleDelete}  // Pass the full utilisateur object
-      handleModify={handleModify}  // Pass the full utilisateur object
-      ModifyIcon={FaRegEdit}
-      DeleteIcon={FaRegTrashCan}
-      showModify={true}
-      showDelete={true}
+      showModify={false}
+      showDelete={false}  
       role={role}
     />
   );
