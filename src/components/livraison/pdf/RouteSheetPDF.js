@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
-import { fetchbyReference } from '../../../api/livraisonService';  // Ensure this path is correct
+import { Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
+import { fetchByDriverAndDate } from '../../../api/livraisonService';  // Make sure to create this function
+import logo from '../../../images/logo1.png';  // Placeholder logo
 
 const styles = StyleSheet.create({
     page: {
@@ -11,11 +12,19 @@ const styles = StyleSheet.create({
         lineHeight: 1.6,
         color: '#4a4a4a',
     },
+    logo: {
+        width: 100, 
+        height: 60,
+        marginBottom: 10,
+        alignSelf: 'flex-end', 
+    },
     headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 20,
+        borderBottom: '1px solid #e0e0e0',
+        paddingBottom: 10,
     },
     headerLeft: {
         width: '60%',
@@ -28,80 +37,80 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginBottom: 4,
     },
-    driverName: {
-        fontSize: 12,
-        marginTop: 10,
-    },
     companyName: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 4,
     },
     contactInfo: {
         fontSize: 12,
     },
+    driverTitle: {
+        marginBottom: 20,
+        textAlign: 'center',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    tableContainer: {
+        marginTop: 20,
+        border: '1px solid #e0e0e0',
+        borderRadius: 5,
+        overflow: 'hidden',
+    },
     table: {
         display: 'table',
         width: '100%',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
+        borderCollapse: 'collapse',
     },
     tableRow: {
         flexDirection: 'row',
+        borderBottom: '1px solid #e0e0e0',
     },
-    tableColHeader: {
-        width: '12%',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-        textAlign: 'center',
-        padding: 5,
+    tableHeader: {
+        backgroundColor: '#f8f8f8',
         fontWeight: 'bold',
     },
-    tableCol: {
-        width: '12%',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
+    tableCell: {
+        flex: 1,
+        padding: 8,
+        fontSize: 10,
+        borderRight: '1px solid #e0e0e0',
         textAlign: 'center',
-        padding: 5,
     },
-    tableColWide: {
-        width: '24%',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-        textAlign: 'left',
-        padding: 5,
+    lastTableCell: {
+        borderRight: 'none',
     },
-    signatureSection: {
-        marginTop: 20,
-        textAlign: 'left',
-    },
-    signatureLabel: {
-        fontSize: 12,
-        marginBottom: 5,
-        fontWeight: 'bold',
+    magasinCell: {
+        flex: 2, 
+        padding: 8,
+        fontSize: 10,
+        borderRight: '1px solid #e0e0e0',
+        textAlign: 'center',
     },
 });
 
-const RouteSheetDocument = ({ data }) => {
-    const delivery = data ? data[0] : null;
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+};
 
-    if (!delivery) {
-        return <Text>No data available for this reference</Text>;
+const RouteSheetDocument = ({ data }) => {
+    if (!data || data.length === 0) {
+        return <Text>No deliveries available for this driver on this date</Text>;
     }
+
+    const driverName = data[0]?.driver ? `${data[0].driver.first_name} ${data[0].driver.last_name}` : 'N/A';
+    const formattedDate = formatDate(data[0]?.Date ?? 'N/A');
 
     return (
         <Document>
             <Page size="A4" style={styles.page}>
                 <View style={styles.headerContainer}>
                     <View style={styles.headerLeft}>
-                        <Text style={styles.routeDate}>Feuille de route du {delivery.Date}</Text>
-                        <Text style={styles.driverName}>Nom du chauffeur: {delivery.driver ? `${delivery.driver.first_name} ${delivery.driver.last_name}` : 'N/A'}</Text>
+                        <Text style={styles.routeDate}>Feuille de route : {formattedDate}</Text>
                     </View>
                     <View style={styles.headerRight}>
+                        <Image style={styles.logo} src={logo} />
                         <Text style={styles.companyName}>AGB TRANSPORT</Text>
                         <Text style={styles.contactInfo}>Email: mhatem@agbtransport.fr</Text>
                         <Text style={styles.contactInfo}>Phone: +33 6 21 40 10 47</Text>
@@ -109,36 +118,38 @@ const RouteSheetDocument = ({ data }) => {
                     </View>
                 </View>
 
-                <View style={styles.table}>
-                    <View style={styles.tableRow}>
-                        <Text style={styles.tableColHeader}>Magasin</Text>
-                        <Text style={styles.tableColHeader}>Client Référence</Text>
-                        <Text style={styles.tableColHeader}>Observations</Text>
-                        <Text style={styles.tableColHeader}>Chq</Text>
-                        <Text style={styles.tableColHeader}>Esp</Text>
-                        <Text style={styles.tableColHeader}>Aut</Text>
-                        <Text style={styles.tableColHeader}>A Fact</Text>
-                        <Text style={styles.tableColHeader}>Fact Sup</Text>
-                        <Text style={styles.tableColHeader}>Cde Fact</Text>
-                    </View>
+                <Text style={styles.driverTitle}>Nom du chauffeur: {driverName}</Text>
 
-                    {data.map((delivery, index) => (
-                        <View style={styles.tableRow} key={index}>
-                            <Text style={styles.tableColWide}>
-                                {delivery.market ? delivery.market.first_name : 'N/A'}
-                                {'\n'}Ref: {delivery.Référence}
-                                {'\n'}Dist: {delivery.distance ? `${delivery.distance} Km` : 'N/A'}
-                            </Text>
-                            <Text style={styles.tableCol}>{delivery.client.first_name} {delivery.client.last_name}</Text>
-                            <Text style={styles.tableCol}>{delivery.Observations}</Text>
-                            <Text style={styles.tableCol}></Text> {/* Empty columns for checkmarks */}
-                            <Text style={styles.tableCol}></Text>
-                            <Text style={styles.tableCol}></Text>
-                            <Text style={styles.tableCol}></Text>
-                            <Text style={styles.tableCol}></Text>
-                            <Text style={styles.tableCol}></Text>
+                <View style={styles.tableContainer}>
+                    <View style={styles.table}>
+                        <View style={[styles.tableRow, styles.tableHeader]}>
+                            <Text style={styles.magasinCell}>Magasin</Text>
+                            <Text style={styles.tableCell}>Client Référence</Text>
+                            <Text style={styles.tableCell}>Observations</Text>
+                            <Text style={styles.tableCell}>Chq</Text>
+                            <Text style={styles.tableCell}>Esp</Text>
+                            <Text style={styles.tableCell}>Aut</Text>
+                            <Text style={styles.tableCell}>A Fact</Text>
+                            <Text style={[styles.tableCell, styles.lastTableCell]}>Fact Sup</Text>
                         </View>
-                    ))}
+
+                        {data.map((delivery, index) => (
+                            <View style={styles.tableRow} key={index}>
+                                <Text style={styles.magasinCell}>
+                                    {delivery.market ? delivery.market.first_name : 'N/A'}
+                                    {'\n'}Ref: {delivery.Référence}
+                                    {'\n'}Dist: {delivery.distance ? `${delivery.distance} Km` : 'N/A'}
+                                </Text>
+                                <Text style={styles.tableCell}>{delivery.client.first_name} {delivery.client.last_name}</Text>
+                                <Text style={styles.tableCell}>{delivery.Observations}</Text>
+                                <Text style={styles.tableCell}></Text> {/* Empty columns for checkmarks */}
+                                <Text style={styles.tableCell}></Text>
+                                <Text style={styles.tableCell}></Text>
+                                <Text style={styles.tableCell}></Text>
+                                <Text style={[styles.tableCell, styles.lastTableCell]}></Text>
+                            </View>
+                        ))}
+                    </View>
                 </View>
             </Page>
         </Document>
@@ -146,15 +157,15 @@ const RouteSheetDocument = ({ data }) => {
 };
 
 const RouteSheetPDF = () => {
-    const { reference } = useParams();
+    const { driverId, date } = useParams();  
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log('Fetching data for reference:', reference);
-                const deliveryData = await fetchbyReference(reference);
+                console.log('Fetching data for driver ID:', driverId, 'and date:', date);
+                const deliveryData = await fetchByDriverAndDate(driverId, date);  
                 console.log('Fetched data:', deliveryData);
                 setData(deliveryData);
             } catch (error) {
@@ -164,14 +175,14 @@ const RouteSheetPDF = () => {
             }
         };
         fetchData();
-    }, [reference]);
+    }, [driverId, date]);
 
     if (loading) {
         return <div>Loading...</div>;
     }
 
     if (!data || data.length === 0) {
-        return <div>No delivery data found for the reference: {reference}</div>;
+        return <div>No delivery data found for this driver on this date</div>;
     }
 
     return (

@@ -58,7 +58,13 @@ const Profile = () => {
         } else if (role === 'market') {
           await modifyMagasin(userId, updateData);
         }
+
+        localStorage.removeItem('profileImage');
+
+        localStorage.setItem('profileImage', reader.result);
+
         setUserData((prev) => ({ ...prev, image: reader.result }));
+
         toast.success('Avatar updated successfully');
       } catch (error) {
         console.error('Error updating avatar:', error);

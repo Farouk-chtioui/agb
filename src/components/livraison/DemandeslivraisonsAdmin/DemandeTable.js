@@ -21,18 +21,26 @@ const DemandeTable = ({ demandes, handleDelete, handleAcceptOrder }) => {
 
     const renderRow = (demande) => {
         const statusInfo = getStatusLabel(demande.status);
+        const formattedDate = new Date(demande.Date).toISOString().split('T')[0]; // Ensure the date is correctly formatted
+
         return (
             <>
                 <td className="py-6 px-4 border-b border-gray-200">
-                    <Link to={`/route/${demande.reference}`}>
-                        {demande.reference}
-                    </Link>
-
+                    {demande.reference}
                 </td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.client?.first_name ?? 'N/A'}</td>
-                <td className="py-6 px-4 border-b border-gray-200">{demande.driver?.first_name ?? 'N/A'}</td>
+                <td className="py-6 px-4 border-b border-gray-200">
+                    {demande.driver ? (
+                        <Link
+                            to={`/route-sheet/driver/${demande.driver._id}/date/${formattedDate}`}
+                            className="text-blue-500 hover:text-blue-700"
+                        >
+                            {demande.driver.first_name}
+                        </Link>
+                    ) : 'N/A'}
+                </td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.market?.first_name ?? 'N/A'}</td>
-                <td className="py-6 px-4 border-b border-gray-200">{demande.Date}</td>
+                <td className="py-6 px-4 border-b border-gray-200">{formattedDate}</td>
                 <td className={`py-6 px-4 border-b border-gray-200 ${statusInfo.color}`}>
                     <span className={`w-2 h-2 rounded-full inline-block ${statusInfo.color}`}></span>
                     <span className="font-poppins font-normal text-base leading-6">

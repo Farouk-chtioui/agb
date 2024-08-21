@@ -116,4 +116,17 @@ export async function fetchbyReference(reference) {
         console.error('Error fetching livraison by reference:', error);
         throw error;
     }
+
 }
+export const fetchByDriverAndDate = async (driverId, date) => {
+    try {
+        const response = await axios.get(`${API_URL}/livraison/driver/${driverId}`, {
+            params: { date },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching deliveries by driver and date:', error);
+        throw error;
+    }
+};
+

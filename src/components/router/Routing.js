@@ -46,6 +46,7 @@ function Routing() {
         <Route path="/route" element={<ProtectedRoute element={<FicheDeRoute />} requiredRoles={['admin']} />} />
         <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
         <Route path="/market/dashboard" element={<ProtectedRoute element={<MarketDashboard />} requiredRoles={['market']} />} />
+        <Route path="/route-sheet/driver/:driverId/date/:date" element={<ProtectedRoute element={<RouteSheetPDF />} requiredRoles={['admin', 'market']} />} />
       </Routes>
     </Provider>
   );
