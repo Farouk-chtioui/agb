@@ -22,12 +22,16 @@ const FicheDeRoute = () => {
   const getLivraisons = useCallback(async () => {
     try {
       const data = await fetchLivraisons(currentPage);
-      setLivraisons(data.livraisons.filter(l => !l.driver));
+      const filteredLivraisons = data.livraisons.filter(
+        l => !l.driver || l.status === 'En attente'
+      );
+      setLivraisons(filteredLivraisons);
       setTotalPages(Math.ceil(data.total / 10)); 
     } catch (error) {
       toast.error('Error fetching livraisons');
     }
   }, [currentPage]);
+  
 
   const getDrivers = useCallback(async () => {
     try {

@@ -3,6 +3,7 @@ import Dashboard from './Dashboard';
 import ReadOnlyCalendarComponent from '../Calendar/ReadOnly/ReadOnlyCalendarComponent';
 import { fetchPlans } from '../../api/plansService';
 import { format, parseISO } from 'date-fns';
+import './AdminDashboard.css'; // Reusing the AdminDashboard styles
 
 const MarketDashboard = () => {
   const [plans, setPlans] = useState([]);
@@ -12,7 +13,6 @@ const MarketDashboard = () => {
     const fetchData = async () => {
       try {
         const plansData = await fetchPlans();
-        console.log("Fetched Plans:", plansData); // Debugging line
         setPlans(plansData);
       } catch (error) {
         console.error('Error fetching plans data:', error);
@@ -28,8 +28,6 @@ const MarketDashboard = () => {
 
   const today = format(new Date(), 'yyyy-MM-dd'); // Get today's date in 'yyyy-MM-dd' format
   const todayNotes = plans.filter(plan => plan.Date === today && plan.notes);
-
-  console.log("Plans State:", plans); // Debugging line
 
   return (
     <div className="dashboard-container">

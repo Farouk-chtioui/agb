@@ -137,7 +137,7 @@ const RouteSheetDocument = ({ data }) => {
                             <View style={styles.tableRow} key={index}>
                                 <Text style={styles.magasinCell}>
                                     {delivery.market ? delivery.market.first_name : 'N/A'}
-                                    {'\n'}Ref: {delivery.Référence}
+                                    {'\n'}Ref: {delivery.reference}
                                     {'\n'}Dist: {delivery.distance ? `${delivery.distance} Km` : 'N/A'}
                                 </Text>
                                 <Text style={styles.tableCell}>{delivery.client.first_name} {delivery.client.last_name}</Text>

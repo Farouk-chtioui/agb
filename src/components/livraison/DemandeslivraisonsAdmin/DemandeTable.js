@@ -30,14 +30,7 @@ const DemandeTable = ({ demandes, handleDelete, handleAcceptOrder }) => {
                 </td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.client?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">
-                    {demande.driver ? (
-                        <Link
-                            to={`/route-sheet/driver/${demande.driver._id}/date/${formattedDate}`}
-                            className="text-blue-500 hover:text-blue-700"
-                        >
-                            {demande.driver.first_name}
-                        </Link>
-                    ) : 'N/A'}
+                    {demande.driver ? `${demande.driver.first_name} ${demande.driver.last_name}` : 'N/A'}
                 </td>
                 <td className="py-6 px-4 border-b border-gray-200">{demande.market?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">{formattedDate}</td>

@@ -1,9 +1,10 @@
 import React from 'react';
 import Table from '../Table/Table';
-import { FaUserPlus } from 'react-icons/fa';
+import { FaUserPlus, FaEye } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
-const FicheDeRouteTable = ({ livraisons, handleAssignDriver }) => {
-  const headers = ['Numero Commande', 'reference', 'Client', 'Market', 'Driver', 'Action'];
+const FicheDeRouteTable = ({ livraisons, handleAssignDriver ,handleViewDetails}) => {
+  const headers = ['Numero Commande', 'Référence', 'Client', 'Market', 'Driver', 'Status', 'Action'];
   const role = localStorage.getItem('role');
 
   const renderRow = (livraison) => (
@@ -15,25 +16,38 @@ const FicheDeRouteTable = ({ livraisons, handleAssignDriver }) => {
       <td className="py-2 px-4 border-b border-gray-200">
         {livraison.driver ? livraison.driver.first_name : 'No driver assigned'}
       </td>
+      <td className="py-2 px-4 border-b border-gray-200">
+        {livraison.status}
+      </td>
       <td className="py-2 px-4 border-b border-gray-200 text-center">
-        <button onClick={() => handleAssignDriver(livraison)}>
-          <FaUserPlus className="text-blue-500 hover:text-blue-700" />
-        </button>
+        {livraison.driver ? (
+          <div className="flex justify-center items-center h-full">
+            <Link to={`/route-sheet/driver/${livraison.driver._id}/date/${livraison.Date}`} className="flex items-center justify-center">
+              <FaEye className="text-blue-500 hover:text-blue-700" size={20} />
+            </Link>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center h-full">
+            <button onClick={() => handleAssignDriver(livraison)} className="flex items-center justify-center">
+              <FaUserPlus className="text-blue-500 hover:text-blue-700" size={20} />
+            </button>
+          </div>
+        )}
       </td>
     </>
   );
-  
 
   return (
     <Table
       headers={headers}
       data={livraisons}
       renderRow={renderRow}
-      handleThirdAction={handleAssignDriver}
       role={role}
-      ThirdIcon={FaUserPlus}
       showModify={false}
       showDelete={false}
+      showThirdAction={true}
+      ThirdIcon={FaEye}
+      handleThirdAction={handleViewDetails}
     />
   );
 };
