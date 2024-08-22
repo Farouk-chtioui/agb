@@ -13,6 +13,9 @@ import Pagination from '../Pagination/Pagination';
 import Dashboard from '../dashboard/Dashboard';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3001');
 
 function Livraison() {
     const [clients, setClients] = useState([]);
@@ -57,7 +60,17 @@ function Livraison() {
 
     useEffect(() => {
         fetchAllData();
-    }, [currentPage, fetchAllData]);
+
+        // Listen for new livraison with status 'En attente'
+        socket.on('newPendingLivraison', (data) => {
+            console.log('Received new pending livraison:', data);
+            setLivraisons((prevLivraisons) => [...prevLivraisons, data]);
+        });
+
+        return () => {
+            socket.off('newPendingLivraison');
+        };
+    }, [fetchAllData]);
 
     const fetchAllClientsData = async () => {
         try {
@@ -210,6 +223,7 @@ function Livraison() {
             }
         }
     };
+
     const handleDelete = async (livraisonId) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer cette livraison?')) {
             try {
@@ -222,7 +236,6 @@ function Livraison() {
             }
         }
     };
-    
 
     const resetForm = () => {
         setNewLivraison({
@@ -247,7 +260,7 @@ function Livraison() {
             <Dashboard />
             <div className="flex-1 container mx-auto p-9 relative mt-20">
                 <ToastContainer />
-                <Search setData={handleSearch} title={"Toutes les livraisons"} />
+                <Search setData={handleSearch} title={"Toutes les livraisons"} name={"Numero"} />
                 <button
                     className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
                     onClick={() => {

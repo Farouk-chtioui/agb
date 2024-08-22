@@ -7,6 +7,7 @@ import {
   fetchAdminData,
   createAdmin,
   deleteAdmin,
+  updateAdmin,
 } from "../../api/adminService";
 import {
   fetchDrivers,
@@ -104,7 +105,7 @@ const Utilisateurs = () => {
                 default:
                     throw new Error('Invalid role');
             }
-            fetchUtilisateursData();  // Refresh the data after deletion
+            fetchUtilisateursData();  
             toast.success('Utilisateur supprimé avec succès!');
         } catch (error) {
             console.error('Error deleting utilisateur', error);
@@ -128,6 +129,7 @@ const Utilisateurs = () => {
     try {
       switch (updatedUtilisateur.role) {
         case 'Admin':
+          await updateAdmin(updatedUtilisateur._id, updatedUtilisateur);
           break;
         case 'Driver':
           await modifyDriver(updatedUtilisateur);

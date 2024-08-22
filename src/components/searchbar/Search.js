@@ -5,7 +5,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faUsers } from '@fortawesome/free-solid-svg-icons'; // Import the icon for "Show All"
 import './search.css';
 
-const Search = ({ setData ,title}) => {
+const Search = ({ setData ,title,name="Nom"}) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearchChange = event => {
@@ -33,7 +33,7 @@ const Search = ({ setData ,title}) => {
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
         <input
           type="text"
-          placeholder="Nom"
+          placeholder={name}
           value={searchTerm}
           onChange={handleSearchChange}
           onKeyPress={handleKeyPress}

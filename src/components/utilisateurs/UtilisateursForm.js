@@ -83,7 +83,6 @@ const UtilisateursForm = ({
       } else {
         await handleAddUtilisateur(updatedUtilisateur);
       }
-      toast.success(isEditMode ? 'Utilisateur modifié avec succès' : 'Utilisateur ajouté avec succès');
       setShowForm(false);
     } catch (error) {
       toast.error('Une erreur est survenue');
@@ -105,7 +104,7 @@ const UtilisateursForm = ({
               <label htmlFor={field.name} className="block text-blue-700 mb-2">{field.label}</label>
               <select
                 name={field.name}
-                value={newUtilisateur[field.name]}
+                value={newUtilisateur[field.name] || ''}  
                 onChange={handleChange}
                 className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
               >
@@ -122,7 +121,7 @@ const UtilisateursForm = ({
             <div className={`form-group col-span-${field.colSpan}`} key={index}>
               <label htmlFor={field.name} className="block text-blue-700 mb-2">{field.label}</label>
               <AddressAutocomplete
-                value={newUtilisateur.address}
+                value={newUtilisateur.address || ''}  // Ensure the value is always a string
                 onChange={handleAddressChange}
               />
             </div>
@@ -134,7 +133,7 @@ const UtilisateursForm = ({
             <input
               type={field.type}
               name={field.name}
-              value={newUtilisateur[field.name]}
+              value={newUtilisateur[field.name] || ''} 
               onChange={handleChange}
               placeholder={field.placeholder}
               className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
