@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { fetchLivraisons, modifyDriver } from '../../api/livraisonService';
+import { findByStatus, modifyDriver } from '../../api/livraisonService';
 import { fetchDrivers } from '../../api/driverService';
 import FicheDeRouteForm from './FicheDeRouteForm';
 import FicheDeRouteTable from './FicheDeRouteTable';  // Correctly importing the table component
@@ -21,17 +21,14 @@ const FicheDeRoute = () => {
 
   const getLivraisons = useCallback(async () => {
     try {
-      const data = await fetchLivraisons(currentPage);
-      const filteredLivraisons = data.livraisons.filter(
-        l => !l.driver || l.status === 'En attente'
-      );
-      setLivraisons(filteredLivraisons);
-      setTotalPages(Math.ceil(data.total / 10)); 
+      const response = await findByStatus('En attente');
+      const pendingLivraisons = response.length > 0 ? response : [];
+      setLivraisons(pendingLivraisons);
+      setTotalPages(Math.ceil(pendingLivraisons.length / 10)); 
     } catch (error) {
       toast.error('Error fetching livraisons');
     }
   }, [currentPage]);
-  
 
   const getDrivers = useCallback(async () => {
     try {
@@ -85,7 +82,6 @@ const FicheDeRoute = () => {
     }
   };
   
-
   return (
     <div className="flex">
       <Dashboard />

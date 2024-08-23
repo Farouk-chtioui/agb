@@ -35,7 +35,6 @@ const Chauffeurs = () => {
       setDrivers(drivers);
       setFilteredDrivers(drivers);
       setTotalPages(totalPages);
-      toast.success('Chauffeurs récupérés avec succès!');
     } catch (error) {
       console.error('Error fetching drivers', error);
       toast.error('Erreur lors de la récupération des chauffeurs.');

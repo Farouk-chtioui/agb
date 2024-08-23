@@ -221,56 +221,59 @@ const Utilisateurs = () => {
   }, []);
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <Dashboard />
-      <div className="flex-1 container mx-auto p-9 relative mt-20">
-        <ToastContainer />
-        <Search setData={handleSearch} title={"Tous les utilisateurs"} />
-        <button
-          className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
-          onClick={() => {
-            setShowForm(true);
-            setIsEditMode(false);
-            setNewUtilisateur({
-              role: 'Market',
-              first_name: '',
-              last_name: '',
-              email: '',
-              password: '',
-              address: '',
-              codePostal: '',
-              numberMa: '',
-              numberMi: ''
-            });
-          }}
-        >
-          Ajouter un utilisateur
-        </button>
-        {showForm && (
-          <UtilisateursForm
-            newUtilisateur={newUtilisateur}
-            handleChange={handleChange}
-            handleAddUtilisateur={handleAddUtilisateur}
-            handleEditUtilisateur={handleEditUtilisateur}
-            setShowForm={setShowForm}
-            isEditMode={isEditMode}
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
+        <div className="container mx-auto p-9 relative mt-20">
+          <ToastContainer />
+          <Search setData={handleSearch} title={"Tous les utilisateurs"} />
+          <button
+            className="custom-color2 text-white px-4 py-2 rounded mb-4 absolute top-0 right-0 mt-4 mr-4 shadow hover:bg-blue-600 transition"
+            onClick={() => {
+              setShowForm(true);
+              setIsEditMode(false);
+              setNewUtilisateur({
+                role: 'Market',
+                first_name: '',
+                last_name: '',
+                email: '',
+                password: '',
+                address: '',
+                codePostal: '',
+                numberMa: '',
+                numberMi: ''
+              });
+            }}
+          >
+            Ajouter un utilisateur
+          </button>
+          {showForm && (
+            <UtilisateursForm
+              newUtilisateur={newUtilisateur}
+              handleChange={handleChange}
+              handleAddUtilisateur={handleAddUtilisateur}
+              handleEditUtilisateur={handleEditUtilisateur}
+              setShowForm={setShowForm}
+              isEditMode={isEditMode}
+            />
+          )}
+          <Utilisateurstable
+            utilisateurs={isSearchActive ? filteredUtilisateurs : utilisateurs}
+            handleDelete={handleDelete}
+            handleModify={handleModify}
           />
-        )}
-        <Utilisateurstable
-          utilisateurs={isSearchActive ? filteredUtilisateurs : utilisateurs}
-          handleDelete={handleDelete}
-          handleModify={handleModify}
-        />
-        {!isSearchActive && (
-          <Pagination
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPages={totalPages}
-          />
-        )}
+          {!isSearchActive && (
+            <Pagination
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
+
 };
 
 export default Utilisateurs;

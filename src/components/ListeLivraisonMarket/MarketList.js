@@ -49,24 +49,27 @@ function MarketList() {
     };
 
     return (
-        <div className="flex">
+        <div className="flex h-screen">
             <Dashboard />
-            <div className="flex-1 container mx-auto p-9 relative mt-20">
-                <ToastContainer />
-                <Search setData={handleSearch} title={"Commandes par Magasin"} />
-                <MarketListTable
-                    livraisons={isSearchActive ? filteredLivraisons : livraisons}
-                />
-                {!isSearchActive && (
-                    <Pagination
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        totalPages={totalPages}
+            <div className="flex-1 flex flex-col h-screen overflow-y-auto">
+                <div className="container mx-auto p-9 relative mt-20">
+                    <ToastContainer />
+                    <Search setData={handleSearch} title={"Commandes par Magasin"} />
+                    <MarketListTable
+                        livraisons={isSearchActive ? filteredLivraisons : livraisons}
                     />
-                )}
+                    {!isSearchActive && (
+                        <Pagination
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                            totalPages={totalPages}
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );
+    
 }
 
 export default MarketList;

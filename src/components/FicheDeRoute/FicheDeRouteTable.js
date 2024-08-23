@@ -4,7 +4,7 @@ import { FaUserPlus, FaEye } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const FicheDeRouteTable = ({ livraisons, handleAssignDriver ,handleViewDetails}) => {
-  const headers = ['Numero Commande', 'Référence', 'Client', 'Market', 'Driver', 'Status', 'Action'];
+  const headers = ['Numero Commande', 'Référence', 'Client', 'Driver', 'Status', 'Date', 'Action'];
   const role = localStorage.getItem('role');
 
   const renderRow = (livraison) => (
@@ -12,13 +12,14 @@ const FicheDeRouteTable = ({ livraisons, handleAssignDriver ,handleViewDetails})
       <td className="py-2 px-4 border-b border-gray-200">{livraison.NumeroCommande}</td>
       <td className="py-2 px-4 border-b border-gray-200">{livraison.reference}</td>
       <td className="py-2 px-4 border-b border-gray-200">{livraison.client ? livraison.client.first_name : 'No client info'}</td>
-      <td className="py-2 px-4 border-b border-gray-200">{livraison.market ? livraison.market.first_name : 'No market info'}</td>
       <td className="py-2 px-4 border-b border-gray-200">
         {livraison.driver ? livraison.driver.first_name : 'No driver assigned'}
       </td>
       <td className="py-2 px-4 border-b border-gray-200">
         {livraison.status}
       </td>
+      <td className="py-2 px-4 border-b border-gray-200">{livraison.Date ? new Date(livraison.Date).toLocaleDateString() : 'No date info'}</td>
+
       <td className="py-2 px-4 border-b border-gray-200 text-center">
         {livraison.driver ? (
           <div className="flex justify-center items-center h-full">
@@ -34,6 +35,7 @@ const FicheDeRouteTable = ({ livraisons, handleAssignDriver ,handleViewDetails})
           </div>
         )}
       </td>
+      
     </>
   );
 
