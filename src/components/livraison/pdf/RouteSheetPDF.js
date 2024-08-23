@@ -130,7 +130,8 @@ const RouteSheetDocument = ({ data }) => {
                             <Text style={styles.tableCell}>Esp</Text>
                             <Text style={styles.tableCell}>Aut</Text>
                             <Text style={styles.tableCell}>A Fact</Text>
-                            <Text style={[styles.tableCell, styles.lastTableCell]}>Fact Sup</Text>
+                            <Text style={styles.tableCell}>Fact Sup</Text>
+                            <Text style={[styles.tableCell, styles.lastTableCell]}>Cde Fact</Text>
                         </View>
 
                         {data.map((delivery, index) => (
@@ -143,6 +144,7 @@ const RouteSheetDocument = ({ data }) => {
                                 <Text style={styles.tableCell}>{delivery.client.first_name} {delivery.client.last_name}</Text>
                                 <Text style={styles.tableCell}>{delivery.Observations}</Text>
                                 <Text style={styles.tableCell}></Text> {/* Empty columns for checkmarks */}
+                                <Text style={styles.tableCell}></Text>
                                 <Text style={styles.tableCell}></Text>
                                 <Text style={styles.tableCell}></Text>
                                 <Text style={styles.tableCell}></Text>

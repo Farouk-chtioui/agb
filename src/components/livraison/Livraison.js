@@ -157,16 +157,7 @@ function Livraison() {
         }
     };
 
-    const handleEditLivraison = async (livraisonData) => {
-        try {
-            fetchLivraisonsData();
-            resetForm();
-            toast.success('Livraison modifiée avec succès!');
-        } catch (error) {
-            console.error('Error editing livraison', error);
-            toast.error('Erreur lors de la modification de la livraison.');
-        }
-    };
+
 
     const handleModify = (livraison) => {
         setCurrentLivraison(livraison);
@@ -278,7 +269,6 @@ function Livraison() {
                             setNewLivraison={setNewLivraison}
                             handleChange={handleChange}
                             handleAddLivraison={handleAddLivraison}
-                            handleEditLivraison={handleEditLivraison}
                             setShowForm={setShowForm}
                             isEditMode={isEditMode}
                             clients={clients}

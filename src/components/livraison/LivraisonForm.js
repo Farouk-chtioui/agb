@@ -21,7 +21,7 @@ const LivraisonForm = ({
     drivers,
     secteurs = [],
     currentLivraison,
-    plans // Pass plans as a prop
+    plans
 }) => {
     const [productList, setProductList] = useState(newLivraison.products.length > 0 ? newLivraison.products : [{ productId: '', quantity: 1, Dépôt: false, Montage: false, Install: false }]);
     const [currentStep, setCurrentStep] = useState(0);
@@ -322,7 +322,7 @@ const LivraisonForm = ({
                             <div className="form-group">
                                 <label className="block text-blue-700 mb-2" htmlFor="client">Client</label>
                                 <select
-                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                    className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600 max-h-48 overflow-y-auto"
                                     name="client"
                                     value={newLivraison.client || ''}
                                     onChange={handleChange}
@@ -349,7 +349,7 @@ const LivraisonForm = ({
                                     <div key={index} className="mb-4">
                                         <label className="block text-blue-700 mb-2" htmlFor={`product-${index}`}>Produit</label>
                                         <select
-                                            className="border rounded-lg w-full py-3 px-4 mb-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                            className="border rounded-lg w-full py-3 px-4 mb-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600 max-h-48 overflow-y-auto"
                                             name={`product-${index}`}
                                             value={product.productId}
                                             onChange={(e) => handleProductChange(index, 'productId', e.target.value)}
@@ -407,7 +407,7 @@ const LivraisonForm = ({
                                 <div className="form-group">
                                     <label className="block text-blue-700 mb-2" htmlFor="market">Market</label>
                                     <select
-                                        className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                        className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600 max-h-48 overflow-y-auto"
                                         name="market"
                                         value={newLivraison.market || ''}
                                         onChange={handleChange}
@@ -423,7 +423,7 @@ const LivraisonForm = ({
                                 <div className="form-group">
                                     <label className="block text-blue-700 mb-2" htmlFor="driver">Driver</label>
                                     <select
-                                        className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+                                        className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600 max-h-48 overflow-y-auto"
                                         name="driver"
                                         value={newLivraison.driver || ''}
                                         onChange={handleChange}

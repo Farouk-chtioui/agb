@@ -1,5 +1,6 @@
 import React from 'react';
 import Table from '../Table/Table';
+import { FaEye } from 'react-icons/fa'; // Import the Eye icon
 import { Link } from 'react-router-dom';
 
 const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
@@ -28,7 +29,9 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
         return (
             <>
                 <td className="py-6 px-4 border-b border-gray-200">
-                    <Link to={`/invoice/${livraison.NumeroCommande}`}>{"#" + livraison.NumeroCommande}</Link>
+                    <Link to={`/invoice/${livraison.NumeroCommande}`} className="text-blue-500 hover:text-blue-700">
+                        {"#" + livraison.NumeroCommande}
+                    </Link>
                 </td>
                 <td className="py-6 px-4 border-b border-gray-200">{livraison.client?.first_name ?? 'N/A'}</td>
                 <td className="py-6 px-4 border-b border-gray-200">{livraison.driver?.first_name ?? 'N/A'}</td>
@@ -44,6 +47,11 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
         );
     };
 
+    const handleThirdAction = (livraison) => {
+        // Navigate to the invoice page
+        window.location.href = `/invoice/${livraison.NumeroCommande}`;
+    };
+
     return (
         <div className="overflow-x-auto">
             <Table
@@ -52,7 +60,11 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
                 renderRow={renderRow}
                 handleDelete={handleDelete}
                 handleModify={handleModify}
+                showModify={false}
                 role={role}
+                ThirdIcon={FaEye} 
+                showThirdAction={true} 
+                handleThirdAction={handleThirdAction} 
             />
         </div>
     );
