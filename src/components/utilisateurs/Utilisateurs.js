@@ -4,23 +4,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import UtilisateursForm from "./UtilisateursForm";
 import Utilisateurstable from "./Utilisateurstable";
 import {
-  fetchAdminData,
   createAdmin,
   deleteAdmin,
   updateAdmin,
 } from "../../api/adminService";
 import {
-  fetchDrivers,
   addDriver,
   modifyDriver,
   deleteDriver,
 } from "../../api/driverService";
 import {
-  fetchMagasins,
   addMagasin,
   modifyMagasin,
   deleteMagasin,
 } from "../../api/marketService";
+import { fetchUsers, searchUsers } from "../../api/UsersService"; // Assuming this is the path to your new functions
 import Pagination from "../Pagination/Pagination";
 import Dashboard from "../dashboard/Dashboard";
 import Search from "../searchbar/Search";
@@ -51,32 +49,16 @@ const Utilisateurs = () => {
 
   const fetchUtilisateursData = async () => {
     try {
-      const [adminData, driverData, marketData] = await Promise.all([
-        fetchAdminData(),
-        fetchDrivers(currentPage),
-        fetchMagasins(currentPage),
-      ]);
-
-      const normalizedAdmins = (adminData.admins || adminData || []).map(admin => ({
-        ...admin,
-        role: 'Admin',
+      const data = await fetchUsers(currentPage);
+      
+      const normalizedUsers = data.users.map(user => ({
+        ...user,
+        role: user.role || 'User', // Adjust this if your data has roles or any other normalization needed
       }));
 
-      const normalizedDrivers = (driverData.drivers || driverData || []).map(driver => ({
-        ...driver,
-        role: 'Driver',
-      }));
-
-      const normalizedMarkets = (marketData.markets || marketData || []).map(market => ({
-        ...market,
-        role: 'Market',
-      }));
-
-      const combinedData = [...normalizedAdmins, ...normalizedDrivers, ...normalizedMarkets];
-
-      setUtilisateurs(combinedData);
-      setFilteredUtilisateurs(combinedData);
-      setTotalPages(Math.max(adminData.totalPages || 1, driverData.totalPages || 1, marketData.totalPages || 1));
+      setUtilisateurs(normalizedUsers);
+      setFilteredUtilisateurs(normalizedUsers);
+      setTotalPages(data.totalPages || 1); // Adjust this if your data includes total pages
     } catch (error) {
       console.error('Error fetching utilisateurs', error);
       toast.error('Erreur lors du chargement des utilisateurs');
@@ -114,11 +96,6 @@ const Utilisateurs = () => {
     }
 };
 
-
-
-
-
-
   const handleModify = (utilisateur) => {
     setNewUtilisateur(utilisateur);
     setIsEditMode(true);
@@ -152,14 +129,13 @@ const Utilisateurs = () => {
   const handleSearch = async (searchTerm) => {
     if (searchTerm) {
       setIsSearchActive(true);
-      setFilteredUtilisateurs(utilisateurs.filter(u => 
-        (u.first_name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-        (u.last_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (u.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (u.name || '').toLowerCase().includes(searchTerm.toLowerCase())||
-        (u.role || '').toLowerCase().includes(searchTerm.toLowerCase())
-        
-      ));
+      try {
+        const data = await searchUsers(searchTerm);
+        setFilteredUtilisateurs(data.users);
+      } catch (error) {
+        console.error('Error searching utilisateurs', error);
+        toast.error('Erreur lors de la recherche des utilisateurs');
+      }
     } else {
       setIsSearchActive(false);
       setFilteredUtilisateurs(utilisateurs);
