@@ -50,7 +50,6 @@ const Utilisateurs = () => {
   const fetchUtilisateursData = async () => {
     try {
       const data = await fetchUsers(currentPage);
-      console.log('Fetched Data:', data); // Add this line
       
       const normalizedUsers = data.users.map(user => ({
         ...user,

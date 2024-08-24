@@ -23,10 +23,9 @@ export const deleteMagasin = createAsyncThunk('magasins/deleteMagasin', async (i
 });
 
 export const modifyMagasin = createAsyncThunk('magasins/modifyMagasin', async ({ id, data }) => {
-    const response = await modifyMagasinAPI(id, data); // Ensure id and data are passed correctly here
-    return response;
+  const response = await modifyMagasinAPI(id, data); // Ensure id and data are passed correctly here
+  return response;
 });
-
 
 export const searchMagasins = createAsyncThunk('magasins/searchMagasins', async (searchTerm) => {
   const response = await searchMagasinsAPI(searchTerm);
@@ -72,8 +71,13 @@ const magasinSlice = createSlice({
         }
       })
       .addCase(searchMagasins.fulfilled, (state, action) => {
-        state.items = action.payload.markets; 
-        state.total = action.payload.total;
+        state.items = action.payload; 
+        state.total = action.payload.length;
+      })
+      
+      .addCase(searchMagasins.rejected, (state, action) => {
+        console.error('Search failed:', action.error.message);
+        state.error = action.error.message;
       });
   },
 });

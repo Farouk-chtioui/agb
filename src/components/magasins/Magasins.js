@@ -51,30 +51,44 @@ const Magasins = () => {
     setNewMagasin({ ...magasin });
     setIsEditMode(true);
     setShowForm(true);
-};
-
+  };
 
   const handleEditMagasin = (e) => {
     e.preventDefault();
-    dispatch(modifyMagasin(newMagasin));
-    setShowForm(false);
-    setIsEditMode(false);
-    setCurrentMagasin(null);
-    setNewMagasin({
-      first_name: '',
-      last_name: '',
-      email: '',
-      password: '',
-      address: '',
-      numberMa: '',
-      numberMi: ''
-    });
+    dispatch(modifyMagasin(newMagasin))
+      .unwrap()
+      .then(() => {
+        setShowForm(false);
+        setIsEditMode(false);
+        setCurrentMagasin(null);
+        setNewMagasin({
+          first_name: '',
+          last_name: '',
+          email: '',
+          password: '',
+          address: '',
+          numberMa: '',
+          numberMi: ''
+        });
+      })
+      .catch((error) => {
+        console.error('Failed to edit magasin:', error);
+        toast.error('Failed to edit magasin');
+      });
   };
 
   const handleAddMagasin = (e) => {
     e.preventDefault();
-    dispatch(addMagasin(newMagasin));
-    setShowForm(false);
+    dispatch(addMagasin(newMagasin))
+      .unwrap()
+      .then(() => {
+        setShowForm(false);
+        toast.success('Magasin ajouté avec succès!');
+      })
+      .catch((error) => {
+        console.error('Failed to add magasin:', error);
+        toast.error('Failed to add magasin');
+      });
   };
 
   const handleChange = useCallback((e) => {
@@ -90,11 +104,18 @@ const Magasins = () => {
       setIsSearchActive(false);
       dispatch(fetchMagasins(currentPage));
     } else {
-      dispatch(searchMagasins(searchTerm));
-      setIsSearchActive(true);
+      dispatch(searchMagasins(searchTerm))
+        .unwrap()
+        .then((data) => {
+          console.log('Search success:', data);
+          setIsSearchActive(true);
+        })
+        .catch((error) => {
+          console.error('Search failed:', error);
+          toast.error('Search failed');
+        });
     }
   };
-
 
   return (
     <div className="flex h-screen">

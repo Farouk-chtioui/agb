@@ -42,8 +42,7 @@ export const deleteMagasin = async (id) => {
 export const modifyMagasin = async (id, updatedMarket) => {
   try {
       const token = getToken();
-      console.log('Using token:', token);
-      console.log('Modifying market with ID:', id); // Debugging the ID
+
 
       const response = await axios.patch(`${API_URL}/market/${id}`, updatedMarket, {
           headers: {
@@ -57,16 +56,19 @@ export const modifyMagasin = async (id, updatedMarket) => {
   }
 };
 
-
-
 export const searchMagasins = async (searchTerm) => {
   const token = getToken();
-  const response = await axios.get(`${API_URL}/market/search/${searchTerm}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}/market/search/${searchTerm}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error during search:', error.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const decreaseMarketTotals = async (id, period) => {
@@ -74,7 +76,7 @@ export const decreaseMarketTotals = async (id, period) => {
     const token = getToken();
     const response = await axios.patch(
       `${API_URL}/market/${id}/decrease/${period}`,
-      null, // Pass null or an empty object since we're not sending a body
+      null, 
       {
         headers: {
           Authorization: `Bearer ${token}`,

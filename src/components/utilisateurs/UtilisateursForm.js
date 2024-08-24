@@ -13,33 +13,36 @@ const UtilisateursForm = ({
   isEditMode,
 }) => {
   const [fields, setFields] = useState([]);
-  const [addressData, setAddressData] = useState({ address: '', codePostal: '' });
+  const [addressData, setAddressData] = useState({
+    address: newUtilisateur.address || '', 
+    codePostal: newUtilisateur.codePostal || ''
+  });
 
   useEffect(() => {
     const getFieldsByRole = (role) => {
       switch (role) {
         case 'Admin':
           return [
-            { name: 'name', label: 'Name', type: 'text', placeholder: 'Name', colSpan: 1 },
-            { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 1 },
-            { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1 },
+            { name: 'name', label: 'Name', type: 'text', placeholder: 'Name', colSpan: 1, value: newUtilisateur.name || '' },
+            { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 1, value: newUtilisateur.email || '' },
+            { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1, value: '' },
           ];
         case 'Market':
           return [
-            { name: 'first_name', label: 'First Name', type: 'text', placeholder: 'First Name', colSpan: 1 },
-            { name: 'last_name', label: 'Last Name', type: 'text', placeholder: 'Last Name', colSpan: 1 },
-            { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 1 },
-            { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1 },
-            { name: 'address', label: 'Address', type: 'autocomplete', placeholder: 'Address', colSpan: 2 },
-            { name: 'numberMa', label: 'Number MA', type: 'text', placeholder: 'Number MA', colSpan: 1 },
-            { name: 'numberMi', label: 'Number MI', type: 'text', placeholder: 'Number MI', colSpan: 1 },
+            { name: 'first_name', label: 'First Name', type: 'text', placeholder: 'First Name', colSpan: 1, value: newUtilisateur.first_name || '' },
+            { name: 'last_name', label: 'Last Name', type: 'text', placeholder: 'Last Name', colSpan: 1, value: newUtilisateur.last_name || '' },
+            { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 1, value: newUtilisateur.email || '' },
+            { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1, value: '' },
+            { name: 'address', label: 'Address', type: 'autocomplete', placeholder: 'Address', colSpan: 2, value: addressData.address },
+            { name: 'numberMa', label: 'Number MA', type: 'text', placeholder: 'Number MA', colSpan: 1, value: newUtilisateur.numberMa || '' },
+            { name: 'numberMi', label: 'Number MI', type: 'text', placeholder: 'Number MI', colSpan: 1, value: newUtilisateur.numberMi || '' },
           ];
         case 'Driver':
           return [
-            { name: 'first_name', label: 'First Name', type: 'text', placeholder: 'First Name', colSpan: 1 },
-            { name: 'last_name', label: 'Last Name', type: 'text', placeholder: 'Last Name', colSpan: 1 },
-            { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 1 },
-            { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1 },
+            { name: 'first_name', label: 'First Name', type: 'text', placeholder: 'First Name', colSpan: 1, value: newUtilisateur.first_name || '' },
+            { name: 'last_name', label: 'Last Name', type: 'text', placeholder: 'Last Name', colSpan: 1, value: newUtilisateur.last_name || '' },
+            { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 1, value: newUtilisateur.email || '' },
+            { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1, value: '' },
           ];
         default:
           return [];
@@ -47,10 +50,10 @@ const UtilisateursForm = ({
     };
 
     setFields([
-      { name: 'role', label: 'Rôle', type: 'select', options: ['Admin', 'Market', 'Driver'], colSpan: 1 },
+      { name: 'role', label: 'Rôle', type: 'select', options: ['Admin', 'Market', 'Driver'], colSpan: 1, value: newUtilisateur.role || '' },
       ...getFieldsByRole(newUtilisateur.role || 'Market')
     ]);
-  }, [newUtilisateur.role]);
+  }, [newUtilisateur.role, newUtilisateur, addressData.address]);
 
   const handleAddressChange = ({ address, codePostal }) => {
     setAddressData({ address, codePostal });
@@ -104,7 +107,7 @@ const UtilisateursForm = ({
               <label htmlFor={field.name} className="block text-blue-700 mb-2">{field.label}</label>
               <select
                 name={field.name}
-                value={newUtilisateur[field.name] || ''}  
+                value={field.value || ''}  
                 onChange={handleChange}
                 className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
               >
@@ -121,7 +124,7 @@ const UtilisateursForm = ({
             <div className={`form-group col-span-${field.colSpan}`} key={index}>
               <label htmlFor={field.name} className="block text-blue-700 mb-2">{field.label}</label>
               <AddressAutocomplete
-                value={newUtilisateur.address || ''}  // Ensure the value is always a string
+                value={addressData.address || ''}  // Ensure the value is always a string
                 onChange={handleAddressChange}
               />
             </div>
@@ -133,7 +136,7 @@ const UtilisateursForm = ({
             <input
               type={field.type}
               name={field.name}
-              value={newUtilisateur[field.name] || ''} 
+              value={field.value || ''} 
               onChange={handleChange}
               placeholder={field.placeholder}
               className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"

@@ -9,7 +9,7 @@ const Utilisateurstable = React.memo(({
   handleDelete,
   handleModify,
 }) => {
-  const headers = ['Display Name', 'Email', 'Role', 'Actions'];
+  const headers = ['Nom', 'Email', 'Role', 'Actions'];
   const role = localStorage.getItem('role');
 
   const normalizedUtilisateurs = useMemo(() => {
