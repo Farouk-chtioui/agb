@@ -16,17 +16,18 @@ export async function fetchUsers(page=1){
     }
   }
   
-export async function searchUsers(searchTerm){
-  const token=localStorage.getItem('token');
-  try {
-    const response=await axios.get(`${API_URL}/users/search?searchTerm=${searchTerm}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
-  }catch(error){
-    console.error('Error searching users', error);
-    throw error;
+  export async function searchUsers(searchTerm) {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get(`${API_URL}/users/search`, {
+        params: { term: searchTerm },  // Correct query parameter
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error searching users', error);
+      throw error;
+    }
   }
-}

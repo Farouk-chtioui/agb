@@ -13,12 +13,15 @@ const Utilisateurstable = React.memo(({
   const role = localStorage.getItem('role');
 
   const normalizedUtilisateurs = useMemo(() => {
-    return utilisateurs.map(utilisateur => ({
-      _id: utilisateur._doc._id,
-      displayName: utilisateur.displayName || 'N/A',
-      email: utilisateur._doc.email || 'N/A',
-      role: utilisateur.role || 'N/A',
-    }));
+    return utilisateurs.map(utilisateur => {
+      const _doc = utilisateur && utilisateur._doc ? utilisateur._doc : {};  // Safely access _doc
+      return {
+        _id: _doc._id || 'N/A',
+        displayName: utilisateur && utilisateur.displayName ? utilisateur.displayName : 'Unnamed User',
+        email: _doc.email || 'No Email Provided',
+        role: utilisateur && utilisateur.role ? utilisateur.role : 'No Role',
+      };
+    });
   }, [utilisateurs]);
 
   const renderRow = (utilisateur) => {
@@ -35,7 +38,7 @@ const Utilisateurstable = React.memo(({
             <FaRegEdit size={18} />
           </button>
           <button
-            className="text-red-500 hover:text-red-700 transition mx-2"
+            className="text-blue-500 hover:text-blue-700 transition mx-2"
             onClick={() => handleDelete(utilisateur)}
           >
             <FaRegTrashCan size={18} />

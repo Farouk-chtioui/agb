@@ -50,21 +50,23 @@ const Utilisateurs = () => {
   const fetchUtilisateursData = async () => {
     try {
       const data = await fetchUsers(currentPage);
+      console.log('Fetched Data:', data); // Add this line
       
       const normalizedUsers = data.users.map(user => ({
         ...user,
-        role: user.role || 'User', // Adjust this if your data has roles or any other normalization needed
+        role: user.role || 'User',
       }));
-
+  
       setUtilisateurs(normalizedUsers);
       setFilteredUtilisateurs(normalizedUsers);
-      setTotalPages(data.totalPages || 1); // Adjust this if your data includes total pages
+      setTotalPages(data.totalPages || 1);
     } catch (error) {
       console.error('Error fetching utilisateurs', error);
       toast.error('Erreur lors du chargement des utilisateurs');
     }
   };
-
+  
+  
   const handleDelete = async (utilisateur) => {
     if (!utilisateur || !utilisateur._id || !utilisateur.role) {
         console.error("Utilisateur _id or role is undefined:", utilisateur);
@@ -127,20 +129,38 @@ const Utilisateurs = () => {
   };
 
   const handleSearch = async (searchTerm) => {
-    if (searchTerm) {
+    if (searchTerm && searchTerm.trim()) {
       setIsSearchActive(true);
       try {
-        const data = await searchUsers(searchTerm);
-        setFilteredUtilisateurs(data.users);
+        console.log('Searching for:', searchTerm); // Debugging: Check what we're searching for
+        const data = await searchUsers(searchTerm.trim());
+  
+        console.log('Search result:', data); // Debugging: Check the result from the backend
+  
+        // Safely map through the response to extract user data
+        const users = data.map(item => {
+          const _doc = item && item._doc ? item._doc : {};  // Safely access _doc, default to empty object if undefined
+          return {
+            _id: _doc._id || 'N/A',
+            displayName: item && item.displayName ? item.displayName : 'Unnamed User',
+            email: _doc.email || 'No Email Provided',
+            role: item && item.role ? item.role : 'No Role',
+          };
+        });
+  
+        console.log('Filtered users set:', users); // Debugging: Confirm setting state
+        setFilteredUtilisateurs(users);
       } catch (error) {
         console.error('Error searching utilisateurs', error);
         toast.error('Erreur lors de la recherche des utilisateurs');
+        setFilteredUtilisateurs([]);
       }
     } else {
       setIsSearchActive(false);
       setFilteredUtilisateurs(utilisateurs);
     }
   };
+  
 
   const handleAddUtilisateur = async (newUtilisateur) => {
     try {
@@ -249,7 +269,6 @@ const Utilisateurs = () => {
       </div>
     </div>
   );
-
 };
 
 export default Utilisateurs;
