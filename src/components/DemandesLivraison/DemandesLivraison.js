@@ -4,7 +4,7 @@ import ClientForm from '../clients/ClientForm';
 import { fetchAllClients, addClient } from '../../api/clientService';
 import { fetchProductsNoPage } from '../../api/productService';
 import { fetchDrivers } from '../../api/driverService';
-import { fetchSectures } from '../../api/sectureService';
+import { fetchallSectures } from '../../api/sectureService';
 import { fetchPlans, decreasePlanTotals } from '../../api/plansService';
 import { addLivraison } from '../../api/livraisonService';
 import { decreaseMarketTotals } from '../../api/marketService';
@@ -41,7 +41,7 @@ const DemandesLivraison = () => {
                     fetchAllClients(),
                     fetchProductsNoPage(),
                     fetchDrivers(),
-                    fetchSectures(),
+                    fetchallSectures(),
                     fetchPlans()
                 ]);
 

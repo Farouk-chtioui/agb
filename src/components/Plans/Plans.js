@@ -4,7 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { format, parseISO } from 'date-fns';
 import { fetchPlans, deletePlan, addPlan, modifyPlan } from '../../api/plansService';
 import { fetchMagasins } from '../../api/marketService';
-import { fetchSectures } from '../../api/sectureService';
+import { fetchallSectures } from '../../api/sectureService';
 import PlanForm from './PlansForm';
 import Dashboard from '../dashboard/Dashboard';
 import Search from '../searchbar/Search';
@@ -19,7 +19,6 @@ const Plans = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState({
     Date: '',
-    market: '',
     secteurMatinal: [],
     secteurApresMidi: [],
     totalMatin: '',
@@ -41,7 +40,7 @@ const Plans = () => {
       const [plansData, marketsData, secteursData] = await Promise.all([
         fetchPlans(),
         fetchMagasins(),
-        fetchSectures(),
+        fetchallSectures(),
       ]);
       setPlans(plansData);
       console.log('Markets Data:', marketsData); // Add this line to log markets data
@@ -64,7 +63,6 @@ const Plans = () => {
     } else {
       setSelectedPlan({
         Date: formattedDate,
-        market: '',
         secteurMatinal: [],
         secteurApresMidi: [],
         totalMatin: '',
@@ -153,7 +151,6 @@ const Plans = () => {
     setShowForm(false);
     setSelectedPlan({
       Date: '',
-      market: '',
       secteurMatinal: [],
       secteurApresMidi: [],
       totalMatin: '',

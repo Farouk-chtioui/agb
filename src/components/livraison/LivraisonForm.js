@@ -125,14 +125,12 @@ const LivraisonForm = ({
             }
         });
 
-        // Set status based on checks
         if (isClientCodePostalInPlans) {
             newLivraison.status = 'À la livraison';
         } else {
             newLivraison.status = 'En attente';
         }
 
-        // Proceed with the rest of the form submission logic
         try {
             const market = markets.find(market => market._id === newLivraison.market);
             const client = clients.find(client => client._id === newLivraison.client);

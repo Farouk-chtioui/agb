@@ -4,7 +4,7 @@ import { fetchAllDrivers } from '../../api/driverService';
 import { fetchAllMarkets, decreaseMarketTotals } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
 import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison } from '../../api/livraisonService';
-import { fetchSectures } from '../../api/sectureService';
+import { fetchallSectures } from '../../api/sectureService';
 import { fetchPlans, decreasePlanTotals } from '../../api/plansService';
 import LivraisonForm from './LivraisonForm';
 import LivraisonTable from './LivraisonTable';
@@ -63,7 +63,6 @@ function Livraison() {
     useEffect(() => {
         fetchAllData();
     
-        // Listen for new livraison with status 'En attente'
         socket.on('newPendingLivraison', (data) => {
             console.log('Received new pending livraison:', data);
             setLivraisons((prevLivraisons) => [...prevLivraisons, data]);
@@ -74,7 +73,6 @@ function Livraison() {
         };
     }, [fetchAllData]);
 
-    // Fetch clients
     const fetchAllClientsData = async () => {
         try {
             const data = await fetchAllClients();
@@ -84,7 +82,6 @@ function Livraison() {
         }
     };
 
-    // Fetch drivers
     const fetchDriversData = async () => {
         try {
             const data = await fetchAllDrivers();
@@ -95,7 +92,6 @@ function Livraison() {
         }
     };
 
-    // Fetch products
     const fetchProductsData = async () => {
         try {
             const data = await fetchProductsNoPage();
@@ -105,7 +101,6 @@ function Livraison() {
         }
     };
 
-    // Fetch markets
     const fetchMarketsData = async () => {
         try {
             const data = await fetchAllMarkets();
@@ -116,7 +111,6 @@ function Livraison() {
         }
     };
 
-    // Fetch livraisons
     const fetchLivraisonsData = async () => {
         try {
             const { livraisons, totalPages } = await fetchLivraisons(currentPage);
@@ -128,17 +122,15 @@ function Livraison() {
         }
     };
 
-    // Fetch secteurs
     const fetchSecteursData = async () => {
         try {
-            const data = await fetchSectures();
+            const data = await fetchallSectures();
             setSecteurs(data);
         } catch (error) {
             console.error('Error fetching secteurs', error);
         }
     };
 
-    // Fetch plans
     const fetchPlansData = async () => {
         try {
             const data = await fetchPlans();
@@ -154,8 +146,8 @@ function Livraison() {
                 livraisonData.status = 'En attente';
             }
     
-            await addLivraison(livraisonData); // Add the livraison via API
-            fetchLivraisonsData(); // Refresh the list of livraisons
+            await addLivraison(livraisonData); 
+            fetchLivraisonsData(); 
             resetForm();
             toast.success('Livraison ajoutée avec succès!');
     
@@ -257,7 +249,7 @@ function Livraison() {
             market: '',
             driver: '',
             price: '',
-            distance: 0 // Reset distance
+            distance: 0 
         });
         setIsEditMode(false);
         setCurrentLivraison(null);

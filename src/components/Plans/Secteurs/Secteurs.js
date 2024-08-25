@@ -10,6 +10,7 @@ const Secture = () => {
   const [sectures, setSectures] = useState([]);
   const [filteredSectures, setFilteredSectures] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentSecture, setCurrentSecture] = useState({ name: '', codesPostaux: [] });
@@ -22,8 +23,9 @@ const Secture = () => {
   const fetchSecturesData = async () => {
     try {
       const data = await fetchSectures(currentPage);
-      setSectures(data);
-      setFilteredSectures(data);
+      setSectures(data.secteurs);
+      setFilteredSectures(data.secteurs);
+      setTotalPages(data.totalPages);
     } catch (error) {
       console.error('Error fetching sectures', error);
     }
@@ -109,7 +111,7 @@ const Secture = () => {
             handleDelete={handleDelete}
             handleModify={handleModify}
           />
-          {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+          {!isSearchActive && <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />}
         </div>
       </div>
     </div>

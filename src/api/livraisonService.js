@@ -78,7 +78,6 @@ export async function deleteLivraison(id) {
 
 export const updateStatus = async (id, status) => {
     try {
-        console.log('Updating status for livraison with ID:', id); // Log the ID for debugging
         const response = await axios.patch(`${API_URL}/livraison/${id}/status`, { status });
         return response.data;
     } catch (error) {
@@ -90,8 +89,7 @@ export const updateStatus = async (id, status) => {
 export async function pendingCount() {
     try {
         const response = await axios.get(`${API_URL}/livraison/pending/count`);
-        console.log('API Response for pending count:', response.data); // Ensure this logs the correct count
-        return response.data; // Ensure this includes a `count` property
+        return response.data;
     } catch (error) {
         console.error('Error fetching pending count:', error);
         throw error;

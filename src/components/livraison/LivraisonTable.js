@@ -48,7 +48,6 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
     };
 
     const handleThirdAction = (livraison) => {
-        // Navigate to the invoice page
         window.location.href = `/invoice/${livraison.NumeroCommande}`;
     };
 

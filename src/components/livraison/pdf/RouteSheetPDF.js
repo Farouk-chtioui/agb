@@ -139,7 +139,7 @@ const RouteSheetDocument = ({ data }) => {
                                 <Text style={styles.magasinCell}>
                                     {delivery.market ? delivery.market.first_name : 'N/A'}
                                     {'\n'}Ref: {delivery.reference}
-                                    {'\n'}Dist: {delivery.distance ? `${delivery.distance} Km` : 'N/A'}
+                                    {'\n'}Dist: {Math.ceil(delivery.distance)} Km
                                 </Text>
                                 <Text style={styles.tableCell}>{delivery.client.first_name} {delivery.client.last_name}</Text>
                                 <Text style={styles.tableCell}>{delivery.Observations}</Text>

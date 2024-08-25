@@ -5,12 +5,12 @@ const API_URL = process.env.REACT_APP_API_URL;
 export async function fetchSectures(page) {
     try {
         const response = await axios.get(`${API_URL}/secture?page=${page}`);
-        return response.data;
+        return response.data; 
     } catch (error) {
-        console.error('Error fetching secures', error);
+        console.error('Error fetching sectures', error);
         throw error;
     }
-    }
+}
 
 export async function deleteSecture(id) {
     try {
@@ -44,6 +44,15 @@ export async function searchSectures(searchTerm) {
         return response.data;
     } catch (error) {
         console.error('Error searching secures', error);
+        throw error;
+    }
+}
+export async function fetchallSectures() {
+    try {
+        const response = await axios.get(`${API_URL}/secture/all`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching all secures', error);
         throw error;
     }
 }
