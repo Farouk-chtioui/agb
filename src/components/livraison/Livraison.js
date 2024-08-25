@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { fetchAllClients, addClient } from '../../api/clientService';
 import { fetchDrivers } from '../../api/driverService';
-import { fetchMagasins, decreaseMarketTotals } from '../../api/marketService';
+import { fetchAllMarkets, decreaseMarketTotals } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
 import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison } from '../../api/livraisonService';
 import { fetchSectures } from '../../api/sectureService';
@@ -102,7 +102,7 @@ function Livraison() {
 
     const fetchMarketsData = async () => {
         try {
-            const data = await fetchMagasins();
+            const data = await fetchAllMarkets();
             setMarkets(Array.isArray(data.markets) ? data.markets : []);
         } catch (error) {
             console.error('Error fetching markets', error);

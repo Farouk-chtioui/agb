@@ -99,3 +99,13 @@ export const fetchMarketById = async (id) => {
   });
   return response.data;
 };
+
+export const fetchAllMarkets = async () => {
+  const token = getToken();
+  const response = await axios.get(`${API_URL}/market/all`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

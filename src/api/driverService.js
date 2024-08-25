@@ -74,3 +74,17 @@ export async function searchDrivers(searchTerm) {
     throw error;
   }
 }
+export async function fetchAllDrivers() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.get(`${API_URL}/driver/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching drivers', error);
+    throw error;
+  }
+}
