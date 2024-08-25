@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { format, parseISO } from 'date-fns';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { fetchPlans, deletePlan, addPlan, modifyPlan } from '../../api/plansService';
 import { fetchMagasins } from '../../api/marketService';
 import { fetchallSectures } from '../../api/sectureService';
@@ -96,13 +98,19 @@ const Plans = () => {
   };
 
   const handleAddPlan = async (plan) => {
-    const formattedPlan = {
-      ...plan,
-      Date: format(new Date(plan.Date), 'yyyy-MM-dd')
-    };
-    await addPlan(formattedPlan);
-    fetchData();
-    setShowForm(false);
+    try {
+      const formattedPlan = {
+        ...plan,
+        Date: format(new Date(plan.Date), 'yyyy-MM-dd')
+      };
+      await addPlan(formattedPlan);
+      fetchData();
+      setShowForm(false);
+      toast.success('Plan created successfully!');
+    } catch (error) {
+      toast.error('Error creating plan. Please try again.');
+      console.error('Error creating plan:', error);
+    }
   };
 
   const handleEditPlan = async (planId, plan) => {
@@ -114,15 +122,23 @@ const Plans = () => {
       await modifyPlan(planId, formattedPlan);
       fetchData();
       setShowForm(false);
+      toast.success('Plan modified successfully!');
     } catch (error) {
+      toast.error('Error modifying plan. Please try again.');
       console.error('Error editing plan:', error);
     }
   };
 
   const handleDeletePlan = async (planId) => {
-    await deletePlan(planId);
-    fetchData();
-    setShowForm(false);
+    try {
+      await deletePlan(planId);
+      fetchData();
+      setShowForm(false);
+      toast.success('Plan deleted successfully!');
+    } catch (error) {
+      toast.error('Error deleting plan. Please try again.');
+      console.error('Error deleting plan:', error);
+    }
   };
 
   const handleSearch = (searchResults) => {
@@ -172,6 +188,7 @@ const Plans = () => {
       <div className="flex h-screen">
         <Dashboard title="Gérer les plans" />
         <div className="flex-1 container mx-auto p-6 relative flex flex-col pt-24">
+          <ToastContainer position="top-right" autoClose={3000} />
           <div className="flex flex-1 overflow-hidden">
             <div className="w-4/5 h-full overflow-auto">
               {showForm && (

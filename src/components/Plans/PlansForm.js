@@ -50,8 +50,8 @@ const PlanForm = ({
       Date: adjustedDate,
       secteurMatinal: newPlan.secteurMatinal?.filter(Boolean).map(item => item._id || item) || [],
       secteurApresMidi: newPlan.secteurApresMidi?.filter(Boolean).map(item => item._id || item) || [],
-      totalMatin: parseInt(newPlan.totalMatin, 10),
-      totalMidi: parseInt(newPlan.totalMidi, 10),
+      totalMatin: parseInt(newPlan.totalMatin, 10) || 0,
+      totalMidi: parseInt(newPlan.totalMidi, 10) || 0,
       notes: newPlan.notes
     };
 
@@ -87,7 +87,6 @@ const PlanForm = ({
     }
   };
 
-  // Filter options based on what's already selected in the same dropdown list
   const filterOptions = (selectedValues) => {
     return secteurs.filter(secteur => !selectedValues.some(selected => selected._id === secteur._id));
   };
