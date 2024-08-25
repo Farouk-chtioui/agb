@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { fetchAllClients, addClient } from '../../api/clientService';
-import { fetchDrivers } from '../../api/driverService';
+import { fetchAllDrivers } from '../../api/driverService';
 import { fetchAllMarkets, decreaseMarketTotals } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
 import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison } from '../../api/livraisonService';
@@ -83,13 +83,14 @@ function Livraison() {
 
     const fetchDriversData = async () => {
         try {
-            const data = await fetchDrivers();
-            setDrivers(Array.isArray(data.drivers) ? data.drivers : []);
+            const data = await fetchAllDrivers();
+            setDrivers(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching drivers', error);
             setDrivers([]);
         }
     };
+    
 
     const fetchProductsData = async () => {
         try {
@@ -99,15 +100,16 @@ function Livraison() {
             console.error('Error fetching products', error);
         }
     };
-
     const fetchMarketsData = async () => {
         try {
             const data = await fetchAllMarkets();
-            setMarkets(Array.isArray(data.markets) ? data.markets : []);
+            setMarkets(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching markets', error);
+            setMarkets([]);
         }
     };
+    
 
     const fetchLivraisonsData = async () => {
         try {

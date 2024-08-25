@@ -66,27 +66,27 @@ const LivraisonForm = ({
             toast.error('Veuillez remplir tous les champs obligatoires.');
             return;
         }
-    
+
         const selectedDate = newLivraison.Date;
         const selectedPeriod = newLivraison.Periode;
         const clientPostalCode1 = extractPostalCode(clientCodePostal);
         const clientPostalCode2 = extractPostalCode(clientCodePostal2);
-    
+
         let isClientCodePostalInSecteur = false;
         let isClientCodePostalInPlans = false;
-    
+
         secteurs.forEach(secteur => {
             if (secteur.codesPostaux.includes(clientPostalCode1) || secteur.codesPostaux.includes(clientPostalCode2)) {
                 isClientCodePostalInSecteur = true;
             }
         });
-    
+
         if (!isClientCodePostalInSecteur) {
             toast.error('Le code postal du client ne fait pas partie des secteurs disponibles.');
-            return; 
+            return;
         }
-    
-  
+
+
         plans.forEach(plan => {
             if (plan.Date === selectedDate) {
                 if (selectedPeriod === 'Matin' && plan.secteurMatinal) {
@@ -100,35 +100,35 @@ const LivraisonForm = ({
                 }
             }
         });
-    
+
         // Set status based on checks
         if (isClientCodePostalInPlans) {
             newLivraison.status = 'À la livraison';
         } else {
             newLivraison.status = 'En attente';
         }
-    
+
         // Proceed with the rest of the form submission logic
         try {
             const market = markets.find(market => market._id === newLivraison.market);
             const client = clients.find(client => client._id === newLivraison.client);
-    
+
             if (!market || !client) {
                 throw new Error('Invalid market or client selected');
             }
-    
+
             const distance = calculateDistance(
                 parseFloat(market.latitude),
                 parseFloat(market.longitude),
                 parseFloat(client.latitude),
                 parseFloat(client.longitude)
             );
-    
+
             let priceAdjustment = 0;
             if (distance > 300) {
                 priceAdjustment = (distance - 300) * 2;
             }
-    
+
             let productTotalPrice = 0;
             productList.forEach(product => {
                 const selectedProduct = products.find(p => p._id === product.productId);
@@ -136,24 +136,24 @@ const LivraisonForm = ({
                     productTotalPrice += selectedProduct.price * product.quantity;
                 }
             });
-    
+
             const deliveryFee = priceAdjustment;
             const finalPrice = productTotalPrice + deliveryFee;
-    
+
             newLivraison.price = finalPrice.toFixed(2);
             setCalculatedPrice(finalPrice.toFixed(2)); // Set the calculated price to state for display
         } catch (error) {
             toast.error('Error calculating price: ' + error.message);
             return;
         }
-    
+
         const livraisonData = { ...newLivraison, products: productList };
         if (isEditMode) {
             handleEditLivraison(livraisonData);
         } else {
             handleAddLivraison(livraisonData);
         }
-    
+
         try {
             const selectedPlan = plans.find(plan => plan.Date === newLivraison.Date);
             if (selectedPlan) {
@@ -164,10 +164,10 @@ const LivraisonForm = ({
             toast.error('Erreur lors de la mise à jour des totaux.');
             return;
         }
-    
+
     };
-    
-    
+
+
     const handleClientAdd = async () => {
         try {
             const addedClient = await addClient(newClient);
