@@ -35,7 +35,8 @@ function Livraison() {
         products: [],
         market: '',
         driver: '',
-        price: ''
+        price: '',
+        distance: 0 // Added distance
     });
     const [showForm, setShowForm] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -46,6 +47,7 @@ function Livraison() {
     const [currentLivraison, setCurrentLivraison] = useState(null);
     const [isSearchActive, setIsSearchActive] = useState(false);
 
+    // Fetch all necessary data
     const fetchAllData = useCallback(async () => {
         await Promise.all([
             fetchAllClientsData(),
@@ -60,18 +62,19 @@ function Livraison() {
 
     useEffect(() => {
         fetchAllData();
-
+    
         // Listen for new livraison with status 'En attente'
         socket.on('newPendingLivraison', (data) => {
             console.log('Received new pending livraison:', data);
             setLivraisons((prevLivraisons) => [...prevLivraisons, data]);
         });
-
+    
         return () => {
             socket.off('newPendingLivraison');
         };
     }, [fetchAllData]);
 
+    // Fetch clients
     const fetchAllClientsData = async () => {
         try {
             const data = await fetchAllClients();
@@ -81,6 +84,7 @@ function Livraison() {
         }
     };
 
+    // Fetch drivers
     const fetchDriversData = async () => {
         try {
             const data = await fetchAllDrivers();
@@ -90,8 +94,8 @@ function Livraison() {
             setDrivers([]);
         }
     };
-    
 
+    // Fetch products
     const fetchProductsData = async () => {
         try {
             const data = await fetchProductsNoPage();
@@ -100,6 +104,8 @@ function Livraison() {
             console.error('Error fetching products', error);
         }
     };
+
+    // Fetch markets
     const fetchMarketsData = async () => {
         try {
             const data = await fetchAllMarkets();
@@ -109,8 +115,8 @@ function Livraison() {
             setMarkets([]);
         }
     };
-    
 
+    // Fetch livraisons
     const fetchLivraisonsData = async () => {
         try {
             const { livraisons, totalPages } = await fetchLivraisons(currentPage);
@@ -122,6 +128,7 @@ function Livraison() {
         }
     };
 
+    // Fetch secteurs
     const fetchSecteursData = async () => {
         try {
             const data = await fetchSectures();
@@ -131,6 +138,7 @@ function Livraison() {
         }
     };
 
+    // Fetch plans
     const fetchPlansData = async () => {
         try {
             const data = await fetchPlans();
@@ -142,12 +150,20 @@ function Livraison() {
 
     const handleAddLivraison = async (livraisonData) => {
         try {
-            await addLivraison(livraisonData);
-            fetchLivraisonsData();
+            if (!livraisonData.status) {
+                livraisonData.status = 'En attente';
+            }
+    
+            await addLivraison(livraisonData); // Add the livraison via API
+            fetchLivraisonsData(); // Refresh the list of livraisons
             resetForm();
             toast.success('Livraison ajoutée avec succès!');
-
-            // Decrease totals for the selected market and plans
+    
+            if (livraisonData.status === 'En attente') {
+                console.log('Emitting newPendingLivraison event:', livraisonData); 
+                socket.emit('newPendingLivraison', livraisonData);
+            }
+    
             const selectedPlan = plans.find(plan => plan.Date === livraisonData.Date);
             if (selectedPlan) {
                 await decreasePlanTotals(selectedPlan._id, livraisonData.Periode);
@@ -158,8 +174,6 @@ function Livraison() {
             toast.error('Erreur lors de l\'ajout de la livraison.');
         }
     };
-
-
 
     const handleModify = (livraison) => {
         setCurrentLivraison(livraison);
@@ -201,7 +215,7 @@ function Livraison() {
             }));
         }
     }, []);
-    
+
     const handleSearch = async (searchTerm) => {
         if (searchTerm === '') {
             setFilteredLivraisons(livraisons);
@@ -242,7 +256,8 @@ function Livraison() {
             products: [],
             market: '',
             driver: '',
-            price: ''
+            price: '',
+            distance: 0 // Reset distance
         });
         setIsEditMode(false);
         setCurrentLivraison(null);
@@ -298,7 +313,6 @@ function Livraison() {
             </div>
         </div>
     );
-    
 }
 
 export default Livraison;

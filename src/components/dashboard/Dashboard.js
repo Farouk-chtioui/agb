@@ -61,35 +61,20 @@ function Dashboard({ title }) {
   }, [role, userId]);
 
   useEffect(() => {
-    // Only fetch if data is not already available in state/localStorage
-    if (!pendingDeliveriesCount) {
-      fetchPendingDeliveries();
-    }
+    fetchPendingDeliveries();
+    fetchUserProfile();
 
-    if (!profileImage) {
-      fetchUserProfile();
-    }
-
-    socket.on('updatePendingCount', (data) => {
-      console.log('Received updatePendingCount event:', data);
-      setPendingDeliveriesCount(data.count);
-      localStorage.setItem('pendingDeliveriesCount', data.count);
-    });
-
-    socket.on('statusChange', () => {
-      fetchPendingDeliveries(); 
-    });
-
-    socket.on('addLivraison', () => {
-      fetchPendingDeliveries();
-    });
+    // Listen to all relevant socket events
+    socket.on('updatePendingCount', fetchPendingDeliveries);
+    socket.on('statusChange', fetchPendingDeliveries);
+    socket.on('addLivraison', fetchPendingDeliveries);
 
     return () => {
-      socket.off('updatePendingCount');
-      socket.off('statusChange');
-      socket.off('addLivraison');
+      socket.off('updatePendingCount', fetchPendingDeliveries);
+      socket.off('statusChange', fetchPendingDeliveries);
+      socket.off('addLivraison', fetchPendingDeliveries);
     };
-  }, [fetchPendingDeliveries, fetchUserProfile, pendingDeliveriesCount, profileImage]);
+  }, [fetchPendingDeliveries, fetchUserProfile]);
 
   const handleLogout = () => {
     console.log('handleLogout function called');

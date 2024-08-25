@@ -31,16 +31,20 @@ function Demandes() {
 
     useEffect(() => {
         loadData(currentPage);
-
+    
         socket.on('statusChange', () => loadData(currentPage));
         socket.on('addLivraison', () => loadData(currentPage));
-
+    
+        // Listen to new pending deliveries
+        socket.on('newPendingLivraison', () => loadData(currentPage));
+    
         return () => {
             socket.off('statusChange', () => loadData(currentPage));
             socket.off('addLivraison', () => loadData(currentPage));
+            socket.off('newPendingLivraison');
         };
     }, [currentPage, loadData]);
-
+    
     const handleDelete = async (demande) => {
         const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer cette demande ?");
         if (confirmed) {

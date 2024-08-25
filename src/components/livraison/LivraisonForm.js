@@ -38,6 +38,7 @@ const LivraisonForm = ({
     const [clientCodePostal, setClientCodePostal] = useState('');
     const [clientCodePostal2, setClientCodePostal2] = useState('');
     const [calculatedPrice, setCalculatedPrice] = useState('');
+    const [distance, setDistance] = useState(null); // State to hold the calculated distance
 
     useEffect(() => {
         if (isEditMode && currentLivraison) {
@@ -54,6 +55,30 @@ const LivraisonForm = ({
             }
         }
     }, [newLivraison.client, clients]);
+
+    useEffect(() => {
+        if (newLivraison.market && newLivraison.client) {
+            const market = markets.find(market => market._id === newLivraison.market);
+            const client = clients.find(client => client._id === newLivraison.client);
+
+            if (market && client) {
+                const calculatedDistance = calculateDistance(
+                    parseFloat(market.latitude),
+                    parseFloat(market.longitude),
+                    parseFloat(client.latitude),
+                    parseFloat(client.longitude)
+                );
+
+                setDistance(calculatedDistance);
+                setNewLivraison(prevState => ({
+                    ...prevState,
+                    distance: calculatedDistance // Store the distance in the newLivraison state
+                }));
+
+                console.log(`Calculated distance: ${calculatedDistance} km`);
+            }
+        }
+    }, [newLivraison.market, newLivraison.client, markets, clients, setNewLivraison]);
 
     const extractPostalCode = (address) => {
         const match = address.match(/\d{5}/);
@@ -86,7 +111,6 @@ const LivraisonForm = ({
             return;
         }
 
-
         plans.forEach(plan => {
             if (plan.Date === selectedDate) {
                 if (selectedPeriod === 'Matin' && plan.secteurMatinal) {
@@ -94,7 +118,7 @@ const LivraisonForm = ({
                         isClientCodePostalInPlans = true;
                     }
                 } else if (selectedPeriod === 'Midi' && plan.secteurApresMidi) {
-                    if (plan.secteurApresMidi.some(secteur => secteur.codesPostaux.includes(clientPostalCode1) || secteur.codesPostaux.includes(clientPostalCode2))) {
+                    if (plan.secteurApresMidi.some(secteur => secteur.codesPostaux.includes(clientPostalCode1) || secteur.codesPostaux.includes(clientCodePostal2))) {
                         isClientCodePostalInPlans = true;
                     }
                 }
