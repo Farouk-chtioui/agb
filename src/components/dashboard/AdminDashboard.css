@@ -141,6 +141,7 @@
 .summary-count {
   font-size: 2.5rem;
   font-weight: bold;
+  margin-right: 20px;
 }
 
 .summary-icon {

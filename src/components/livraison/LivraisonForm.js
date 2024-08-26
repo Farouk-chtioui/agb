@@ -364,7 +364,7 @@ const LivraisonForm = ({
                                     <option value="">Select a client</option>
                                     {clients.map(client => (
                                         <option key={client._id} value={client._id}>
-                                            {client.first_name}
+                                            {client.first_name} {client.last_name}
                                         </option>
                                     ))}
                                 </select>
@@ -465,7 +465,7 @@ const LivraisonForm = ({
                                         <option value="">Select a driver</option>
                                         {drivers.map(driver => (
                                             <option key={driver._id} value={driver._id}>
-                                                {driver.first_name}
+                                                {driver.first_name} {driver.last_name}
                                             </option>
                                         ))}
                                     </select>

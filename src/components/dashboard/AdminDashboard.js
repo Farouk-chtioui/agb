@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import Dashboard from './Dashboard';
-import ReadOnlyCalendarComponent from '../Calendar/ReadOnly/ReadOnlyCalendarComponent';
-import { fetchClients } from '../../api/clientService';
-import { fetchMagasins } from '../../api/marketService';
-import { fetchProducts } from '../../api/productService';
-import { fetchDrivers } from '../../api/driverService';
-import { fetchSectures } from '../../api/sectureService';
-import { fetchLivraisons } from '../../api/livraisonService';
-import { fetchPlans } from '../../api/plansService';
+import { faBox, faStore, faTruck, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faStore, faBox, faTruck } from '@fortawesome/free-solid-svg-icons';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
-import './AdminDashboard.css';
 import { format, parseISO } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { fetchClients } from '../../api/clientService';
+import { fetchDrivers } from '../../api/driverService';
+import { fetchLivraisons } from '../../api/livraisonService';
+import { fetchMagasins } from '../../api/marketService';
+import { fetchPlans } from '../../api/plansService';
+import { fetchProducts } from '../../api/productService';
+import { fetchallSectures } from '../../api/sectureService';
+import ReadOnlyCalendarComponent from '../Calendar/ReadOnly/ReadOnlyCalendarComponent';
+import './AdminDashboard.css';
+import Dashboard from './Dashboard';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 const PERIOD_COLORS = ['#0088FE', '#00C49F'];
@@ -38,7 +38,7 @@ const AdminDashboard = () => {
         const magasins = await fetchMagasins();
         const products = await fetchProducts();
         const drivers = await fetchDrivers();
-        const secturesData = await fetchSectures();
+        const secturesData = await fetchallSectures();
         const orders = await fetchLivraisons();
         const plansData = await fetchPlans();
 
@@ -162,7 +162,7 @@ const AdminDashboard = () => {
 
   const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
     const RADIAN = Math.PI / 180;
-    const radius = outerRadius + 10; // Move the label a bit outside the pie chart
+    const radius = outerRadius + 22; // Move the label a bit outside the pie chart
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 

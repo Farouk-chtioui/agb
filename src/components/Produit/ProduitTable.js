@@ -1,10 +1,13 @@
-// src/components/ProuditsTable.js
 import React from "react";
 import Table from "../Table/Table";
 
 const ProuditsTable = ({ produits, handleDelete, handleModify }) => {
-  const headers = ["Image", "Nom de produit", "Description", "Prix", "Action"];
   const role = localStorage.getItem('role');
+  const headers = ["Image", "Nom de produit", "Description", "Prix"];
+  
+  if (role === 'admin') {
+    headers.push("Action");
+  }
 
   const renderRow = (produit) => (
     <>

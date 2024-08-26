@@ -34,8 +34,8 @@ const Table = ({
           {data.map(item => (
             <tr key={item._id} className="text-center">
               {renderRow(item)}
-              <td className="py-2 px-4 border-b border-gray-200">
-                {role === 'admin' && (
+              {role === 'admin' && (
+                <td className="py-2 px-4 border-b border-gray-200">
                   <>
                     {showThirdAction && ThirdIcon && handleThirdAction && (
                       <button
@@ -62,16 +62,8 @@ const Table = ({
                       </button>
                     )}
                   </>
-                )}
-                {role === 'market' && showModify && handleModify && (
-                  <button
-                    className="text-blue-500 hover:text-blue-700 transition mx-1"
-                    onClick={() => handleModify(item)}
-                  >
-                    <ModifyIcon size={20} />
-                  </button>
-                )}
-              </td>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

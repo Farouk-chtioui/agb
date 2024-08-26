@@ -77,6 +77,27 @@ const Profile = () => {
     }
   };
 
+  const handleRemoveAvatar = async () => {
+    const updateData = { image: '' };
+
+    try {
+      if (role === 'admin') {
+        await updateAdmin(userId, updateData);
+      } else if (role === 'market') {
+        await modifyMagasin(userId, updateData);
+      }
+
+      localStorage.removeItem('profileImage');
+
+      setUserData((prev) => ({ ...prev, image: '' }));
+
+      toast.success('Avatar removed successfully');
+    } catch (error) {
+      console.error('Error removing avatar:', error);
+      toast.error('Failed to remove avatar');
+    }
+  };
+
   const handlePasswordChange = async () => {
     if (!password) {
       toast.error('Please enter a new password');
@@ -164,6 +185,16 @@ const Profile = () => {
                   className="ml-4 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
                 />
               </div>
+              {userData.image && (
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={handleRemoveAvatar}
+                    className="py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-700 transition duration-200"
+                  >
+                    Remove Current Avatar
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
