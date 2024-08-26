@@ -109,3 +109,13 @@ export const fetchAllMarkets = async () => {
   });
   return response.data;
 };
+
+export const fetchMarketsWithTotal = async () => {
+  const token = getToken();
+  const response = await axios.get(`${API_URL}/market/all/total`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

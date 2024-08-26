@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format, parseISO } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { fetchClients } from '../../api/clientService';
-import { fetchDrivers } from '../../api/driverService';
-import { fetchLivraisons } from '../../api/livraisonService';
-import { fetchMagasins } from '../../api/marketService';
+import { fetchAllwithTotal } from '../../api/clientService';
+import { getAllwithTotal } from '../../api/driverService';
+import { fetchAllLivraisonsWithoutPagination } from '../../api/livraisonService';
+import { fetchMarketsWithTotal } from '../../api/marketService';
 import { fetchPlans } from '../../api/plansService';
-import { fetchProducts } from '../../api/productService';
+import { fetchProductwithTotal } from '../../api/productService';
 import { fetchallSectures } from '../../api/sectureService';
 import ReadOnlyCalendarComponent from '../Calendar/ReadOnly/ReadOnlyCalendarComponent';
 import './AdminDashboard.css';
@@ -34,12 +34,12 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const clients = await fetchClients();
-        const magasins = await fetchMagasins();
-        const products = await fetchProducts();
-        const drivers = await fetchDrivers();
+        const clients = await fetchAllwithTotal();
+        const magasins = await fetchMarketsWithTotal();
+        const products = await fetchProductwithTotal();
+        const drivers = await getAllwithTotal();
         const secturesData = await fetchallSectures();
-        const orders = await fetchLivraisons();
+        const orders = await fetchAllLivraisonsWithoutPagination();
         const plansData = await fetchPlans();
 
         setClientCount(clients.total || clients.length || 0);

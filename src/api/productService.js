@@ -60,3 +60,13 @@ export async function searchProducts(searchTerm) {
     throw error;
   }
 }
+
+export async function fetchProductwithTotal() {
+  try {
+    const response = await axios.get(`${API_URL}/product/all/total`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching products', error);
+    throw error;
+  }
+}

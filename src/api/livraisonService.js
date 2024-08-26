@@ -143,3 +143,16 @@ export async function fetchByMarketId(marketId, page = 1, searchTerm = '') {
         throw error;
     }
 }
+export async function fetchAllLivraisonsWithoutPagination() {
+    try {
+        const response = await axios.get(`${API_URL}/livraison/all`);
+        return {
+            livraisons: response.data.livraisons,
+            total: response.data.total
+        };
+    } catch (error) {
+        console.error('Error fetching all livraisons without pagination:', error);
+        throw error;
+    }
+}
+

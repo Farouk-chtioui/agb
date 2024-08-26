@@ -59,3 +59,12 @@ export async function fetchAllClients() {
         throw error;
     }
 }
+export async function fetchAllwithTotal() {
+    try {
+        const response = await axios.get(`${API_URL}/client/all/total`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching clients', error);
+        throw error;
+    }
+}

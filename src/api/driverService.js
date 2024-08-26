@@ -88,3 +88,18 @@ export async function fetchAllDrivers() {
     throw error;
   }
 }
+export async function getAllwithTotal() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.get(`${API_URL}/driver/all/total`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  }
+  catch (error) {
+    console.error('Error fetching drivers', error);
+    throw error;
+  }
+}
