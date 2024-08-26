@@ -35,9 +35,33 @@ const PlanForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if ((!newPlan.secteurMatinal || newPlan.secteurMatinal.length === 0) &&
-        (!newPlan.secteurApresMidi || newPlan.secteurApresMidi.length === 0)) {
-      alert('Please select at least one Secteur Matinal or Secteur Après Midi.');
+    // Validate required fields
+    if (
+      (!newPlan.secteurMatinal || newPlan.secteurMatinal.length === 0) &&
+      (!newPlan.secteurApresMidi || newPlan.secteurApresMidi.length === 0)
+    ) {
+      alert('Veuillez sélectionner au moins un Secteur Matinal ou Secteur Après Midi.');
+      return;
+    }
+
+    if (!newPlan.Date) {
+      alert('Veuillez sélectionner une date de livraison.');
+      return;
+    }
+
+    // Validate totalMatin and totalMidi
+    const totalMatin = parseInt(newPlan.totalMatin, 10);
+    const totalMidi = parseInt(newPlan.totalMidi, 10);
+
+    if (
+      isNaN(totalMatin) ||
+      totalMatin < 0 ||
+      totalMatin > 99999 ||
+      isNaN(totalMidi) ||
+      totalMidi < 0 ||
+      totalMidi > 99999
+    ) {
+      alert('Veuillez entrer des valeurs valides pour Total Matin et Total Après Midi (entre 0 et 99999).');
       return;
     }
 
@@ -48,24 +72,38 @@ const PlanForm = ({
     const updatedPlan = {
       ...newPlan,
       Date: adjustedDate,
-      secteurMatinal: newPlan.secteurMatinal?.filter(Boolean).map(item => item._id || item) || [],
-      secteurApresMidi: newPlan.secteurApresMidi?.filter(Boolean).map(item => item._id || item) || [],
-      totalMatin: parseInt(newPlan.totalMatin, 10) || 0,
-      totalMidi: parseInt(newPlan.totalMidi, 10) || 0,
-      notes: newPlan.notes
+      secteurMatinal:
+        newPlan.secteurMatinal?.filter(Boolean).map((item) => item._id || item) || [],
+      secteurApresMidi:
+        newPlan.secteurApresMidi?.filter(Boolean).map((item) => item._id || item) || [],
+      totalMatin,
+      totalMidi,
+      notes: newPlan.notes || '',
     };
 
-    if (isEditMode) {
-      await handleEditPlan(newPlan._id.toString(), updatedPlan);
-    } else {
-      await handleAddPlan(updatedPlan);
+    try {
+      if (isEditMode) {
+        await handleEditPlan(newPlan._id.toString(), updatedPlan);
+      } else {
+        await handleAddPlan(updatedPlan);
+      }
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error submitting plan:', error);
+      alert('Une erreur est survenue lors de la soumission du plan. Veuillez réessayer.');
     }
-    setShowForm(false);
   };
 
   const handleDelete = async () => {
-    await handleDeletePlan(newPlan._id.toString());
-    setShowForm(false);
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce plan ?')) {
+      try {
+        await handleDeletePlan(newPlan._id.toString());
+        setShowForm(false);
+      } catch (error) {
+        console.error('Error deleting plan:', error);
+        alert('Une erreur est survenue lors de la suppression du plan. Veuillez réessayer.');
+      }
+    }
   };
 
   const handleClearField = (fieldName, index = null) => {
@@ -88,7 +126,9 @@ const PlanForm = ({
   };
 
   const filterOptions = (selectedValues) => {
-    return secteurs.filter(secteur => !selectedValues.some(selected => selected._id === secteur._id));
+    return secteurs.filter(
+      (secteur) => !selectedValues.some((selected) => selected._id === secteur._id)
+    );
   };
 
   const renderArrayField = (field) => {
@@ -106,13 +146,19 @@ const PlanForm = ({
               value={item._id || ''}
               onChange={(e) => {
                 const updatedArray = [...newPlan[field.name]];
-                updatedArray[idx] = secteurs.find(secteur => secteur._id === e.target.value);
+                updatedArray[idx] = secteurs.find(
+                  (secteur) => secteur._id === e.target.value
+                );
                 handleChange({ target: { name: field.name, value: updatedArray } });
               }}
             >
-              <option value="" disabled>{field.placeholder}</option>
-              {options.concat(item).map(option => (
-                <option key={option._id} value={option._id}>{option.name}</option>
+              <option value="" disabled>
+                {field.placeholder}
+              </option>
+              {[item, ...options].map((option) => (
+                <option key={option._id} value={option._id}>
+                  {option.name}
+                </option>
               ))}
             </select>
             <button
@@ -127,21 +173,23 @@ const PlanForm = ({
         <div className="flex items-center">
           <select
             className="border rounded w-full py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-            value={field.name === 'secteurMatinal' ? tempSecteurMatinal : tempSecteurApresMidi}
+            value={
+              field.name === 'secteurMatinal' ? tempSecteurMatinal : tempSecteurApresMidi
+            }
             onChange={(e) => {
-              const selectedSecteur = secteurs.find(secteur => secteur._id === e.target.value);
-              if (field.name === 'secteurMatinal') {
-                setTempSecteurMatinal(e.target.value);
-                handleAddField(field.name, selectedSecteur);
-              } else {
-                setTempSecteurApresMidi(e.target.value);
-                handleAddField(field.name, selectedSecteur);
-              }
+              const selectedSecteur = secteurs.find(
+                (secteur) => secteur._id === e.target.value
+              );
+              handleAddField(field.name, selectedSecteur);
             }}
           >
-            <option value="" disabled>{field.placeholder}</option>
-            {options.map(option => (
-              <option key={option._id} value={option._id}>{option.name}</option>
+            <option value="" disabled>
+              {field.placeholder}
+            </option>
+            {options.map((option) => (
+              <option key={option._id} value={option._id}>
+                {option.name}
+              </option>
             ))}
           </select>
         </div>
@@ -156,54 +204,54 @@ const PlanForm = ({
       type: 'date',
       placeholder: 'Date de la livraison',
       colSpan: 2, // Takes full row
-      value: newPlan.Date ? newPlan.Date : '',
+      value: newPlan.Date || '',
     },
     {
       name: 'secteurMatinal',
       label: 'Secteurs Matinal *',
       type: 'arrayDropdown',
-      placeholder: 'Search Secteur Matinal',
+      placeholder: 'Sélectionnez un Secteur Matinal',
       colSpan: 1, // Takes half row
-      options: secteurs.map(sector => ({ value: sector._id, label: sector.name })),
+      options: secteurs.map((sector) => ({ value: sector._id, label: sector.name })),
       value: newPlan.secteurMatinal || [],
     },
     {
       name: 'secteurApresMidi',
       label: 'Secteurs Après Midi *',
       type: 'arrayDropdown',
-      placeholder: 'Search Secteur Après Midi',
+      placeholder: 'Sélectionnez un Secteur Après Midi',
       colSpan: 1, // Takes half row
-      options: secteurs.map(sector => ({ value: sector._id, label: sector.name })),
+      options: secteurs.map((sector) => ({ value: sector._id, label: sector.name })),
       value: newPlan.secteurApresMidi || [],
     },
-    { 
-      name: 'totalMatin', 
-      label: 'Total Matin *', 
-      type: 'number', 
-      placeholder: 'Total Matin', 
+    {
+      name: 'totalMatin',
+      label: 'Total Matin *',
+      type: 'number',
+      placeholder: 'Total Matin',
       colSpan: 1, // Takes half row
-      value: newPlan.totalMatin || 0,
-      min: 0, 
-      max: 99999, 
+      value: newPlan.totalMatin ?? '',
+      min: 0,
+      max: 99999,
     },
-    { 
-      name: 'totalMidi', 
-      label: 'Total Après Midi *', 
-      type: 'number', 
-      placeholder: 'Total Après Midi', 
+    {
+      name: 'totalMidi',
+      label: 'Total Après Midi *',
+      type: 'number',
+      placeholder: 'Total Après Midi',
       colSpan: 1, // Takes half row
-      value: newPlan.totalMidi || 0,
-      min: 0, 
-      max: 99999, 
+      value: newPlan.totalMidi ?? '',
+      min: 0,
+      max: 99999,
     },
-    { 
-      name: 'notes', 
-      label: 'Notes', 
-      type: 'textarea', 
-      placeholder: 'Add your notes here...', 
+    {
+      name: 'notes',
+      label: 'Notes',
+      type: 'textarea',
+      placeholder: 'Ajoutez vos notes ici...',
       colSpan: 2, // Takes full row
-      value: newPlan.notes || '' 
-    }, 
+      value: newPlan.notes || '',
+    },
   ];
 
   const renderField = (field, index) => {
@@ -213,37 +261,32 @@ const PlanForm = ({
 
     return (
       <div className={`form-group col-span-${field.colSpan || 2}`} key={index}>
-        <label className="block text-blue-700 mb-1 text-sm" htmlFor={field.name}>{field.label}</label>
+        <label className="block text-blue-700 mb-1 text-sm" htmlFor={field.name}>
+          {field.label}
+        </label>
         {field.type === 'textarea' ? (
           <textarea
             className="border rounded w-full py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
             name={field.name}
             value={newPlan[field.name] || ''}
-            onChange={handleChange}
+            onChange={(e) => handleChange(e)}
             placeholder={field.placeholder}
             style={{ height: '60px' }}
           ></textarea>
         ) : (
           <div className="flex items-center">
-            <label className="w-full">
-              <input
-                className="border rounded w-full py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
-                type={field.type}
-                name={field.name}
-                value={newPlan[field.name] || ''}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value, 10);
-                  if (value >= field.min && value <= field.max) {
-                    handleChange(e);
-                  }
-                }}
-                placeholder={field.placeholder}
-                min={field.min}
-                max={field.max}
-                style={{ fontSize: '14px' }}
-              />
-            </label>
-            {newPlan[field.name] && (
+            <input
+              className="border rounded w-full py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 border-blue-600"
+              type={field.type}
+              name={field.name}
+              value={newPlan[field.name] ?? ''}
+              onChange={(e) => handleChange(e)}
+              placeholder={field.placeholder}
+              min={field.min}
+              max={field.max}
+              style={{ fontSize: '14px' }}
+            />
+            {newPlan[field.name] !== '' && (
               <button
                 type="button"
                 className="ml-2 text-red-500"
