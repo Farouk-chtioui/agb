@@ -64,6 +64,11 @@ function Demandes() {
     
 
     const handleAcceptOrder = async (demande) => {
+        if (!demande.driver) {
+            toast.error("Veuillez d'abord assigner un chauffeur dans la fiche de route.", { toastId: 'noDriver' });
+            return;
+        }
+    
         const confirmed = window.confirm("Voulez-vous accepter cette commande ?");
         if (confirmed) {
             try {
@@ -77,6 +82,7 @@ function Demandes() {
             }
         }
     };
+    
 
     const handleSearch = useCallback((searchTerm) => {
         setSearchTerm(searchTerm);

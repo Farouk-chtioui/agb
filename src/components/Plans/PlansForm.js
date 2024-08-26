@@ -260,9 +260,9 @@ const PlanForm = ({
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-2/3 h-auto">
+      <div className="bg-white p-4 sm:p-6 md:p-10 rounded-xl shadow-lg w-full max-w-5xl max-h-full overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-blue-600">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-blue-600">
             {isEditMode ? 'Modifier le Plan' : 'Ajouter un Plan'}
           </h2>
           <button
@@ -273,7 +273,7 @@ const PlanForm = ({
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {fields.map(renderField)}
           </div>
           <div className="flex justify-center mt-4">
