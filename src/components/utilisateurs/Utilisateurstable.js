@@ -16,7 +16,7 @@ const Utilisateurstable = React.memo(({
     return utilisateurs.map(utilisateur => {
       const _doc = utilisateur && utilisateur._doc ? utilisateur._doc : {};  // Safely access _doc
       return {
-        _id: _doc._id || 'N/A',
+        _id: _doc._id || utilisateur._id|| 'N/A',
         displayName: utilisateur && utilisateur.displayName ? utilisateur.displayName : 'Unnamed User',
         email: _doc.email || utilisateur.email||'No Email Provided',
         role: utilisateur && utilisateur.role ? utilisateur.role : 'No Role',

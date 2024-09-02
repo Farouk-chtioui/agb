@@ -25,14 +25,20 @@ const UtilisateursForm = ({
           return [
             { name: 'name', label: 'Name', type: 'text', placeholder: 'Name', colSpan: 1, value: newUtilisateur.name || '' },
             { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 1, value: newUtilisateur.email || '' },
-            { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1, value: '' },
+            {
+              name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1, 
+              value: isEditMode ? newUtilisateur.password || '' : ''
+            },
           ];
         case 'Market':
           return [
             { name: 'first_name', label: 'First Name', type: 'text', placeholder: 'First Name', colSpan: 1, value: newUtilisateur.first_name || '' },
             { name: 'last_name', label: 'Last Name', type: 'text', placeholder: 'Last Name', colSpan: 1, value: newUtilisateur.last_name || '' },
             { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 1, value: newUtilisateur.email || '' },
-            { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1, value: '' },
+            {
+              name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1, 
+              value: isEditMode ? newUtilisateur.password || '' : ''
+            },
             { name: 'address', label: 'Address', type: 'autocomplete', placeholder: 'Address', colSpan: 2, value: addressData.address },
             { name: 'numberMa', label: 'Number MA', type: 'text', placeholder: 'Number MA', colSpan: 1, value: newUtilisateur.numberMa || '' },
             { name: 'numberMi', label: 'Number MI', type: 'text', placeholder: 'Number MI', colSpan: 1, value: newUtilisateur.numberMi || '' },
@@ -42,12 +48,16 @@ const UtilisateursForm = ({
             { name: 'first_name', label: 'First Name', type: 'text', placeholder: 'First Name', colSpan: 1, value: newUtilisateur.first_name || '' },
             { name: 'last_name', label: 'Last Name', type: 'text', placeholder: 'Last Name', colSpan: 1, value: newUtilisateur.last_name || '' },
             { name: 'email', label: 'Email', type: 'email', placeholder: 'Email', colSpan: 1, value: newUtilisateur.email || '' },
-            { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1, value: '' },
+            {
+              name: 'password', label: 'Password', type: 'password', placeholder: 'Password', colSpan: 1, 
+              value: isEditMode ? newUtilisateur.password || '' : ''
+            },
           ];
         default:
           return [];
       }
     };
+    
 
     setFields([
       { name: 'role', label: 'Rôle', type: 'select', options: ['Admin', 'Market', 'Driver'], colSpan: 1, value: newUtilisateur.role || '' },
