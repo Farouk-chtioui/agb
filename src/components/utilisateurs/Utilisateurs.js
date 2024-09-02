@@ -10,7 +10,7 @@ import { fetchUsers, searchUsers } from "../../api/UsersService";
 import Pagination from "../Pagination/Pagination";
 import Dashboard from "../dashboard/Dashboard";
 import Search from "../searchbar/Search";
-import bcrypt from 'bcryptjs';  // Import bcryptjs for password hashing
+import bcrypt from 'bcryptjs';
 
 const Utilisateurs = () => {
   const [utilisateurs, setUtilisateurs] = useState([]);
