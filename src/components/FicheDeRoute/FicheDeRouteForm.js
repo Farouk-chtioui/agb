@@ -9,18 +9,30 @@ mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setShowForm }) => {
   const [selectedDriver, setSelectedDriver] = useState('');
   const [distance, setDistance] = useState(null);
+  const [loading, setLoading] = useState(false);
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
 
   useEffect(() => {
-    if (mapContainerRef.current && selectedLivraison) {
+    if (!mapRef.current && mapContainerRef.current) {
+      // Initialize map only once
+      mapRef.current = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: 'mapbox://styles/mapbox/streets-v11',
+        zoom: 10,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedLivraison && mapRef.current) {
       const marketCoords = [
         parseFloat(selectedLivraison.market.longitude),
-        parseFloat(selectedLivraison.market.latitude)
+        parseFloat(selectedLivraison.market.latitude),
       ];
       const clientCoords = [
         parseFloat(selectedLivraison.client.longitude),
-        parseFloat(selectedLivraison.client.latitude)
+        parseFloat(selectedLivraison.client.latitude),
       ];
 
       if (isNaN(marketCoords[0]) || isNaN(marketCoords[1]) || isNaN(clientCoords[0]) || isNaN(clientCoords[1])) {
@@ -28,37 +40,27 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
         return;
       }
 
-      if (mapRef.current) {
-        mapRef.current.remove();
-      }
-
-      mapRef.current = new mapboxgl.Map({
-        container: mapContainerRef.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: marketCoords,
-        zoom: 10,
-      });
+      mapRef.current.setCenter(marketCoords);
 
       const coordinates = `${marketCoords.join(',')};${clientCoords.join(',')}`;
       const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+      setLoading(true); // Start loading
 
       fetch(directionsUrl)
         .then(response => response.json())
         .then(data => {
           if (data.routes && data.routes[0]) {
             const route = data.routes[0].geometry.coordinates;
-            const marketPopup = new mapboxgl.Popup({ offset: 25 }).setText('Market');
-            new mapboxgl.Marker({ color: 'green' })
-              .setLngLat(route[0])
-              .setPopup(marketPopup)
-              .addTo(mapRef.current);
+            setDistance(data.routes[0].distance / 1000);
 
-            const clientPopup = new mapboxgl.Popup({ offset: 25 }).setText('Client');
-            new mapboxgl.Marker({ color: 'red' })
-              .setLngLat(route[route.length - 1])
-              .setPopup(clientPopup)
-              .addTo(mapRef.current);
+            // Clear existing layers and sources
+            if (mapRef.current.getSource('route')) {
+              mapRef.current.removeLayer('route');
+              mapRef.current.removeSource('route');
+            }
 
+            // Add new route source and layer
             mapRef.current.addSource('route', {
               type: 'geojson',
               data: {
@@ -84,20 +86,31 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
               },
             });
 
+            // Fit map to route
             const bounds = new mapboxgl.LngLatBounds();
             route.forEach(coord => bounds.extend(coord));
-            mapRef.current.fitBounds(bounds, {
-              padding: 50,
-            });
+            mapRef.current.fitBounds(bounds, { padding: 50 });
 
-            // Set the distance in kilometers
-            setDistance(data.routes[0].distance / 1000);
+            // Add markers
+            new mapboxgl.Marker({ color: 'green' })
+              .setLngLat(route[0])
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText('Market'))
+              .addTo(mapRef.current);
+
+            new mapboxgl.Marker({ color: 'red' })
+              .setLngLat(route[route.length - 1])
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText('Client'))
+              .addTo(mapRef.current);
+
           } else {
             console.error('No routes found');
           }
         })
         .catch(error => {
           console.error('Error fetching directions:', error);
+        })
+        .finally(() => {
+          setLoading(false); // End loading
         });
     }
   }, [selectedLivraison]);
@@ -108,7 +121,6 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
       console.error('Driver or distance not set');
       return;
     }
-
     handleDriverSubmit(selectedDriver, distance);
   };
 
@@ -163,7 +175,7 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
               <span className="font-semibold">Client: </span> {selectedLivraison ? selectedLivraison.client.first_name : ''}
             </div>
             <div className="flex items-center text-blue-600">
-              <span className="font-semibold">Distance: </span> {distance ? `${distance.toFixed(2)} km` : 'Calculating...'}
+              <span className="font-semibold">Distance: </span> {loading ? 'Calculating...' : distance ? `${distance.toFixed(2)} km` : 'Error'}
             </div>
           </div>
         </div>
