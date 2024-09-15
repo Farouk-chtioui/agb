@@ -3,7 +3,7 @@ import { fetchAllClients, addClient } from '../../api/clientService';
 import { fetchAllDrivers } from '../../api/driverService';
 import { fetchAllMarkets, decreaseMarketTotals } from '../../api/marketService';
 import { fetchProductsNoPage } from '../../api/productService';
-import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison } from '../../api/livraisonService';
+import { addLivraison, fetchLivraisons, searchLivraisons, deleteLivraison, modifyLivraison } from '../../api/livraisonService';
 import { fetchallSectures } from '../../api/sectureService';
 import { fetchPlans, decreasePlanTotals } from '../../api/plansService';
 import LivraisonForm from './LivraisonForm';
@@ -141,18 +141,25 @@ function Livraison() {
     };
 
     const handleAddLivraison = async (livraisonData) => {
+        console.log('Livraison Data:', livraisonData);
+
         try {
             if (!livraisonData.status) {
                 livraisonData.status = 'En attente';
             }
     
-            await addLivraison(livraisonData); 
-            fetchLivraisonsData(); 
+            if (isEditMode) {
+                await modifyLivraison(livraisonData); 
+                toast.success('Livraison modifiée avec succès!');
+            } else {
+                await addLivraison(livraisonData); 
+                toast.success('Livraison ajoutée avec succès!');
+            }
+            
+            fetchLivraisonsData();
             resetForm();
-            toast.success('Livraison ajoutée avec succès!');
     
             if (livraisonData.status === 'En attente') {
-                console.log('Emitting newPendingLivraison event:', livraisonData); 
                 socket.emit('newPendingLivraison', livraisonData);
             }
     
@@ -162,10 +169,11 @@ function Livraison() {
                 await decreaseMarketTotals(livraisonData.market, livraisonData.Periode);
             }
         } catch (error) {
-            console.error('Error adding livraison', error);
-            toast.error('Erreur lors de l\'ajout de la livraison.');
+            console.error('Error adding/modifying livraison', error);
+            toast.error('Erreur lors de l\'ajout ou de la modification de la livraison.');
         }
     };
+    
 
     const handleModify = (livraison) => {
         setCurrentLivraison(livraison);
@@ -253,7 +261,9 @@ function Livraison() {
         });
         setIsEditMode(false);
         setCurrentLivraison(null);
+        setShowForm(false); 
     };
+    
 
     return (
         <div className="flex h-screen">
@@ -273,21 +283,22 @@ function Livraison() {
                         Ajouter une livraison
                     </button>
                     {showForm && (
-                        <LivraisonForm
-                            newLivraison={newLivraison}
-                            setNewLivraison={setNewLivraison}
-                            handleChange={handleChange}
-                            handleAddLivraison={handleAddLivraison}
-                            setShowForm={setShowForm}
-                            isEditMode={isEditMode}
-                            clients={clients}
-                            markets={markets}
-                            products={products}
-                            drivers={drivers}
-                            secteurs={secteurs}
-                            currentLivraison={currentLivraison}
-                            plans={plans}
-                        />
+                       <LivraisonForm
+                       newLivraison={newLivraison}
+                       setNewLivraison={setNewLivraison}
+                       handleChange={handleChange}
+                       handleAddLivraison={handleAddLivraison} // Pass the correct handler here
+                       setShowForm={setShowForm}
+                       isEditMode={isEditMode}
+                       clients={clients}
+                       markets={markets}
+                       products={products}
+                       drivers={drivers}
+                       secteurs={secteurs}
+                       currentLivraison={currentLivraison}
+                       plans={plans}
+                   />
+                   
                     )}
                     <LivraisonTable
                         livraisons={isSearchActive ? filteredLivraisons : livraisons}

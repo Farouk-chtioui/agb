@@ -12,7 +12,6 @@ const LivraisonForm = ({
     setNewLivraison,
     handleChange,
     handleAddLivraison,
-    handleEditLivraison,
     setShowForm,
     isEditMode,
     clients,
@@ -170,11 +169,8 @@ const LivraisonForm = ({
         }
 
         const livraisonData = { ...newLivraison, products: productList };
-        if (isEditMode) {
-            handleEditLivraison(livraisonData);
-        } else {
-            handleAddLivraison(livraisonData);
-        }
+        handleAddLivraison(livraisonData); // Use handleAddLivraison for both add and edit
+
 
         try {
             const selectedPlan = plans.find(plan => plan.Date === newLivraison.Date);

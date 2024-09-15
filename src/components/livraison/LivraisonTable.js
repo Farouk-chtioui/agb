@@ -59,7 +59,7 @@ const LivraisonTable = ({ livraisons, handleDelete, handleModify }) => {
                 renderRow={renderRow}
                 handleDelete={handleDelete}
                 handleModify={handleModify}
-                showModify={false}
+                showModify={true}
                 role={role}
                 ThirdIcon={FaEye} 
                 showThirdAction={true} 

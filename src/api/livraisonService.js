@@ -44,14 +44,18 @@ export async function fetchbyCommande(NumeroCommande) {
 
 export async function modifyLivraison(livraison) {
     try {
-        console.log('Modifying livraison with ID:', livraison.id); // Log the ID for debugging
-        const response = await axios.patch(`${API_URL}/livraison/${livraison.id}`, livraison);
+        if (!livraison._id) {
+            throw new Error('Livraison ID is missing');
+        }
+        console.log('Modifying livraison with ID:', livraison._id); // Log the ID for debugging
+        const response = await axios.patch(`${API_URL}/livraison/${livraison._id}`, livraison);
         return response.data;
     } catch (error) {
         console.error('Error modifying livraison:', error);
         throw error;
     }
 }
+
 
 export const modifyDriver = async ({ id, driver, distance }) => {
     try {
