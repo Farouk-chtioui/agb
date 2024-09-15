@@ -141,18 +141,16 @@ function Livraison() {
     };
 
     const handleAddLivraison = async (livraisonData) => {
-        console.log('Livraison Data:', livraisonData);
-
         try {
             if (!livraisonData.status) {
                 livraisonData.status = 'En attente';
             }
     
             if (isEditMode) {
-                await modifyLivraison(livraisonData); 
+                await modifyLivraison(livraisonData); // Modify the livraison if in edit mode
                 toast.success('Livraison modifiée avec succès!');
             } else {
-                await addLivraison(livraisonData); 
+                await addLivraison(livraisonData); // Add new livraison otherwise
                 toast.success('Livraison ajoutée avec succès!');
             }
             
@@ -261,9 +259,7 @@ function Livraison() {
         });
         setIsEditMode(false);
         setCurrentLivraison(null);
-        setShowForm(false); 
     };
-    
 
     return (
         <div className="flex h-screen">
@@ -283,22 +279,21 @@ function Livraison() {
                         Ajouter une livraison
                     </button>
                     {showForm && (
-                       <LivraisonForm
-                       newLivraison={newLivraison}
-                       setNewLivraison={setNewLivraison}
-                       handleChange={handleChange}
-                       handleAddLivraison={handleAddLivraison} // Pass the correct handler here
-                       setShowForm={setShowForm}
-                       isEditMode={isEditMode}
-                       clients={clients}
-                       markets={markets}
-                       products={products}
-                       drivers={drivers}
-                       secteurs={secteurs}
-                       currentLivraison={currentLivraison}
-                       plans={plans}
-                   />
-                   
+                        <LivraisonForm
+                            newLivraison={newLivraison}
+                            setNewLivraison={setNewLivraison}
+                            handleChange={handleChange}
+                            handleAddLivraison={handleAddLivraison}
+                            setShowForm={setShowForm}
+                            isEditMode={isEditMode}
+                            clients={clients}
+                            markets={markets}
+                            products={products}
+                            drivers={drivers}
+                            secteurs={secteurs}
+                            currentLivraison={currentLivraison}
+                            plans={plans}
+                        />
                     )}
                     <LivraisonTable
                         livraisons={isSearchActive ? filteredLivraisons : livraisons}

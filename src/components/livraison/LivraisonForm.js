@@ -169,8 +169,11 @@ const LivraisonForm = ({
         }
 
         const livraisonData = { ...newLivraison, products: productList };
-        handleAddLivraison(livraisonData); // Use handleAddLivraison for both add and edit
-
+        if (isEditMode) {
+            handleAddLivraison(livraisonData);
+        } else {
+            handleAddLivraison(livraisonData);
+        }
 
         try {
             const selectedPlan = plans.find(plan => plan.Date === newLivraison.Date);
