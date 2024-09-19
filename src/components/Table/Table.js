@@ -35,7 +35,7 @@ const Table = ({
             <tr key={item._id} className="text-center">
               {renderRow(item)}
               {role === 'admin' && (
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 action-cell">
                   <>
                     {showThirdAction && ThirdIcon && handleThirdAction && (
                       <button

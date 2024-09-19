@@ -6,6 +6,9 @@
     background-color: #2E75B5;
   }
 
-
+  .action-cell {
+    white-space: nowrap; /* Prevents text wrapping inside the cell */
+    min-width: 120px; /* Adjust the minimum width as needed */
+  }
 
 
