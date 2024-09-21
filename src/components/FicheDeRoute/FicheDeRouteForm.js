@@ -129,7 +129,7 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
       <div className="bg-white p-4 sm:p-6 md:p-10 rounded-2xl shadow-lg w-full max-w-5xl max-h-full overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-700">
-            Assign Driver for {selectedLivraison ? selectedLivraison.NumeroCommande : ''}
+            Assigner un chauffeur pour {selectedLivraison ? selectedLivraison.NumeroCommande : ''}
           </h2>
           <button
             onClick={() => setShowForm(false)}
@@ -140,14 +140,14 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group mb-6">
-            <label htmlFor="driver" className="block text-base sm:text-lg md:text-xl font-semibold text-blue-700">Select Driver</label>
+            <label htmlFor="driver" className="block text-base sm:text-lg md:text-xl font-semibold text-blue-700">Sélectionner un chauffeur</label>
             <select
               id="driver"
               className="w-full border rounded-lg py-2 px-3 text-sm sm:text-lg"
               value={selectedDriver}
               onChange={(e) => setSelectedDriver(e.target.value)}
             >
-              <option value="">Choose a driver</option>
+              <option value="">Choisir un chauffeur</option>
               {drivers.map((driver) => (
                 <option key={driver._id} value={driver._id}>
                   {driver.first_name}
@@ -160,7 +160,7 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
               type="submit"
               className="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-blue-700 transition text-sm sm:text-lg"
             >
-              Assign
+              Assigner
             </button>
           </div>
         </form>
@@ -168,14 +168,14 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
           <div className="p-4 border rounded-lg shadow-sm">
             <div className="flex items-center mb-2 text-blue-600">
               <FaMapMarkerAlt className="mr-2 text-lg sm:text-xl" />
-              <span className="font-semibold">Market: </span> {selectedLivraison ? selectedLivraison.market.first_name : ''}
+              <span className="font-semibold">Marché : </span> {selectedLivraison ? selectedLivraison.market.first_name : ''}
             </div>
             <div className="flex items-center mb-2 text-blue-600">
               <MdDirections className="mr-2 text-lg sm:text-xl" />
-              <span className="font-semibold">Client: </span> {selectedLivraison ? selectedLivraison.client.first_name : ''}
+              <span className="font-semibold">Client : </span> {selectedLivraison ? selectedLivraison.client.first_name : ''}
             </div>
             <div className="flex items-center text-blue-600">
-              <span className="font-semibold">Distance: </span> {loading ? 'Calculating...' : distance ? `${distance.toFixed(2)} km` : 'Error'}
+              <span className="font-semibold">Distance : </span> {loading ? 'Calcul en cours...' : distance ? `${distance.toFixed(2)} km` : 'Erreur'}
             </div>
           </div>
         </div>
@@ -186,6 +186,7 @@ const FicheDeRouteForm = ({ selectedLivraison, drivers, handleDriverSubmit, setS
       </div>
     </div>
   );
+
 };
 
 export default FicheDeRouteForm;
